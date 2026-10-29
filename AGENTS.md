@@ -7,7 +7,8 @@ source instead of paraphrasing.
 ## Install
 
 ```
-pip install git+https://github.com/FaultyPacket/faultypacket-audit
+pip install faultypacket-audit
+# or from source: pip install git+https://github.com/FaultyPacket/faultypacket-audit
 ```
 
 Python 3.10+. Dependencies: dnspython, publicsuffixlist.

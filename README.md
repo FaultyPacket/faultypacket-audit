@@ -9,7 +9,8 @@
 **Is your domain's email set up to current rules? One command checks SPF, DMARC (RFC 9989), DKIM, MTA-STS, DNSSEC, DANE, CAA, BIMI and Google/Yahoo/Outlook sender requirements, and every finding cites the RFC section or provider page behind it.**
 
 ```
-pip install git+https://github.com/FaultyPacket/faultypacket-audit
+pip install faultypacket-audit
+# or from source: pip install git+https://github.com/FaultyPacket/faultypacket-audit
 faultypacket-audit --doh europa.eu
 faultypacket-audit --doh -f domains.txt --json out.json --sarif out.sarif
 ```
@@ -54,7 +55,8 @@ The two opt-in checks send extra queries (to third-party lists, or 180 queries f
 ## Install and run
 
 ```
-pip install git+https://github.com/FaultyPacket/faultypacket-audit
+pip install faultypacket-audit
+# or from source: pip install git+https://github.com/FaultyPacket/faultypacket-audit
 faultypacket-audit example.com
 faultypacket-audit -f domains.txt --json out.json --csv out.csv --sarif out.sarif
 faultypacket-audit example.com --html report.html        # self-contained; print to PDF from a browser
