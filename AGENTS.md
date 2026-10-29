@@ -48,6 +48,8 @@ Example client config:
 * Bulk-sender rows can be `not-dns-verifiable`. Never present those as passes,
   and never call a domain "compliant"; the verdicts are `fail`, `incomplete` or `dns-checks-pass`.
 
+* `fixes`: per report, copy-paste TXT records `{rule_id, name, type, value, note}`. Values containing `REPLACE-` need the owner's input; say so when you pass them on.
+
 ## Exit codes
 
 | code | meaning |

@@ -37,5 +37,11 @@ def audit(domain, res, rules, checks=None, options=None):
         r["status"] = worst(f.severity for f in r["findings"])
         opts["results"][name] = r["data"]
         out.append(r)
+    from .fixes import suggest
+    try:
+        fixes = suggest(domain, out)
+    except Exception:              # a fix suggestion must never break an audit
+        fixes = []
     return {"domain": domain, "checked_at_utc": now_utc(), "rules_version": rules.version,
-            "resolvers": res.servers, "status": worst(c["status"] for c in out), "checks": out}
+            "resolvers": res.servers, "status": worst(c["status"] for c in out), "checks": out,
+            "fixes": fixes}

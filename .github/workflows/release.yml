@@ -21,4 +21,13 @@ jobs:
       - name: Create release with rules.json attached
         if: steps.v.outputs.new == 'true'
         env: {GH_TOKEN: "${{ github.token }}", V: "${{ steps.v.outputs.version }}"}
-        run: gh release create "v$V" faultypacket_audit/data/rules.json --generate-notes --title "v$V"
+        run: |
+          notes=$(awk -v v="## $V" '$0 ~ "^"v {f=1; next} /^## / {f=0} f' CHANGELOG.md)
+          gh release create "v$V" faultypacket_audit/data/rules.json --title "v$V" --notes "${notes:-Release v$V}"
+      - name: Move the major tag (v1) to this release
+        if: steps.v.outputs.new == 'true'
+        env: {V: "${{ steps.v.outputs.version }}"}
+        run: |
+          git fetch --tags --force
+          git tag -f "v${V%%.*}" "v$V"
+          git push -f origin "v${V%%.*}"

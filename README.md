@@ -29,7 +29,7 @@ europa.eu: ERROR
 
 Runs locally. No account, no upload. Also a [GitHub Action](#github-action), an [MCP server](#mcp-server-for-ai-agents) and a [weekly scan](#weekly-scan-in-your-own-repo) for your own repo. AI agents: see [AGENTS.md](AGENTS.md).
 
-> Status: v1.1.0 (2026-10-29). JSON fields are stable within 1.x ([schema](schema/audit.schema.json)); rule changes bump `rules_version`.
+> Status: v1.2.0 (2026-10-29). JSON fields are stable within 1.x ([schema](schema/audit.schema.json)); rule changes bump `rules_version`.
 
 ## Checks
 
@@ -77,6 +77,10 @@ Each finding has these fields:
 * `level`, which is `MUST`, `SHOULD`, `MAY`, `PROVIDER` or `TOOL`. `TOOL` covers the tool's own conditions, such as DNS errors.
 * `rules_version` (for example `2026.10.29.3`), so a finding can be traced to the exact rule set that produced it. SARIF messages end with `[rule_id | citation | rules version]`.
 
+## Suggested fixes
+
+Where the right record follows from the standard alone, the report includes a copy-paste fix tied to the rule it answers: a monitoring DMARC record when none exists, your existing DMARC record rewritten without the tags RFC 9989 retired (plus any invalid `fo` or obsolete `!size`), and a TLS-RPT record when it is missing. Anything only you know, such as the mailbox that reads reports, is a `REPLACE-` placeholder. In JSON these are in each report's `fixes` list.
+
 ## Provider verdicts
 
 `bulk-sender` gives a separate verdict for Google, Yahoo and Outlook, with one row per published requirement and a link to the provider page. DKIM rows use the keys the `dkim` check found, including Google's rule that mail to personal Gmail accounts needs a DKIM key of 1024 bits or longer (support.google.com/a/answer/81126, checked 2026-10-29).
@@ -104,7 +108,7 @@ report = audit("example.com", Resolver(), load_rules())
   with: {sarif_file: "${{ steps.audit.outputs.sarif }}"}
 ```
 
-Outputs: `exit-code`, `json`, `sarif`. `@v1` follows the latest 1.x release; pin a tag such as `@v1.1.0` for fixed behaviour.
+Outputs: `exit-code`, `json`, `sarif`. `@v1` follows the latest 1.x release; pin a tag such as `@v1.2.0` for fixed behaviour.
 
 ## MCP server for AI agents
 

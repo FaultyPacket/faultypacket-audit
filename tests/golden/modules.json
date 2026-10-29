@@ -623,6 +623,7 @@
   }
  ],
  "domain": "shop.example",
+ "fixes": [],
  "resolvers": [
   "fake"
  ],

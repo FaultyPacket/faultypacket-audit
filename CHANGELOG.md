@@ -1,6 +1,11 @@
 # Changelog
 
 
+
+## 1.2.0 (2026-10-29)
+
+- Suggested fixes: each report has a `fixes` list of copy-paste TXT records where the correct record follows from the standard (missing DMARC, RFC 9989 retired tags / invalid `fo` / obsolete `!size`, missing TLS-RPT). Owner-specific values are `REPLACE-` placeholders. Shown in text output, JSON and MCP.
+- Release workflow moves the `v1` tag to each new 1.x release.
 ## 1.1.0 (2026-10-29)
 
 - GitHub Action: `uses: FaultyPacket/faultypacket-audit@v1` (composite `action.yml`, outputs `exit-code`, `json`, `sarif`), with a self-test workflow.

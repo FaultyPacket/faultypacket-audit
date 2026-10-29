@@ -6,7 +6,7 @@ Library use:
 
 Checks are pure functions of (domain, resolver, rules, options); they never print.
 """
-__version__ = "1.1.0"
+__version__ = "1.2.0"
 
 from .core.resolver import Resolver, Cached          # noqa: E402
 from .core.rules import load_rules                    # noqa: E402

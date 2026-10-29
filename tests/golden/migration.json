@@ -784,6 +784,22 @@
   }
  ],
  "domain": "council.gov.example",
+ "fixes": [
+  {
+   "name": "_dmarc.council.gov.example",
+   "note": "Same record without pct, ri, which RFC 9989 9.3 retired, the invalid fo value (RFC 9989 4.8) and the obsolete !size suffix (RFC 9989 4.8). Without pct the full policy applies to all mail; receivers following RFC 9989 already do this.",
+   "rule_id": "dmarc.historic_pct",
+   "type": "TXT",
+   "value": "v=DMARC1; p=quarantine; rua=mailto:r@reports.test"
+  },
+  {
+   "name": "_smtp._tls.council.gov.example",
+   "note": "RFC 8460 3. Replace the mailbox with one you read.",
+   "rule_id": "tlsrpt.absent",
+   "type": "TXT",
+   "value": "v=TLSRPTv1; rua=mailto:REPLACE-tls-reports@council.gov.example"
+  }
+ ],
  "resolvers": [
   "fake"
  ],

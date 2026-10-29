@@ -22,6 +22,9 @@ def render(reports, verbose=False):
                     lines.append(f"    {p['provider']}: {p['verdict']}"
                                  + (f" (not checkable from DNS: {', '.join(p['not_dns_verifiable'])})"
                                     if p["not_dns_verifiable"] else ""))
+        for fx in r.get("fixes", []):
+            lines.append(f"  suggested fix ({fx['rule_id']}): {fx['name']} {fx['type']} \"{fx['value']}\"")
+            lines.append(f"      {fx['note']}")
         lines.append("")
     return "\n".join(lines)
 

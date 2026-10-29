@@ -528,6 +528,15 @@
   }
  ],
  "domain": "good.test",
+ "fixes": [
+  {
+   "name": "_smtp._tls.good.test",
+   "note": "RFC 8460 3. Replace the mailbox with one you read.",
+   "rule_id": "tlsrpt.absent",
+   "type": "TXT",
+   "value": "v=TLSRPTv1; rua=mailto:REPLACE-tls-reports@good.test"
+  }
+ ],
  "resolvers": [
   "fake"
  ],
