@@ -59,6 +59,19 @@ def analyse_key(name, rec, R):
     if "y" in flags:
         info["testing"] = True
         fs.append(F("warning", "dkim.testing", f"{name}: t=y testing flag; verifiers MUST treat mail as unsigned, so it gives you no DKIM pass for DMARC-dependent policies"))
+    for fl in flags:
+        if fl == "s":
+            fs.append(F("info", "dkim.strict_subdomain", f"{name}: t=s; signatures whose i= is a subdomain of d= will fail with this key"))
+        elif fl != "y":
+            fs.append(F("warning", "dkim.unknown_flag", f"{name}: unknown t= flag {fl!r}; verifiers ignore it"))
+    if "s" in t:
+        svc = [x.strip() for x in t["s"].split(":") if x.strip()]
+        if not ({"*", "email"} & set(svc)):
+            fs.append(F("error", "dkim.service_type", f"{name}: s={t['s']}; the key is not usable for email (needs s=email or s=*)"))
+    if "g" in t:
+        fs.append(F("info" if t["g"] in ("*", "") else "warning", "dkim.granularity",
+                    f"{name}: g={t['g']!r} is from RFC 4871 and was dropped by RFC 6376"
+                    + ("" if t["g"] in ("*", "") else "; some older verifiers still restrict the key to that local-part")))
     if "h" in t and "sha256" not in t["h"].split(":"):
         fs.append(F("error", "dkim.sha1_only", f"{name}: h={t['h']} excludes sha256; rsa-sha1 MUST NOT be used"))
     if t["p"] == "":

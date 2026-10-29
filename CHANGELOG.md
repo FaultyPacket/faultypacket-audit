@@ -7,6 +7,10 @@
 - New `faultypacket-audit reports`: offline DMARC aggregate (RFC 7489 7.2 / RFC 9990) and TLS-RPT (RFC 8460) report reader for .xml, .gz, .zip and .json. Per-source-IP and per-domain SPF, DKIM and alignment pass/fail, failing and unauthorised senders, TLS failure types; Markdown or JSON. DTDs refused, 64 MiB decompression cap. See docs/reports.md.
 - New `faultypacket-audit alert`: daily change and new-failure alerts to Slack, Teams or a generic JSON webhook. URL from an environment variable/secret only. GitHub Action inputs `alert-format` and `alert-state`; example in examples/alerts.yml. See docs/alerts.md.
 - New `faultypacket-audit spf-drift`: compares a flattened SPF record with the current resolution of its source includes and lists missing and extra ranges. See docs/spf-drift.md.
+- SPF: `spf.record_size` (name + TXT >= 450 octets, RFC 7208 3.4), `spf.rr_type_99` (discontinued SPF RR still published, RFC 7208 3.1/14.1), `spf.exp_target` (exp= target missing, multiple or not a valid macro-string, RFC 7208 6.2/7.1).
+- DMARC: `dmarc.cname` / `dmarc.cname_dangling` when `_dmarc` is served through a CNAME chain that resolves, loops or dangles.
+- DKIM key tags: `dkim.strict_subdomain` (t=s), `dkim.unknown_flag`, `dkim.service_type` (s= without email or *), `dkim.granularity` (g=, RFC 6376 C.2) (RFC 6376 3.6.1).
+- BIMI mark certificates (VMC/CMC): chain order and signatures, expiry, BIMI EKU, SAN, and the embedded logotype hash compared with l=. Needs `pip install faultypacket-audit[crypto]`; without it the check reports "not tested". Root trust is not judged.
 
 ## 1.4.0 (2026-10-29)
 

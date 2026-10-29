@@ -283,8 +283,73 @@ def check(domain, res, rules, options=None):
     elif q is None:
         findings.append(rules.finding(NAME, "warning", "spf.no_all",
                                       "no 'all' term and no redirect: unlisted hosts get the default result 'neutral'"))
+    findings += record_checks(domain, res, rules, rec)
     return {"check": NAME, "domain": domain, "findings": findings,
             "data": {"result": r["result"], "lookups": r["lookups"], "all": q, "lookup_limit": LOOKUP_LIMIT,
                      "void_lookups": r["void_lookups"], "void_limit": VOID_LIMIT,
                      "record": (r["tree"] or {}).get("record"),
                      "lookup_log": r["lookup_log"], "tree": r["tree"]}}
+
+
+EXP_MACRO = re.compile(r"%(\{[slodiphcrtv][0-9]*r?[-.+,/_=]*\}|%|_|-)", re.I)
+
+
+def macro_string_ok(txt):
+    """RFC 7208 7.1 macro-string: every '%' starts %%, %_, %- or a valid %{...}."""
+    i = 0
+    while i < len(txt):
+        if txt[i] != "%":
+            i += 1
+            continue
+        m = EXP_MACRO.match(txt, i)
+        if not m:
+            return False
+        i = m.end()
+    return True
+
+
+def txt_size(name, txts):
+    """RFC 7208 3.4 guideline: DNS name plus the text of all TXT records."""
+    return len(name.rstrip(".")) + sum(len(t.encode("utf-8", "replace")) for t in txts)
+
+
+def record_checks(domain, res, rules, rec):
+    """RFC 7208 3.4 size, 3.1 type 99, 6.2 exp= target."""
+    F = lambda sev, rid, msg, **e: rules.finding(NAME, sev, rid, msg, **e)
+    out = []
+    txts, st = res.query(domain, "TXT")
+    if st == "ok":
+        size, lim = txt_size(domain, txts), rules.value("spf.record_size")
+        if size >= lim:
+            out.append(F("warning", "spf.record_size",
+                         f"name + all TXT records at {domain} are {size} octets (guideline < {lim}); the answer may not fit a "
+                         "512-octet UDP response and some verifiers will not retry over TCP", octets=size))
+    v99, st99 = res.query(domain, "SPF")
+    if st99 == "ok" and v99:
+        out.append(F("warning", "spf.rr_type_99",
+                     f"{domain} still publishes the discontinued SPF RR type (99); verifiers only read TXT. "
+                     "Remove it so the two cannot drift" + ("" if v99 == [t for t in txts if t.lower().startswith("v=spf1")]
+                                                            else "; it already differs from the TXT record")))
+    if not rec:
+        return out
+    exps = [t.split("=", 1)[1] for t in rec.split()[1:] if t.lower().startswith("exp=")]
+    if not exps:
+        return out
+    target = exps[0]
+    if "%" in target:
+        out.append(F("info", "spf.exp_target", f"exp={target} uses macros; target not checked"))
+        return out
+    vals, st = res.query(target, "TXT")
+    if st.startswith("error"):
+        out.append(F("info", "spf.exp_target", f"exp={target}: DNS {st}"))
+    elif not vals:
+        out.append(F("warning", "spf.exp_target", f"exp={target} has no TXT record; receivers will give no explanation"))
+    elif len(vals) > 1:
+        out.append(F("warning", "spf.exp_target", f"exp={target} has {len(vals)} TXT records; RFC 7208 6.2 treats this as no explanation"))
+    else:
+        txt = vals[0]
+        bad = not txt.isascii() or not macro_string_ok(txt)
+        if bad:
+            out.append(F("warning", "spf.exp_target", f"exp={target} text is not valid macro-string (US-ASCII, valid %{{...}} macros); "
+                                                      "receivers will ignore it"))
+    return out

@@ -348,10 +348,36 @@ def check_domain(domain, res):
                 if t in tags:
                     rows, iss = external_check(domain, parse_uris(tags[t]), res, t, org["tree_walk"])
                     dests += rows; issues += iss
+    issues += cname_issues(domain, res, record)
     issues = [{"severity": s, "code": c, "message": m} for s, c, m in issues]
     return {"domain": domain, "record": record, "policy": tags.get("p"),
             "policy_source": applied_from, "org_domain": org, "tags": tags,
             "destinations": dests, "issues": issues, "result": verdict(issues)}
+
+
+def cname_issues(domain, res, record):
+    """_dmarc.<domain> reached through a CNAME (common when a provider hosts the policy)."""
+    name = "_dmarc." + domain
+    out, seen, cur = [], [], name
+    for _ in range(8):
+        vals, st = res.query(cur, "CNAME")
+        if st != "ok" or not vals:
+            break
+        cur = vals[0].lower().rstrip(".")
+        if cur in seen or cur == name:
+            return [("error", "cname_dangling", f"{name} CNAME chain loops at {cur}; receivers get no record")]
+        seen.append(cur)
+    if not seen:
+        return []
+    chain = " -> ".join([name] + seen)
+    if record:
+        out.append(("info", "cname", f"DMARC record is served through a CNAME ({chain}); whoever controls {seen[-1]} controls your policy"))
+    else:
+        txts, st = res.query(seen[-1], "TXT")
+        if not st.startswith("error"):
+            out.append(("error", "cname_dangling", f"{chain}: the CNAME target has no valid DMARC record, so the policy is lost "
+                                                   "(check the provider still hosts it, or replace the CNAME with a TXT record)"))
+    return out
 
 
 def verdict(issues):

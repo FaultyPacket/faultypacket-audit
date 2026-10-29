@@ -1,6 +1,6 @@
 {
  "schema": "faultypacket-rules/1",
- "rules_version": "2026.10.29.5",
+ "rules_version": "2026.10.29.6",
  "note": "Every finding the tool emits references one of these rules. Provider (bulk-sender) rows are added only after reading the provider's live page; value, date and url are mandatory. RFC section numbers pinned against rfc-editor.org text on 2026-10-29.",
  "rules": [
   {
@@ -2050,6 +2050,276 @@
    "url": "",
    "verified": "2026-10-29",
    "check": "lookalike"
+  },
+  {
+   "id": "spf.record_size",
+   "check": "spf",
+   "value": 450,
+   "level": "SHOULD",
+   "source": "RFC 7208 3.4",
+   "url": "https://www.rfc-editor.org/rfc/rfc7208#section-3.4",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "spf.rr_type_99",
+   "check": "spf",
+   "value": true,
+   "level": "MUST",
+   "source": "RFC 7208 3.1, 14.1",
+   "url": "https://www.rfc-editor.org/rfc/rfc7208#section-3.1",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "spf.exp_target",
+   "check": "spf",
+   "value": true,
+   "level": "MAY",
+   "source": "RFC 7208 6.2",
+   "url": "https://www.rfc-editor.org/rfc/rfc7208#section-6.2",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "dmarc.cname",
+   "check": "dmarc",
+   "value": true,
+   "level": "MAY",
+   "source": "RFC 9989 4.5; RFC 1034 3.6.2",
+   "url": "https://www.rfc-editor.org/rfc/rfc9989#section-4.5",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "dmarc.cname_dangling",
+   "check": "dmarc",
+   "value": true,
+   "level": "MUST",
+   "source": "RFC 9989 4.10.1",
+   "url": "https://www.rfc-editor.org/rfc/rfc9989#section-4.10.1",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "dkim.strict_subdomain",
+   "check": "dkim",
+   "value": "s",
+   "level": "MAY",
+   "source": "RFC 6376 3.6.1 (t=s)",
+   "url": "https://www.rfc-editor.org/rfc/rfc6376#section-3.6.1",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "dkim.unknown_flag",
+   "check": "dkim",
+   "value": true,
+   "level": "MUST",
+   "source": "RFC 6376 3.6.1 (t=, unrecognised flags MUST be ignored)",
+   "url": "https://www.rfc-editor.org/rfc/rfc6376#section-3.6.1",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "dkim.service_type",
+   "check": "dkim",
+   "value": "email",
+   "level": "MUST",
+   "source": "RFC 6376 3.6.1 (s=)",
+   "url": "https://www.rfc-editor.org/rfc/rfc6376#section-3.6.1",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "dkim.granularity",
+   "check": "dkim",
+   "value": true,
+   "level": "MAY",
+   "source": "RFC 6376 C.2 (g= dropped from RFC 4871)",
+   "url": "https://www.rfc-editor.org/rfc/rfc6376#appendix-C.2",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "bimi.vmc_parse",
+   "check": "bimi",
+   "value": true,
+   "level": "MUST",
+   "source": "draft-brand-indicators-for-message-identification-14 3.5, 7.4",
+   "url": "https://datatracker.ietf.org/doc/html/draft-brand-indicators-for-message-identification-14#section-7.4",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "bimi.vmc_expired",
+   "check": "bimi",
+   "value": true,
+   "level": "MUST",
+   "source": "draft-brand-indicators-for-message-identification-14 7.4; RFC 5280 4.1.2.5",
+   "url": "https://datatracker.ietf.org/doc/html/draft-brand-indicators-for-message-identification-14#section-7.4",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "bimi.vmc_expiring",
+   "check": "bimi",
+   "value": 30,
+   "level": "SHOULD",
+   "source": "draft-brand-indicators-for-message-identification-14 7.4; RFC 5280 4.1.2.5",
+   "url": "https://datatracker.ietf.org/doc/html/draft-brand-indicators-for-message-identification-14#section-7.4",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "bimi.vmc_chain",
+   "check": "bimi",
+   "value": true,
+   "level": "MUST",
+   "source": "draft-brand-indicators-for-message-identification-14 7.4; RFC 5280 6.1",
+   "url": "https://datatracker.ietf.org/doc/html/draft-brand-indicators-for-message-identification-14#section-7.4",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "bimi.vmc_eku",
+   "check": "bimi",
+   "value": true,
+   "level": "MUST",
+   "source": "draft-brand-indicators-for-message-identification-14 7.4 (id-kp-BrandIndicatorforMessageIdentification 1.3.6.1.5.5.7.3.31)",
+   "url": "https://datatracker.ietf.org/doc/html/draft-brand-indicators-for-message-identification-14#section-7.4",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "bimi.vmc_san",
+   "check": "bimi",
+   "value": true,
+   "level": "MUST",
+   "source": "draft-brand-indicators-for-message-identification-14 7.4",
+   "url": "https://datatracker.ietf.org/doc/html/draft-brand-indicators-for-message-identification-14#section-7.4",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "bimi.vmc_logo_hash",
+   "check": "bimi",
+   "value": true,
+   "level": "MUST",
+   "source": "draft-brand-indicators-for-message-identification-14 7.4; RFC 3709 (logotype)",
+   "url": "https://datatracker.ietf.org/doc/html/draft-brand-indicators-for-message-identification-14#section-7.4",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "bimi.vmc_ok",
+   "check": "bimi",
+   "value": true,
+   "level": "MAY",
+   "source": "draft-brand-indicators-for-message-identification-14 7.4",
+   "url": "https://datatracker.ietf.org/doc/html/draft-brand-indicators-for-message-identification-14#section-7.4",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "sectxt.absent",
+   "check": "security-txt",
+   "value": true,
+   "level": "SHOULD",
+   "source": "RFC 9116 3",
+   "url": "https://www.rfc-editor.org/rfc/rfc9116#section-3",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "sectxt.location",
+   "check": "security-txt",
+   "value": true,
+   "level": "MUST",
+   "source": "RFC 9116 3",
+   "url": "https://www.rfc-editor.org/rfc/rfc9116#section-3",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "sectxt.content_type",
+   "check": "security-txt",
+   "value": true,
+   "level": "MUST",
+   "source": "RFC 9116 3",
+   "url": "https://www.rfc-editor.org/rfc/rfc9116#section-3",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "sectxt.no_contact",
+   "check": "security-txt",
+   "value": true,
+   "level": "MUST",
+   "source": "RFC 9116 2.5.3",
+   "url": "https://www.rfc-editor.org/rfc/rfc9116#section-2.5.3",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "sectxt.expires",
+   "check": "security-txt",
+   "value": true,
+   "level": "MUST",
+   "source": "RFC 9116 2.5.5",
+   "url": "https://www.rfc-editor.org/rfc/rfc9116#section-2.5.5",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "sectxt.expired",
+   "check": "security-txt",
+   "value": true,
+   "level": "MUST",
+   "source": "RFC 9116 2.5.5, 5.3",
+   "url": "https://www.rfc-editor.org/rfc/rfc9116#section-5.3",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "sectxt.expires_far",
+   "check": "security-txt",
+   "value": 365,
+   "level": "SHOULD",
+   "source": "RFC 9116 2.5.5",
+   "url": "https://www.rfc-editor.org/rfc/rfc9116#section-2.5.5",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "sectxt.https_uri",
+   "check": "security-txt",
+   "value": true,
+   "level": "MUST",
+   "source": "RFC 9116 2.5",
+   "url": "https://www.rfc-editor.org/rfc/rfc9116#section-2.5",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "sectxt.duplicate",
+   "check": "security-txt",
+   "value": true,
+   "level": "MUST",
+   "source": "RFC 9116 2.5.5, 2.5.8",
+   "url": "https://www.rfc-editor.org/rfc/rfc9116#section-2.5.8",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "sectxt.syntax",
+   "check": "security-txt",
+   "value": true,
+   "level": "MUST",
+   "source": "RFC 9116 4",
+   "url": "https://www.rfc-editor.org/rfc/rfc9116#section-4",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "sectxt.canonical",
+   "check": "security-txt",
+   "value": true,
+   "level": "SHOULD",
+   "source": "RFC 9116 2.5.2, 2.3",
+   "url": "https://www.rfc-editor.org/rfc/rfc9116#section-2.5.2",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "sectxt.ok",
+   "check": "security-txt",
+   "value": true,
+   "level": "MAY",
+   "source": "RFC 9116",
+   "url": "https://www.rfc-editor.org/rfc/rfc9116#section-1",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "sectxt.internal",
+   "check": "security-txt",
+   "value": true,
+   "level": "TOOL",
+   "source": "faultypacket-audit",
+   "url": "",
+   "verified": "2026-10-29"
   }
  ]
 }
