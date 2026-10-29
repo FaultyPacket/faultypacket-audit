@@ -118,8 +118,10 @@ def test_prop_containers_equivalent(rows):
     buf = io.BytesIO()
     with zipfile.ZipFile(buf, "w", zipfile.ZIP_DEFLATED) as z:
         z.writestr("a.xml", x)
+    strip = lambda s: {k: v for k, v in s.items() if k != "conformance"}  # conformance names the inner file
     a = R.summarise(R.parse_bytes("a.xml", x))
-    assert a == R.summarise(R.parse_bytes("a.gz", gzip.compress(x))) == R.summarise(R.parse_bytes("a.zip", buf.getvalue()))
+    assert strip(a) == strip(R.summarise(R.parse_bytes("a.xml.gz", gzip.compress(x)))) == strip(R.summarise(R.parse_bytes("a.zip", buf.getvalue())))
+    assert {c["rule_id"] for c in a["conformance"]} == {c["rule_id"] for c in R.summarise(R.parse_bytes("a.xml.gz", gzip.compress(x)))["conformance"]}
     R.markdown(a)
 
 

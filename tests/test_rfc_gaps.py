@@ -113,8 +113,7 @@ def test_vmc_expired_and_garbage():
 
 def test_every_new_rule_has_rfc_section():
     for rid in ["spf.record_size", "spf.rr_type_99", "spf.exp_target", "dmarc.cname", "dkim.service_type", "bimi.vmc_chain"]:
-        r = R.rule(rid) if hasattr(R, "rule") else None
-        assert r is None or "#" in r["url"], rid
+        assert "#section-" in R.get(rid)["url"], rid
 
 
 @given(st.text(alphabet="ab %{}sid_-", max_size=40))

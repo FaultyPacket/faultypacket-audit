@@ -4,7 +4,7 @@ report reader (RFC 9990 is the current aggregate-report spec): ``faultypacket-au
 Everything is parsed locally. Nothing is uploaded or fetched. Accepts .xml,
 .xml.gz/.gz, .zip (each member read) and .json/.json.gz TLS-RPT reports.
 """
-import gzip, io, ipaddress, json, sys, zipfile
+import gzip, io, ipaddress, json, re, sys, zipfile
 import xml.etree.ElementTree as ET
 
 MAX_BYTES = 64 * 1024 * 1024  # decompressed cap per report (zip/gzip bomb guard)
@@ -129,18 +129,51 @@ def _parse_tlsrpt(data):
             "begin": str(dr.get("start-datetime", "")), "end": str(dr.get("end-datetime", "")), "policies": pols}
 
 
-def parse_bytes(name, data):
+def _issues(lst):
+    return [{"severity": a, "rule_id": b, "message": c} for a, b, c in lst]
+
+
+def parse_bytes(name, data, from_email=False, submitter=None):
+    """-> list of parsed reports; each carries "file" and "conformance" (RFC 9990/8460/9991 checks)."""
+    from . import reportlint as L
+    if not from_email and (name.lower().endswith(".eml") or re.match(rb"(?i)(return-path|received|from|mime-version|dkim-signature|delivered-to|subject|date|message-id):", data[:200])):
+        return parse_email(name, data)
     out = []
     for n, b in blobs(name, data):
         s = b.lstrip()
         if s.startswith(b"\xef\xbb\xbf"):
             s = s[3:].lstrip()
         if s[:1] == b"{":
-            out.append(parse_tlsrpt(s))
+            r = parse_tlsrpt(s)
+            j = json.loads(s.decode("utf-8"))
+            iss = L.validate_tlsrpt(j, name, from_email) + L.tls_submitter_issues(j, submitter)
         elif s[:1] == b"<":
-            out.append(parse_dmarc(s))
+            r = parse_dmarc(s)
+            iss = L.validate_dmarc(s, name, from_email)
         else:
             raise ReportError(f"{n}: neither XML nor JSON")
+        r["file"], r["conformance"] = n, _issues(iss)
+        out.append(r)
+    return out
+
+
+def parse_email(name, data):
+    """An .eml carrying an aggregate report, a TLS-RPT report or an RFC 9991 failure report."""
+    from . import reportlint as L
+    e = L.parse_email(data)
+    if e["kind"] == "failure":
+        return [{"type": "failure", "file": name, **(e["failure"] or {}), "conformance": _issues(e["issues"])}]
+    if e["kind"] == "other":
+        raise ReportError(f"{name}: email carries no DMARC/TLS-RPT report or failure report")
+    out = []
+    for fn, _ct, payload in e["attachments"]:
+        try:
+            out += parse_bytes(fn or name, payload, from_email=True, submitter=e.get("submitter"))
+        except ReportError:
+            continue
+    if not out:
+        raise ReportError(f"{name}: no parsable report attachment")
+    out[0]["conformance"] = _issues(e["issues"]) + out[0]["conformance"]
     return out
 
 
@@ -152,7 +185,13 @@ def _bucket():
 def summarise(reports):
     by_ip, by_dom, tls = {}, {}, {}
     n_dmarc = n_tls = 0
+    failures = []
     for r in reports:
+        if r["type"] == "failure":
+            failures.append({k: r.get(k, "") for k in ("file", "source_ip", "header_from", "reported_domain", "identity_alignment",
+                                                         "auth_failure", "delivery_result", "dkim_domain", "dkim_selector",
+                                                         "original_mail_from", "arrival_date", "subject")})
+            continue
         if r["type"] == "tlsrpt":
             n_tls += 1
             for p in r["policies"]:
@@ -187,7 +226,16 @@ def summarise(reports):
     return {"dmarc_reports": n_dmarc, "tlsrpt_reports": n_tls, "messages": total,
             "dmarc_pass": sum(b["dmarc_pass"] for b in by_dom.values()),
             "by_source_ip": dict(sorted(by_ip.items())), "by_domain": dict(sorted(by_dom.items())),
-            "failing_senders": failing, "unauthorised_senders": unauth, "tls": dict(sorted(tls.items()))}
+            "failing_senders": failing, "unauthorised_senders": unauth, "tls": dict(sorted(tls.items())),
+            "failure_reports": failures, "conformance": conformance(reports)}
+
+
+def conformance(reports):
+    from . import reportlint as L
+    out = [{"file": r.get("file", ""), "type": r["type"], "report_id": r.get("report_id", ""), "org_name": r.get("org_name", ""), **i}
+           for r in reports for i in r.get("conformance", [])]
+    out += [{"file": "", "type": "dmarc", "report_id": "", "org_name": "", **i} for i in _issues(L.cross_checks(reports))]
+    return out
 
 
 def _pct(a, b):
@@ -220,6 +268,20 @@ def markdown(s):
             ft = ", ".join(f"{k} ({v})" for k, v in sorted(t["result_types"].items())) or "none"
             L.append(f"| {d} | {t['success']} | {t['failure']} | {ft} |")
         L.append("")
+    if s.get("failure_reports"):
+        L += ["## DMARC failure reports (RFC 9991)", "", "| Source IP | From domain | Failed (Identity-Alignment) | Delivery | DKIM d=/s= |",
+              "|---|---|---|---|---|"]
+        for f in s["failure_reports"]:
+            L.append(f"| {f['source_ip'] or '?'} | {f['header_from'] or f['reported_domain'] or '?'} | {f['identity_alignment'] or '?'} "
+                     f"| {f['delivery_result'] or '-'} | {(f['dkim_domain'] + '/' + f['dkim_selector']) if f['dkim_domain'] else '-'} |")
+        L.append("")
+    con = [c for c in s.get("conformance", []) if c["severity"] != "info"]
+    if con:
+        L += ["## Report conformance", "", "Problems in the reports themselves (the generator's fault, not your DNS):", ""]
+        for c in con:
+            who = c["org_name"] or c["file"] or "reports"
+            L.append(f"- **{c['severity']}** `{c['rule_id']}` {who}: {c['message']}")
+        L.append("")
     return "\n".join(L)
 
 
@@ -227,12 +289,13 @@ def main(argv, stdin=None, stdout=None, stderr=None):
     import argparse
     stdout, stderr = stdout or sys.stdout, stderr or sys.stderr
     p = argparse.ArgumentParser(prog="faultypacket-audit reports",
-                                description="Summarise DMARC aggregate (RFC 7489) and TLS-RPT (RFC 8460) reports locally. "
-                                            "Accepts .xml, .gz, .zip and .json; nothing is uploaded.")
+                                description="Summarise and validate DMARC aggregate (RFC 9990), TLS-RPT (RFC 8460) and DMARC failure (RFC 9991) "
+                                            "reports locally. Accepts .xml, .gz, .zip, .json and .eml; nothing is uploaded.")
     p.add_argument("files", nargs="+", help="report files")
     p.add_argument("--format", choices=["markdown", "json"], default="markdown")
     p.add_argument("-o", "--output", metavar="FILE", help="write here instead of stdout")
     p.add_argument("--fail-on-unauthorised", action="store_true", help="exit 1 if any source never passed DMARC")
+    p.add_argument("--fail-on-nonconformant", action="store_true", help="exit 1 if any report breaks an RFC 9990/8460/9991 MUST")
     a = p.parse_args(argv)
     reports, bad = [], 0
     for path in a.files:
@@ -251,4 +314,5 @@ def main(argv, stdin=None, stdout=None, stderr=None):
         print(text, file=stdout)
     if bad and not reports:
         return 2
-    return 1 if (a.fail_on_unauthorised and s["unauthorised_senders"]) or bad else 0
+    nonconf = any(c["severity"] == "error" for c in s["conformance"])
+    return 1 if (a.fail_on_unauthorised and s["unauthorised_senders"]) or (a.fail_on_nonconformant and nonconf) or bad else 0

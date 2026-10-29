@@ -2329,6 +2329,357 @@
    "source": "faultypacket-audit",
    "url": "",
    "verified": "2026-10-29"
+  },
+  {
+   "id": "rpt.dmarc_legacy",
+   "check": "reports",
+   "value": "RFC 7489-format report (no namespace)",
+   "level": "SHOULD",
+   "source": "RFC 9990 3.1.1.1",
+   "url": "https://www.rfc-editor.org/rfc/rfc9990#section-3.1.1.1",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "rpt.dmarc_namespace",
+   "check": "reports",
+   "value": "root element in the DMARC namespace",
+   "level": "MUST",
+   "source": "RFC 9990 3.1.1.1",
+   "url": "https://www.rfc-editor.org/rfc/rfc9990#section-3.1.1.1",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "rpt.dmarc_required",
+   "check": "reports",
+   "value": "element multiplicity per the RFC 9990 tables",
+   "level": "MUST",
+   "source": "RFC 9990 3.1.1",
+   "url": "https://www.rfc-editor.org/rfc/rfc9990#section-3.1.1",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "rpt.dmarc_no_record",
+   "check": "reports",
+   "value": "at least one record element",
+   "level": "MUST",
+   "source": "RFC 9990 3.1.1.2",
+   "url": "https://www.rfc-editor.org/rfc/rfc9990#section-3.1.1.2",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "rpt.dmarc_order",
+   "check": "reports",
+   "value": "elements in the order listed",
+   "level": "MUST",
+   "source": "RFC 9990 3.1.1.2",
+   "url": "https://www.rfc-editor.org/rfc/rfc9990#section-3.1.1.2",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "rpt.dmarc_unknown_element",
+   "check": "reports",
+   "value": "document matches the specified format",
+   "level": "SHOULD",
+   "source": "RFC 9990 3.1.1",
+   "url": "https://www.rfc-editor.org/rfc/rfc9990#section-3.1.1",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "rpt.dmarc_ext_namespace",
+   "check": "reports",
+   "value": "extension elements are namespaced",
+   "level": "MUST",
+   "source": "RFC 9990 3.1.1.6",
+   "url": "https://www.rfc-editor.org/rfc/rfc9990#section-3.1.1.6",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "rpt.dmarc_version",
+   "check": "reports",
+   "value": "version is 1.0",
+   "level": "MUST",
+   "source": "RFC 9990 3.1.1.2",
+   "url": "https://www.rfc-editor.org/rfc/rfc9990#section-3.1.1.2",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "rpt.dmarc_report_id",
+   "check": "reports",
+   "value": "Report-ID follows ridtxt",
+   "level": "SHOULD",
+   "source": "RFC 9990 3.5.1",
+   "url": "https://www.rfc-editor.org/rfc/rfc9990#section-3.5.1",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "rpt.dmarc_date_range",
+   "check": "reports",
+   "value": "begin/end are epoch seconds, begin < end",
+   "level": "MUST",
+   "source": "RFC 9990 3.1.1.4",
+   "url": "https://www.rfc-editor.org/rfc/rfc9990#section-3.1.1.4",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "rpt.dmarc_policy_domain",
+   "check": "reports",
+   "value": "one DMARC Policy Domain per report",
+   "level": "MUST",
+   "source": "RFC 9990 3.1.2",
+   "url": "https://www.rfc-editor.org/rfc/rfc9990#section-3.1.2",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "rpt.dmarc_value",
+   "check": "reports",
+   "value": "policy_evaluated dkim/spf are pass or fail",
+   "level": "MUST",
+   "source": "RFC 9990 3.1.1.9",
+   "url": "https://www.rfc-editor.org/rfc/rfc9990#section-3.1.1.9",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "rpt.dmarc_reason_type",
+   "check": "reports",
+   "value": "reason type is a pre-defined value",
+   "level": "MUST",
+   "source": "RFC 9990 3.1.6",
+   "url": "https://www.rfc-editor.org/rfc/rfc9990#section-3.1.6",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "rpt.dmarc_reason_missing",
+   "check": "reports",
+   "value": "reason when disposition differs from policy after alignment failure",
+   "level": "MUST",
+   "source": "RFC 9990 3.1.1.9",
+   "url": "https://www.rfc-editor.org/rfc/rfc9990#section-3.1.1.9",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "rpt.dmarc_too_many_sigs",
+   "check": "reports",
+   "value": "at most 100 DKIM signatures per row",
+   "level": "SHOULD",
+   "source": "RFC 9990 3.1.3",
+   "url": "https://www.rfc-editor.org/rfc/rfc9990#section-3.1.3",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "rpt.dmarc_auth_value",
+   "check": "reports",
+   "value": "auth_results values from RFC 8601",
+   "level": "MUST",
+   "source": "RFC 9990 3.1.1.12",
+   "url": "https://www.rfc-editor.org/rfc/rfc9990#section-3.1.1.12",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "rpt.dmarc_filename",
+   "check": "reports",
+   "value": "attachment filename ABNF and extension",
+   "level": "MUST",
+   "source": "RFC 9990 3.5.2",
+   "url": "https://www.rfc-editor.org/rfc/rfc9990#section-3.5.2",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "rpt.dmarc_duplicate_id",
+   "check": "reports",
+   "value": "Report-ID unique per domain",
+   "level": "MUST",
+   "source": "RFC 9990 3.5.1",
+   "url": "https://www.rfc-editor.org/rfc/rfc9990#section-3.5.1",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "rpt.dmarc_overlap",
+   "check": "reports",
+   "value": "reporting periods do not overlap",
+   "level": "SHOULD",
+   "source": "RFC 9990 3.1.1.4",
+   "url": "https://www.rfc-editor.org/rfc/rfc9990#section-3.1.1.4",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "rpt.dmarc_subject",
+   "check": "reports",
+   "value": "Subject ABNF",
+   "level": "MUST",
+   "source": "RFC 9990 3.5.2",
+   "url": "https://www.rfc-editor.org/rfc/rfc9990#section-3.5.2",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "rpt.dmarc_media_type",
+   "check": "reports",
+   "value": "application/gzip or text/xml",
+   "level": "MUST",
+   "source": "RFC 9990 3.5.2",
+   "url": "https://www.rfc-editor.org/rfc/rfc9990#section-3.5.2",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "rpt.transport_dmarc",
+   "check": "reports",
+   "value": "report mail streams pass DMARC",
+   "level": "MUST",
+   "source": "RFC 9990 3.5.2",
+   "url": "https://www.rfc-editor.org/rfc/rfc9990#section-3.5.2",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "rpt.tls_required",
+   "check": "reports",
+   "value": "required JSON fields",
+   "level": "MUST",
+   "source": "RFC 8460 4.4",
+   "url": "https://www.rfc-editor.org/rfc/rfc8460#section-4.4",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "rpt.tls_policies_array",
+   "check": "reports",
+   "value": "policies is an array",
+   "level": "MUST",
+   "source": "RFC 8460 4",
+   "url": "https://www.rfc-editor.org/rfc/rfc8460#section-4",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "rpt.tls_datetime",
+   "check": "reports",
+   "value": "RFC 3339 date-range",
+   "level": "MUST",
+   "source": "RFC 8460 4.4",
+   "url": "https://www.rfc-editor.org/rfc/rfc8460#section-4.4",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "rpt.tls_full_day",
+   "check": "reports",
+   "value": "one full UTC day",
+   "level": "SHOULD",
+   "source": "RFC 8460 4.1",
+   "url": "https://www.rfc-editor.org/rfc/rfc8460#section-4.1",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "rpt.tls_value",
+   "check": "reports",
+   "value": "policy-type, counts and result-type values",
+   "level": "MUST",
+   "source": "RFC 8460 4.3",
+   "url": "https://www.rfc-editor.org/rfc/rfc8460#section-4.3",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "rpt.tls_reason_code",
+   "check": "reports",
+   "value": "failure-reason-code with validation-failure",
+   "level": "SHOULD",
+   "source": "RFC 8460 4.3.3",
+   "url": "https://www.rfc-editor.org/rfc/rfc8460#section-4.3.3",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "rpt.tls_filename",
+   "check": "reports",
+   "value": "filename ABNF and extension",
+   "level": "MUST",
+   "source": "RFC 8460 5.1",
+   "url": "https://www.rfc-editor.org/rfc/rfc8460#section-5.1",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "rpt.tls_headers",
+   "check": "reports",
+   "value": "TLS-Report-Domain/Submitter present; Submitter matches contact-info",
+   "level": "MUST",
+   "source": "RFC 8460 5.3",
+   "url": "https://www.rfc-editor.org/rfc/rfc8460#section-5.3",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "rpt.tls_subject",
+   "check": "reports",
+   "value": "Subject ABNF",
+   "level": "SHOULD",
+   "source": "RFC 8460 5.3",
+   "url": "https://www.rfc-editor.org/rfc/rfc8460#section-5.3",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "rpt.tls_media_type",
+   "check": "reports",
+   "value": "application/tlsrpt+json or +gzip",
+   "level": "SHOULD",
+   "source": "RFC 8460 5.3",
+   "url": "https://www.rfc-editor.org/rfc/rfc8460#section-5.3",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "rpt.tls_dkim",
+   "check": "reports",
+   "value": "SMTP reports carry a DKIM signature by the reporting domain",
+   "level": "MUST",
+   "source": "RFC 8460 3",
+   "url": "https://www.rfc-editor.org/rfc/rfc8460#section-3",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "rpt.fr_format",
+   "check": "reports",
+   "value": "ARF feedback report structure",
+   "level": "MUST",
+   "source": "RFC 9991 4",
+   "url": "https://www.rfc-editor.org/rfc/rfc9991#section-4",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "rpt.fr_auth_failure",
+   "check": "reports",
+   "value": "Auth-Failure: dmarc",
+   "level": "MUST",
+   "source": "RFC 9991 4",
+   "url": "https://www.rfc-editor.org/rfc/rfc9991#section-4",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "rpt.fr_identity_alignment",
+   "check": "reports",
+   "value": "Identity-Alignment present and well-formed",
+   "level": "MUST",
+   "source": "RFC 9991 4",
+   "url": "https://www.rfc-editor.org/rfc/rfc9991#section-4",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "rpt.fr_dkim_fields",
+   "check": "reports",
+   "value": "DKIM-Domain/Identity/Selector for aligned DKIM failures",
+   "level": "MUST",
+   "source": "RFC 9991 4",
+   "url": "https://www.rfc-editor.org/rfc/rfc9991#section-4",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "rpt.fr_spf_dns",
+   "check": "reports",
+   "value": "SPF-DNS for aligned SPF failures",
+   "level": "MUST",
+   "source": "RFC 9991 4",
+   "url": "https://www.rfc-editor.org/rfc/rfc9991#section-4",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "rpt.fr_transport",
+   "check": "reports",
+   "value": "failure report streams DMARC-aligned",
+   "level": "SHOULD",
+   "source": "RFC 9991 5.1",
+   "url": "https://www.rfc-editor.org/rfc/rfc9991#section-5.1",
+   "verified": "2026-10-29"
   }
  ]
 }
