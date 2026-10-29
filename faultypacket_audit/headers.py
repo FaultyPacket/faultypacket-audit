@@ -160,7 +160,7 @@ def aligned(a, b, mode, res=None):
     return org_of(a, res)[0] == org_of(b, res)[0]
 
 
-def analyse(raw, res=None, adkim="r", aspf="r", trust=None):
+def analyse(raw, res=None, adkim="r", aspf="r", trust=None, verify=False, keys=None, now=None):
     if isinstance(raw, str):
         raw = raw.encode("utf-8", "surrogateescape")
     msg = email.message_from_bytes(raw, policy=email.policy.compat32)
@@ -207,8 +207,29 @@ def analyse(raw, res=None, adkim="r", aspf="r", trust=None):
     if spf:
         ids.append({"type": "spf", "domain": spf_dom or rp, "result": spf["result"], "source": "authentication-results",
                     "aligned": aligned(spf_dom or rp, from_dom, aspf, res)})
+    ver = None
+    if verify:
+        from .dkimverify import verify as dkv
+        ver = dkv(raw, keys if keys is not None else res, now)
+        for v in ver:
+            v["aligned"] = aligned(v["d"], from_dom, adkim, res) if v["d"] else False
+            for rid, sec, m in v["problems"]:
+                sec = sec if sec.startswith("RFC") else f"RFC 6376 {sec}"
+                problems.append(f"DKIM d={v['d'] or '?'} s={v['s'] or '?'}: {m} ({sec}) [{rid}]")
+        if not dkims:
+            ids = [i for i in ids if i["source"] != "dkim-signature"]
+            ids[:0] = [{"type": "dkim", "domain": v["d"], "result": v["result"], "source": "re-verified", "aligned": v["aligned"]} for v in ver]
+        else:
+            for v in ver:
+                rec = next((i for i in ids if i["type"] == "dkim" and i["domain"] == v["d"]), None)
+                if rec and v["result"] in ("pass", "fail") and rec["result"] in ("pass", "fail") and rec["result"] != v["result"]:
+                    notes.append(f"DKIM d={v['d']}: receiver recorded {rec['result']}, re-verification now gives {v['result']} "
+                                 "(message modified since delivery, key rotated, or saved with altered line endings)")
     passing = [i for i in ids if i["result"] == "pass" and i["aligned"]]
-    if not trusted:
+    if not trusted and ver and any(v["result"] == "pass" and v["aligned"] for v in ver):
+        verdict = "pass"
+        notes.append("no Authentication-Results header; verdict from re-verified DKIM only (SPF needs the connecting IP)")
+    elif not trusted:
         verdict = "unknown"
         notes.append("no Authentication-Results header to read: results unknown (RFC 8601)")
     elif passing:
@@ -267,7 +288,7 @@ def analyse(raw, res=None, adkim="r", aspf="r", trust=None):
             "adkim": adkim, "aspf": aspf, "authentication_results": ars, "trusted_authserv_id": trusted[0]["authserv_id"] if trusted else None,
             "receiver_dmarc": dmarc["result"] if dmarc else None,
             "identifiers": ids, "verdict": verdict, "dkim_signatures": sigs, "arc": arc_out,
-            "received": rx, "problems": problems, "notes": notes,
+            "received": rx, "problems": problems, "notes": notes, "dkim_verification": ver,
             "citations": {k: v for k, v in CITE.items()}}
 
 
@@ -290,13 +311,19 @@ def render(r):
         L.append(f"PROBLEM: {p}")
     for n in r["notes"]:
         L.append(f"note: {n}")
-    L.append("Signatures are not re-verified: this reads what the receiving server recorded.")
+    if r.get("dkim_verification") is None:
+        L.append("Signatures are not re-verified: this reads what the receiving server recorded (use --verify or the analyse command).")
+    else:
+        L.append(f"DKIM re-verification (RFC 6376 6.1): {len(r['dkim_verification'])} signature(s)")
+        for v in r["dkim_verification"]:
+            L.append(f"  d={v['d'] or '?'} s={v['s'] or '?'} a={v['a'] or '?'}: {v['result'].upper()} - {v['reason']}"
+                     + ("" if v["aligned"] else " (NOT aligned with From)"))
     return "\n".join(L)
 
 
-def main(argv, stdin, stdout, stderr):
+def main(argv, stdin, stdout, stderr, prog="headers", verify_default=False):
     import argparse
-    p = argparse.ArgumentParser(prog="faultypacket-audit headers",
+    p = argparse.ArgumentParser(prog=f"faultypacket-audit {prog}",
                                 description="Analyse a saved message's authentication headers (RFC 8601, RFC 8617, RFC 6376) "
                                             "and DMARC alignment (RFC 9989 3.2.10).")
     p.add_argument("file", help=".eml file ('-' = stdin)")
@@ -305,14 +332,16 @@ def main(argv, stdin, stdout, stderr):
     p.add_argument("--aspf", choices=["r", "s"], default="r")
     p.add_argument("--trust", metavar="AUTHSERV_ID", help="read only Authentication-Results from this authserv-id (default: the topmost)")
     p.add_argument("--doh", action="store_true", help="find Organizational Domains by RFC 9989 DNS Tree Walk over DoH (default: offline PSL)")
+    p.add_argument("--verify", action="store_true", default=verify_default,
+                   help="re-verify DKIM signatures (fetches keys over DoH; RFC 6376 6.1)")
     a = p.parse_args(argv)
     raw = stdin.buffer.read() if a.file == "-" and hasattr(stdin, "buffer") else (
         stdin.read().encode() if a.file == "-" else open(a.file, "rb").read())
     res = None
-    if a.doh:
+    if a.doh or a.verify:
         from .core.resolver import Cached, Resolver
         from .cli import DEFAULT_DOH
         res = Cached(Resolver(None, 5.0, DEFAULT_DOH))
-    r = analyse(raw, res, a.adkim, a.aspf, a.trust)
+    r = analyse(raw, res if a.doh else None, a.adkim, a.aspf, a.trust, verify=a.verify, keys=res)
     print(json.dumps(r, indent=1, default=str) if a.json else render(r), file=stdout)
     return 0 if r["verdict"] == "pass" else 1

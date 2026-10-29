@@ -2680,6 +2680,132 @@
    "source": "RFC 9991 5.1",
    "url": "https://www.rfc-editor.org/rfc/rfc9991#section-5.1",
    "verified": "2026-10-29"
+  },
+  {
+   "id": "dkim.sig_syntax",
+   "check": "headers",
+   "value": "tag-list syntax, no duplicate tags",
+   "level": "MUST",
+   "source": "RFC 6376 3.2",
+   "url": "https://www.rfc-editor.org/rfc/rfc6376#section-3.2",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "dkim.sig_missing_tag",
+   "check": "headers",
+   "value": "v a b bh d h s are REQUIRED",
+   "level": "MUST",
+   "source": "RFC 6376 3.5",
+   "url": "https://www.rfc-editor.org/rfc/rfc6376#section-3.5",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "dkim.sig_algorithm",
+   "check": "headers",
+   "value": "rsa-sha256 or ed25519-sha256; rsa-sha1 MUST NOT be used",
+   "level": "MUST",
+   "source": "RFC 8301 3.1",
+   "url": "https://www.rfc-editor.org/rfc/rfc8301#section-3.1",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "dkim.sig_from_unsigned",
+   "check": "headers",
+   "value": "h= includes From",
+   "level": "MUST",
+   "source": "RFC 6376 5.4",
+   "url": "https://www.rfc-editor.org/rfc/rfc6376#section-5.4",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "dkim.sig_h_self",
+   "check": "headers",
+   "value": "h= does not include the signature being verified",
+   "level": "MUST",
+   "source": "RFC 6376 3.5",
+   "url": "https://www.rfc-editor.org/rfc/rfc6376#section-3.5",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "dkim.sig_i_outside_d",
+   "check": "headers",
+   "value": "i= domain equals or is a subdomain of d=",
+   "level": "MUST",
+   "source": "RFC 6376 3.5",
+   "url": "https://www.rfc-editor.org/rfc/rfc6376#section-3.5",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "dkim.sig_expired",
+   "check": "headers",
+   "value": "x= not passed; x= after t=",
+   "level": "MUST",
+   "source": "RFC 6376 3.5",
+   "url": "https://www.rfc-editor.org/rfc/rfc6376#section-3.5",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "dkim.sig_future",
+   "check": "headers",
+   "value": "t= not in the future",
+   "level": "SHOULD",
+   "source": "RFC 6376 3.5",
+   "url": "https://www.rfc-editor.org/rfc/rfc6376#section-3.5",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "dkim.sig_body_length",
+   "check": "headers",
+   "value": "l= allows appended content",
+   "level": "SHOULD",
+   "source": "RFC 6376 8.2",
+   "url": "https://www.rfc-editor.org/rfc/rfc6376#section-8.2",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "dkim.sig_key",
+   "check": "headers",
+   "value": "key record usable for this signature",
+   "level": "MUST",
+   "source": "RFC 6376 6.1.2",
+   "url": "https://www.rfc-editor.org/rfc/rfc6376#section-6.1.2",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "dkim.sig_weak_key",
+   "check": "headers",
+   "value": "verifiers MUST NOT accept RSA keys under 1024 bits",
+   "level": "MUST",
+   "source": "RFC 8301 3.2",
+   "url": "https://www.rfc-editor.org/rfc/rfc8301#section-3.2",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "dkim.sig_body_hash",
+   "check": "headers",
+   "value": "body hash matches bh=",
+   "level": "MUST",
+   "source": "RFC 6376 3.7",
+   "url": "https://www.rfc-editor.org/rfc/rfc6376#section-3.7",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "dkim.sig_bad",
+   "check": "headers",
+   "value": "header hash signature verifies",
+   "level": "MUST",
+   "source": "RFC 6376 3.7",
+   "url": "https://www.rfc-editor.org/rfc/rfc6376#section-3.7",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "dkim.key_syntax",
+   "check": "headers",
+   "value": "p= decodes to a public key",
+   "level": "MUST",
+   "source": "RFC 6376 3.6.1",
+   "url": "https://www.rfc-editor.org/rfc/rfc6376#section-3.6.1",
+   "verified": "2026-10-29"
   }
  ]
 }

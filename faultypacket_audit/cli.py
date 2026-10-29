@@ -159,6 +159,9 @@ def entry():
     if sys.argv[1:2] == ["headers"]:
         from .headers import main as hmain
         sys.exit(hmain(sys.argv[2:], sys.stdin, sys.stdout, sys.stderr))
+    if sys.argv[1:2] == ["analyse"]:  # headers + DKIM re-verification
+        from .headers import main as hmain
+        sys.exit(hmain(sys.argv[2:], sys.stdin, sys.stdout, sys.stderr, prog="analyse", verify_default=True))
     for name, mod in (("reports", "reports"), ("alert", "alerts"), ("spf-drift", "spfdrift")):
         if sys.argv[1:2] == [name]:
             import importlib
