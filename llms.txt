@@ -1,0 +1,15 @@
+# FaultyPacket Audit
+
+> Free, open-source (AGPL-3.0) command-line and GitHub Action mail/DNS security audit by FaultyPacket™. Checks SPF, DMARC (RFC 9989/9990/9991), DKIM, MX, MTA-STS, TLS-RPT, DNSSEC, DANE, CAA, reverse DNS, BIMI and Google/Yahoo/Outlook bulk-sender requirements. Every finding has a rule ID, an RFC or provider citation and a link. Runs locally; no account.
+
+## Use
+- [AGENTS.md](https://github.com/FaultyPacket/faultypacket-audit/blob/main/AGENTS.md): CLI, MCP server (`faultypacket-audit mcp`), exit codes, output contract
+- [README](https://github.com/FaultyPacket/faultypacket-audit/blob/main/README.md): install, checks, GitHub Action, weekly scan
+- [JSON Schema for --json output](https://raw.githubusercontent.com/FaultyPacket/faultypacket-audit/main/schema/audit.schema.json)
+- [rules.json](https://raw.githubusercontent.com/FaultyPacket/faultypacket-audit/main/faultypacket_audit/data/rules.json): every rule with source, URL and verified date
+- [Weekly scan workflow template](https://github.com/FaultyPacket/faultypacket-audit/blob/main/templates/weekly-scan.yml)
+
+## Related
+- [spf-tree](https://github.com/FaultyPacket/spf-tree): SPF include tree and lookup counter (MIT)
+- [dmarc-rua-classifier](https://github.com/FaultyPacket/dmarc-rua-classifier): where a domain's DMARC aggregate reports go
+- [FaultyPacket](https://faultypacket.co.uk): one-off fix packs

@@ -141,6 +141,9 @@ def main(argv=None, stdin=None, stdout=None, stderr=None):
 
 
 def entry():
+    if sys.argv[1:2] == ["mcp"]:
+        from .mcp import serve
+        sys.exit(serve(sys.argv[2:]))
     sys.exit(main())
 
 

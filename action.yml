@@ -1,0 +1,61 @@
+name: FaultyPacket Audit
+description: Cited SPF, DMARC (RFC 9989), DKIM, MTA-STS, DNSSEC, DANE, CAA, BIMI and Google/Yahoo/Outlook sender checks, with SARIF output.
+author: FaultyPacket
+branding: {icon: shield, color: green}
+inputs:
+  domains:
+    description: Space-separated domains to audit (used with or instead of domains-file).
+    default: ""
+  domains-file:
+    description: File with one domain per line ('#' comments allowed).
+    default: ""
+  args:
+    description: Extra CLI flags, e.g. "--dkim-selector s1 --bulk --baseline old.json --fail-on-new".
+    default: ""
+  fail-on:
+    description: Fail the step at this severity or worse (error or warning).
+    default: error
+  output-dir:
+    description: Where audit.json, audit.csv and audit.sarif are written.
+    default: faultypacket-audit-results
+  python-version:
+    description: Python used to run the audit.
+    default: "3.12"
+outputs:
+  exit-code:
+    description: 0 clean, 1 threshold reached or invalid input, 2 usage error.
+    value: ${{ steps.run.outputs.exit-code }}
+  json:
+    description: Path to audit.json (schema/audit.schema.json).
+    value: ${{ steps.run.outputs.json }}
+  sarif:
+    description: Path to audit.sarif, ready for github/codeql-action/upload-sarif.
+    value: ${{ steps.run.outputs.sarif }}
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-python@v5
+      with: {python-version: "${{ inputs.python-version }}"}
+    - shell: bash
+      env: {ACTION_PATH: "${{ github.action_path }}"}
+      run: python -m pip install --quiet "$ACTION_PATH"
+    - id: run
+      shell: bash
+      env:
+        DOMAINS: ${{ inputs.domains }}
+        DOMAINS_FILE: ${{ inputs.domains-file }}
+        ARGS: ${{ inputs.args }}
+        FAIL_ON: ${{ inputs.fail-on }}
+        OUT: ${{ inputs.output-dir }}
+      run: |
+        mkdir -p "$OUT"
+        cmd=(faultypacket-audit --fail-on "$FAIL_ON" --json "$OUT/audit.json" --csv "$OUT/audit.csv" --sarif "$OUT/audit.sarif")
+        if [ -n "$DOMAINS_FILE" ]; then cmd+=(-f "$DOMAINS_FILE"); fi
+        read -r -a extra <<< "$ARGS"
+        read -r -a doms <<< "$DOMAINS"
+        set +e
+        "${cmd[@]}" "${extra[@]}" "${doms[@]}"
+        rc=$?
+        set -e
+        { echo "exit-code=$rc"; echo "json=$OUT/audit.json"; echo "sarif=$OUT/audit.sarif"; } >> "$GITHUB_OUTPUT"
+        exit "$rc"

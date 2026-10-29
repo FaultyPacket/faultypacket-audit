@@ -1,5 +1,13 @@
 # Changelog
 
+
+## 1.1.0 (2026-10-29)
+
+- GitHub Action: `uses: FaultyPacket/faultypacket-audit@v1` (composite `action.yml`, outputs `exit-code`, `json`, `sarif`), with a self-test workflow.
+- MCP server: `faultypacket-audit mcp` (stdio) with `audit_domain` and `list_rules` tools.
+- JSON Schema for `--json` output at `schema/audit.schema.json`, tested against real output.
+- AGENTS.md, llms.txt, SECURITY.md, CONTRIBUTING.md, CITATION.cff, issue templates.
+- No rule changes (rules 2026.10.29.3).
 ## 1.0.0 (2026-10-29)
 - Licence changed from MIT to AGPL-3.0-or-later; added NOTICE.
 - New checks: `dkim` (common-selector probe, RSA/Ed25519 key size from the key, `t=y`, `h=sha1`, revoked keys), `mx` (null MX, CNAME/IP targets), `dnssec` (DS + AD bit), `dane` (TLSA for SMTP), `caa`, `rdns` (FCrDNS), `bimi` (record, DMARC prerequisite, SVG Tiny PS), and a rebuilt `mta-sts` with TLS-RPT.

@@ -24,7 +24,7 @@ permissions:
   issues: write            # alert issue
 concurrency: {group: weekly-mail-scan}
 env:
-  AUDIT_VERSION: "v1.0.0"  # pin a release; bump deliberately
+  AUDIT_VERSION: "v1.1.0"  # pin a release; bump deliberately
   # Extra flags: e.g. "--dkim-selector s1 --sending-ip 192.0.2.10 --bulk"
   AUDIT_FLAGS: ""
 jobs:

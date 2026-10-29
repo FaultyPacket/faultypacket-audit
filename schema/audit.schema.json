@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/FaultyPacket/faultypacket-audit/main/schema/audit.schema.json",
+  "title": "faultypacket-audit --json output",
+  "description": "Array with one report per domain. Stable within 1.x: fields may be added, not removed or renamed.",
+  "type": "array",
+  "items": {"$ref": "#/$defs/report"},
+  "$defs": {
+    "severity": {"enum": ["ok", "info", "warning", "error"]},
+    "report": {
+      "type": "object",
+      "required": ["domain", "checked_at_utc", "rules_version", "resolvers", "status", "tool", "version", "checks"],
+      "properties": {
+        "domain": {"type": "string"},
+        "checked_at_utc": {"type": "string", "description": "ISO 8601, UTC"},
+        "rules_version": {"type": "string", "pattern": "^\\d{4}\\.\\d{2}\\.\\d{2}\\.\\d+$"},
+        "resolvers": {"type": "array", "items": {"type": "string"}},
+        "status": {"$ref": "#/$defs/severity", "description": "worst status of any check"},
+        "tool": {"const": "faultypacket-audit"},
+        "version": {"type": "string"},
+        "checks": {"type": "array", "items": {"$ref": "#/$defs/check"}}
+      }
+    },
+    "check": {
+      "type": "object",
+      "required": ["check", "domain", "data", "status", "findings"],
+      "properties": {
+        "check": {"enum": ["core", "spf", "dmarc", "dkim", "mx", "mta-sts", "dnssec", "dane", "caa", "rdns", "bimi", "bulk-sender"]},
+        "domain": {"type": "string"},
+        "data": {"type": "object", "description": "check-specific structured data (parsed records, trees, provider verdicts)"},
+        "status": {"$ref": "#/$defs/severity"},
+        "findings": {"type": "array", "items": {"$ref": "#/$defs/finding"}}
+      }
+    },
+    "finding": {
+      "type": "object",
+      "required": ["check", "severity", "rule_id", "message", "citation", "url", "level", "evidence", "rules_version"],
+      "properties": {
+        "check": {"type": "string"},
+        "severity": {"enum": ["info", "warning", "error"]},
+        "rule_id": {"type": "string", "description": "id in rules.json, e.g. dmarc.historic_pct"},
+        "message": {"type": "string"},
+        "citation": {"type": "string", "minLength": 1, "description": "e.g. RFC 9989 9.3"},
+        "url": {"type": "string"},
+        "level": {"enum": ["MUST", "SHOULD", "MAY", "PROVIDER", "TOOL"]},
+        "evidence": {"type": "object"},
+        "rules_version": {"type": "string"}
+      }
+    }
+  }
+}

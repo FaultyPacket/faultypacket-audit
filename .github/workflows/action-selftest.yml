@@ -1,0 +1,24 @@
+name: action-selftest
+on:
+  push: {branches: [main], paths: ["action.yml", "faultypacket_audit/**", ".github/workflows/action-selftest.yml"]}
+  pull_request: {paths: ["action.yml", "faultypacket_audit/**", ".github/workflows/action-selftest.yml"]}
+  workflow_dispatch:
+permissions: {contents: read}
+jobs:
+  selftest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - id: audit
+        uses: ./
+        with:
+          domains: gov.uk
+          args: --checks spf,dmarc,mx
+          fail-on: error
+      - name: Outputs exist and match the schema
+        env: {J: "${{ steps.audit.outputs.json }}", S: "${{ steps.audit.outputs.sarif }}", RC: "${{ steps.audit.outputs.exit-code }}"}
+        run: |
+          test -s "$J" && test -s "$S"
+          echo "exit-code=$RC"
+          pip install --quiet jsonschema
+          python -c "import json,jsonschema,sys;jsonschema.validate(json.load(open(sys.argv[1])),json.load(open('schema/audit.schema.json')))" "$J"

@@ -1,10 +1,35 @@
-# FaultyPacket™ Audit (`faultypacket-audit`)
+# FaultyPacket™ Audit
 
-A mail-security audit you can read and check for yourself. Every finding cites the
-RFC section or published sender guideline it comes from, with a link, and the
-rule set (`faultypacket_audit/data/rules.json`) is versioned and dated.
+[![ci](https://github.com/FaultyPacket/faultypacket-audit/actions/workflows/ci.yml/badge.svg)](https://github.com/FaultyPacket/faultypacket-audit/actions/workflows/ci.yml)
+[![rules verified weekly](https://github.com/FaultyPacket/faultypacket-audit/actions/workflows/weekly-verify.yml/badge.svg)](https://github.com/FaultyPacket/faultypacket-audit/actions/workflows/weekly-verify.yml)
+[![upstream watch](https://github.com/FaultyPacket/faultypacket-audit/actions/workflows/watch-upstream.yml/badge.svg)](https://github.com/FaultyPacket/faultypacket-audit/actions/workflows/watch-upstream.yml)
+[![licence: AGPL-3.0](https://img.shields.io/badge/licence-AGPL--3.0-blue)](LICENSE)
+[![rules](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2FFaultyPacket%2Ffaultypacket-audit%2Fmain%2Ffaultypacket_audit%2Fdata%2Frules.json&query=%24.rules_version&label=rules)](faultypacket_audit/data/rules.json)
 
-> Status: v1.0.0 (2026-10-29). JSON fields are stable within 1.x; rule changes bump `rules_version`.
+**Is your domain's email set up to current rules? One command checks SPF, DMARC (RFC 9989), DKIM, MTA-STS, DNSSEC, DANE, CAA, BIMI and Google/Yahoo/Outlook sender requirements, and every finding cites the RFC section or provider page behind it.**
+
+```
+pip install git+https://github.com/FaultyPacket/faultypacket-audit
+faultypacket-audit --doh europa.eu
+faultypacket-audit --doh -f domains.txt --json out.json --sarif out.sarif
+```
+
+Sample output (live run, 2026-10-29 11:45 UTC, trimmed):
+
+```
+europa.eu: ERROR
+  dmarc: error
+    [error] no DMARC record at _dmarc.europa.eu and none found by the Tree Walk: DMARC does not apply (RFC 9989 4.10.1)
+      rule dmarc.no_record | RFC 9989 4.10.1 | https://www.rfc-editor.org/rfc/rfc9989#section-4.10.1 | rules 2026.10.29.3
+  bulk-sender: warning
+    google: fail (not checkable from DNS: alignment, one_click_unsub, tls, spam_rate_max)
+    outlook: fail (not checkable from DNS: alignment)
+    yahoo: fail (not checkable from DNS: unsub_days_max)
+```
+
+Runs locally. No account, no upload. Also a [GitHub Action](#github-action), an [MCP server](#mcp-server-for-ai-agents) and a [weekly scan](#weekly-scan-in-your-own-repo) for your own repo. AI agents: see [AGENTS.md](AGENTS.md).
+
+> Status: v1.1.0 (2026-10-29). JSON fields are stable within 1.x ([schema](schema/audit.schema.json)); rule changes bump `rules_version`.
 
 ## Checks
 
@@ -49,7 +74,7 @@ Each finding has these fields:
 * `message`
 * `citation` (for example `RFC 9989 9.3`)
 * `url`
-* `level`, which is `MUST`, `SHOULD`, `MAY`, `GUIDELINE` or `TOOL`. `TOOL` covers the tool's own conditions, such as DNS errors.
+* `level`, which is `MUST`, `SHOULD`, `MAY`, `PROVIDER` or `TOOL`. `TOOL` covers the tool's own conditions, such as DNS errors.
 * `rules_version` (for example `2026.10.29.3`), so a finding can be traced to the exact rule set that produced it. SARIF messages end with `[rule_id | citation | rules version]`.
 
 ## Provider verdicts
@@ -65,6 +90,30 @@ from faultypacket_audit import audit, load_rules, Resolver
 report = audit("example.com", Resolver(), load_rules())
 ```
 
+## GitHub Action
+
+```yaml
+- uses: FaultyPacket/faultypacket-audit@v1
+  id: audit
+  with:
+    domains-file: domains.txt        # or domains: "example.com example.org"
+    args: --dkim-selector s1         # any CLI flags
+    fail-on: error                   # or warning
+- uses: github/codeql-action/upload-sarif@v3
+  if: always()
+  with: {sarif_file: "${{ steps.audit.outputs.sarif }}"}
+```
+
+Outputs: `exit-code`, `json`, `sarif`. `@v1` follows the latest 1.x release; pin a tag such as `@v1.1.0` for fixed behaviour.
+
+## MCP server for AI agents
+
+```
+faultypacket-audit mcp --doh
+```
+
+A stdio [Model Context Protocol](https://modelcontextprotocol.io) server with two tools, `audit_domain` and `list_rules`. See [AGENTS.md](AGENTS.md).
+
 ## Weekly scan in your own repo
 
 Copy `templates/weekly-scan.yml` into your repo's `.github/workflows/` and add a `domains.txt` file. Once a week the workflow:
@@ -74,7 +123,7 @@ Copy `templates/weekly-scan.yml` into your repo's `.github/workflows/` and add a
 * downloads the previous run's JSON and writes "What changed since the last run" (new problems, fixed, severity changes) to the job summary,
 * opens one alert issue when there are warnings or errors (and comments on it on later runs), and closes it when all domains are clean.
 
-This replaces a hosted service such as Mail Check with something you run and read yourself.
+For UK organisations that used NCSC Mail Check (retired 31 March 2026), this gives a weekly check you run and read yourself.
 
 ## What it cannot check from DNS
 
