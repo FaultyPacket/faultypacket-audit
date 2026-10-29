@@ -122,3 +122,21 @@ def test_macro_string_never_crashes(t):
     assert spf.macro_string_ok(t) in (True, False)
     if "%" not in t:
         assert spf.macro_string_ok(t)
+
+
+# ---- regression: v=DMARC1 record without ';' separators was reported as dmarc.no_record
+@pytest.mark.parametrize("rec,cause", [("v=DMARC1 p=reject sp=reject", "missing ';'"),
+                                       ("v=DMARC1 p=reject; rua=mailto:d@example.com", "missing ';'"),
+                                       ("v=DMARC1, p=reject", "','")])
+def test_dmarc_unparseable_record_not_no_record(rec, cause):
+    r = dmarc.check("example.com", Zone({("_dmarc.example.com", "TXT"): [rec]}), R)
+    got = {f.rule_id: f for f in r["findings"]}
+    assert "dmarc.no_record" not in got
+    f = got["dmarc.unparseable_record"]
+    assert f.severity == "error" and "not a valid DMARC record" in f.message and cause in f.message
+    assert f.url.endswith("rfc9989#section-4.8")
+
+
+def test_dmarc_valid_and_absent_unchanged():
+    assert "dmarc.unparseable_record" not in dm({("_dmarc.example.com", "TXT"): ["v=DMARC1; p=reject"]})
+    assert "dmarc.no_record" in dm({})

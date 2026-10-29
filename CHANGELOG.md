@@ -4,6 +4,7 @@
 
 ## Unreleased
 
+- Fix: a `_dmarc` TXT record that starts with `v=DMARC1` but does not parse (e.g. `v=DMARC1 p=reject sp=reject`, no `;`) was reported as `dmarc.no_record`. It now raises the new error `dmarc.unparseable_record` (RFC 9989 4.8), which says the record is published but invalid and names the likely cause.
 - New `faultypacket-audit reports`: offline DMARC aggregate (RFC 7489 7.2 / RFC 9990) and TLS-RPT (RFC 8460) report reader for .xml, .gz, .zip and .json. Per-source-IP and per-domain SPF, DKIM and alignment pass/fail, failing and unauthorised senders, TLS failure types; Markdown or JSON. DTDs refused, 64 MiB decompression cap. See docs/reports.md.
 - New `faultypacket-audit alert`: daily change and new-failure alerts to Slack, Teams or a generic JSON webhook. URL from an environment variable/secret only. GitHub Action inputs `alert-format` and `alert-state`; example in examples/alerts.yml. See docs/alerts.md.
 - New `faultypacket-audit spf-drift`: compares a flattened SPF record with the current resolution of its source includes and lists missing and extra ranges. See docs/spf-drift.md.

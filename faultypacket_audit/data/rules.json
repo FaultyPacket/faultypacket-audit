@@ -272,6 +272,15 @@
    "verified": "2026-10-29"
   },
   {
+   "id": "dmarc.unparseable_record",
+   "check": "dmarc",
+   "value": "a v=DMARC1 record that does not match the dmarc-record ABNF is ignored",
+   "level": "MUST",
+   "source": "RFC 9989 4.8",
+   "url": "https://www.rfc-editor.org/rfc/rfc9989#section-4.8",
+   "verified": "2026-10-29"
+  },
+  {
    "id": "dmarc.duplicate_tag",
    "check": "dmarc",
    "value": "tag repeated",
