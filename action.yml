@@ -18,6 +18,12 @@ inputs:
   output-dir:
     description: Where audit.json, audit.csv and audit.sarif are written.
     default: faultypacket-audit-results
+  alert-format:
+    description: "Set to slack, teams or json to also run 'faultypacket-audit alert' and POST changes/new failures to the webhook in env FAULTYPACKET_WEBHOOK_URL (pass it from a secret). Empty = off."
+    default: ""
+  alert-state:
+    description: State file diffed between runs (persist it with actions/cache; see examples/alerts.yml).
+    default: .faultypacket-alert-state.json
   python-version:
     description: Python used to run the audit.
     default: "3.12"
@@ -62,3 +68,14 @@ runs:
         set -e
         { echo "exit-code=$rc"; echo "json=$OUT/audit.json"; echo "sarif=$OUT/audit.sarif"; echo "html=$OUT/audit.html"; } >> "$GITHUB_OUTPUT"
         exit "$rc"
+    - if: ${{ inputs.alert-format != '' && always() }}
+      shell: bash
+      env:
+        DOMAINS: ${{ inputs.domains }}
+        DOMAINS_FILE: ${{ inputs.domains-file }}
+        FMT: ${{ inputs.alert-format }}
+        STATE: ${{ inputs.alert-state }}
+      run: |
+        read -r -a doms <<< "$DOMAINS"
+        if [ -n "$DOMAINS_FILE" ]; then while read -r l; do l="${l%%#*}"; [ -n "${l// }" ] && doms+=($l); done < "$DOMAINS_FILE"; fi
+        faultypacket-audit alert --doh --format "$FMT" --state "$STATE" "${doms[@]}"

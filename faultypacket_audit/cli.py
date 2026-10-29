@@ -159,6 +159,11 @@ def entry():
     if sys.argv[1:2] == ["headers"]:
         from .headers import main as hmain
         sys.exit(hmain(sys.argv[2:], sys.stdin, sys.stdout, sys.stderr))
+    for name, mod in (("reports", "reports"), ("alert", "alerts"), ("spf-drift", "spfdrift")):
+        if sys.argv[1:2] == [name]:
+            import importlib
+            m = importlib.import_module(f".{mod}", __package__)
+            sys.exit(m.main(sys.argv[2:], sys.stdin, sys.stdout, sys.stderr))
     sys.exit(main())
 
 

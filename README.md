@@ -119,6 +119,16 @@ faultypacket-audit headers message.eml [--json] [--adkim s] [--aspf s] [--trust 
 
 Reads a saved message and reports: Authentication-Results (RFC 8601, comments and quoting handled), ARC sets and `cv` chain (RFC 8617), each DKIM-Signature (missing tags, `rsa-sha1`, `l=`, whether `From` is signed), the Received chain oldest first with per-hop delay, and a DMARC alignment verdict (RFC 9989 3.2.10 relaxed/strict, 4.4). By default only the topmost Authentication-Results is trusted (anything below it may have been added by the sender). Organizational Domains come from the Public Suffix List offline, or the RFC 9989 Tree Walk with `--doh`. It does not re-verify signatures. Exit 0 when aligned, 1 otherwise.
 
+## DMARC and TLS-RPT reports, alerts, SPF drift
+
+```
+faultypacket-audit reports *.zip *.xml.gz tlsrpt.json           # local report reader, nothing uploaded
+faultypacket-audit alert example.com --state state.json --format slack   # webhook URL from $FAULTYPACKET_WEBHOOK_URL
+faultypacket-audit spf-drift example.com --include _spf.example.org      # flattened SPF vs live includes
+```
+
+Details: [docs/reports.md](docs/reports.md), [docs/alerts.md](docs/alerts.md), [docs/spf-drift.md](docs/spf-drift.md).
+
 ## Provider verdicts
 
 `bulk-sender` gives a separate verdict for Google, Yahoo and Outlook, with one row per published requirement and a link to the provider page. DKIM rows use the keys the `dkim` check found, including Google's rule that mail to personal Gmail accounts needs a DKIM key of 1024 bits or longer (support.google.com/a/answer/81126, checked 2026-10-29).

@@ -2,6 +2,12 @@
 
 
 
+## Unreleased
+
+- New `faultypacket-audit reports`: offline DMARC aggregate (RFC 7489 7.2 / RFC 9990) and TLS-RPT (RFC 8460) report reader for .xml, .gz, .zip and .json. Per-source-IP and per-domain SPF, DKIM and alignment pass/fail, failing and unauthorised senders, TLS failure types; Markdown or JSON. DTDs refused, 64 MiB decompression cap. See docs/reports.md.
+- New `faultypacket-audit alert`: daily change and new-failure alerts to Slack, Teams or a generic JSON webhook. URL from an environment variable/secret only. GitHub Action inputs `alert-format` and `alert-state`; example in examples/alerts.yml. See docs/alerts.md.
+- New `faultypacket-audit spf-drift`: compares a flattened SPF record with the current resolution of its source includes and lists missing and extra ranges. See docs/spf-drift.md.
+
 ## 1.4.0 (2026-10-29)
 
 Bugs found by differential testing against real published records (details in docs/differential-findings.md):

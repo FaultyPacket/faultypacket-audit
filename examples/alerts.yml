@@ -1,0 +1,23 @@
+# Daily change/failure alerts. Store the webhook URL as the repository secret
+# FAULTYPACKET_WEBHOOK_URL (Settings > Secrets and variables > Actions).
+name: mail-dns-alerts
+on:
+  schedule: [{cron: "17 6 * * *"}]
+  workflow_dispatch:
+jobs:
+  alert:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/cache@v4
+        with:
+          path: .faultypacket-alert-state.json
+          key: fp-alert-${{ github.run_id }}
+          restore-keys: fp-alert-
+      - uses: FaultyPacket/faultypacket-audit@v1
+        env:
+          FAULTYPACKET_WEBHOOK_URL: ${{ secrets.FAULTYPACKET_WEBHOOK_URL }}
+        with:
+          domains: example.com example.org
+          alert-format: slack
+          fail-on: error

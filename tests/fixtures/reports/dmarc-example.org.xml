@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feedback>
+  <report_metadata><org_name>example.org</org_name><email>noreply-dmarc@example.org</email>
+    <report_id>synthetic-1</report_id><date_range><begin>1798675200</begin><end>1798761599</end></date_range></report_metadata>
+  <policy_published><domain>example.com</domain><adkim>r</adkim><aspf>r</aspf><p>quarantine</p><pct>100</pct></policy_published>
+  <record><row><source_ip>192.0.2.10</source_ip><count>40</count>
+      <policy_evaluated><disposition>none</disposition><dkim>pass</dkim><spf>pass</spf></policy_evaluated></row>
+    <identifiers><header_from>example.com</header_from></identifiers>
+    <auth_results><dkim><domain>example.com</domain><selector>s1</selector><result>pass</result></dkim>
+      <spf><domain>example.com</domain><result>pass</result></spf></auth_results></record>
+  <record><row><source_ip>198.51.100.7</source_ip><count>5</count>
+      <policy_evaluated><disposition>quarantine</disposition><dkim>fail</dkim><spf>fail</spf></policy_evaluated></row>
+    <identifiers><header_from>example.com</header_from></identifiers>
+    <auth_results><spf><domain>example.net</domain><result>softfail</result></spf></auth_results></record>
+  <record><row><source_ip>2001:db8::25</source_ip><count>3</count>
+      <policy_evaluated><disposition>none</disposition><dkim>pass</dkim><spf>fail</spf></policy_evaluated></row>
+    <identifiers><header_from>mail.example.com</header_from></identifiers>
+    <auth_results><dkim><domain>example.com</domain><selector>s1</selector><result>pass</result></dkim>
+      <spf><domain>bounce.example.org</domain><result>pass</result></spf></auth_results></record>
+</feedback>
