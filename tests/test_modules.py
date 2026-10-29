@@ -239,7 +239,12 @@ def test_dane_absent():
 # ------------------------------------------------------------------ BIMI
 SVG_OK = (b'<svg xmlns="http://www.w3.org/2000/svg" version="1.2" baseProfile="tiny-ps" viewBox="0 0 10 10">'
           b'<title>Acme</title><rect width="10" height="10" fill="teal"/></svg>')
-PEM = b"-----BEGIN CERTIFICATE-----\nMIIB\n-----END CERTIFICATE-----\n"
+try:
+    from vmcgen import chain, NOW
+    PEM = chain(svg=SVG_OK)
+except ImportError:  # cryptography not installed
+    chain, NOW = None, None
+    PEM = b"-----BEGIN CERTIFICATE-----\nMIIB\n-----END CERTIFICATE-----\n"
 
 
 def fetcher(docs):
@@ -252,7 +257,7 @@ def fetcher(docs):
 
 def bm(rec, dmarc_tags, docs=None):
     z = Zone({("default._bimi.d.test", "TXT"): rec} if rec else {})
-    return bimi.check("d.test", z, R, {"results": {"dmarc": {"tags": dmarc_tags}}, "http_fetch": fetcher(docs or {})})
+    return bimi.check("d.test", z, R, {"results": {"dmarc": {"tags": dmarc_tags}}, "http_fetch": fetcher(docs or {}), "now": NOW})
 
 
 def test_bimi_full_pass_with_certificate():
@@ -360,7 +365,7 @@ def test_every_finding_carries_rule_citation_and_rules_version():
 def test_every_check_rule_url_is_section_anchored_for_rfcs():
     for r in R.by_id.values():
         if "rfc-editor.org" in r.get("url", ""):
-            assert "#section-" in r["url"], r["id"]
+            assert "#section-" in r["url"] or "#appendix-" in r["url"], r["id"]
 
 
 def test_sarif_has_citation_and_rules_version():

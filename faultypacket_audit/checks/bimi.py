@@ -2,7 +2,8 @@
 record at default._bimi.<domain> (4.3, 4.3.1), HTTPS-only l=/a= (4.3), SVG
 format (4.3.2) with SVG Tiny PS checks (draft-svg-tiny-ps-abrotman-12 2.1,
 2.3, 2.4), mark certificate presence (3.5), and the DMARC enforcement
-prerequisite (7.1 steps 7-9). The certificate chain itself is not validated."""
+prerequisite (7.1 steps 7-9), and VMC/CMC chain, EKU, SAN, expiry and logo
+binding (7.4, with the optional cryptography package)."""
 import re, urllib.request
 
 from ._common import tags, result
@@ -67,6 +68,7 @@ def dmarc_ok(dm):
     return True, f"DMARC p={p}"
 
 
+
 def check(domain, res, R, options=None):
     options = options or {}
     F = lambda sev, rid, msg, **e: R.finding(NAME, sev, rid, msg, **e)
@@ -113,5 +115,11 @@ def check(domain, res, R, options=None):
         elif b"-----BEGIN CERTIFICATE-----" not in (f["body"] or b""):
             fs.append(F("error", "bimi.certificate_format", f"certificate {a}: not a PEM certificate"))
         else:
-            fs.append(F("info", "bimi.certificate_present", "mark certificate is published (chain and logo binding not validated by this tool)"))
+            fs.append(F("info", "bimi.certificate_present", "mark certificate is published"))
+            from . import _vmc
+            logo = None
+            if l and data.get("logo") and data["logo"].get("status") == 200:
+                logo = getter(l).get("body")
+            for sev, rid, msg in _vmc.check_pem(f["body"], domain, logo, options.get("now")):
+                fs.append(F(sev, rid, f"certificate {a}: {msg}"))
     return result(NAME, domain, fs, data)

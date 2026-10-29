@@ -21,7 +21,7 @@ Sample output (live run, 2026-10-29 11:45 UTC, trimmed):
 europa.eu: ERROR
   dmarc: error
     [error] no DMARC record at _dmarc.europa.eu and none found by the Tree Walk: DMARC does not apply (RFC 9989 4.10.1)
-      rule dmarc.no_record | RFC 9989 4.10.1 | https://www.rfc-editor.org/rfc/rfc9989#section-4.10.1 | rules 2026.10.29.5
+      rule dmarc.no_record | RFC 9989 4.10.1 | https://www.rfc-editor.org/rfc/rfc9989#section-4.10.1 | rules 2026.10.29.6
   bulk-sender: warning
     google: fail (not checkable from DNS: alignment, one_click_unsub, tls, spam_rate_max)
     outlook: fail (not checkable from DNS: alignment)
@@ -30,7 +30,7 @@ europa.eu: ERROR
 
 Runs locally. No account, no upload. Also a [GitHub Action](#github-action), an [MCP server](#mcp-server-for-ai-agents) and a [weekly scan](#weekly-scan-in-your-own-repo) for your own repo. AI agents: see [AGENTS.md](AGENTS.md).
 
-> Status: v1.4.0 (2026-10-29). JSON fields are stable within 1.x ([schema](schema/audit.schema.json)); rule changes bump `rules_version`.
+> Status: v1.5.0 (2026-10-29). JSON fields are stable within 1.x ([schema](schema/audit.schema.json)); rule changes bump `rules_version`.
 
 ## Checks
 
@@ -85,7 +85,7 @@ Each finding has these fields:
 * `citation` (for example `RFC 9989 9.3`)
 * `url`
 * `level`, which is `MUST`, `SHOULD`, `MAY`, `PROVIDER` or `TOOL`. `TOOL` covers the tool's own conditions, such as DNS errors.
-* `rules_version` (for example `2026.10.29.5`), so a finding can be traced to the exact rule set that produced it. SARIF messages end with `[rule_id | citation | rules version]`.
+* `rules_version` (for example `2026.10.29.6`), so a finding can be traced to the exact rule set that produced it. SARIF messages end with `[rule_id | citation | rules version]`.
 
 ## Suggested fixes
 
@@ -119,6 +119,16 @@ faultypacket-audit headers message.eml [--json] [--adkim s] [--aspf s] [--trust 
 
 Reads a saved message and reports: Authentication-Results (RFC 8601, comments and quoting handled), ARC sets and `cv` chain (RFC 8617), each DKIM-Signature (missing tags, `rsa-sha1`, `l=`, whether `From` is signed), the Received chain oldest first with per-hop delay, and a DMARC alignment verdict (RFC 9989 3.2.10 relaxed/strict, 4.4). By default only the topmost Authentication-Results is trusted (anything below it may have been added by the sender). Organizational Domains come from the Public Suffix List offline, or the RFC 9989 Tree Walk with `--doh`. It does not re-verify signatures. Exit 0 when aligned, 1 otherwise.
 
+## DMARC and TLS-RPT reports, alerts, SPF drift
+
+```
+faultypacket-audit reports *.zip *.xml.gz tlsrpt.json           # local report reader, nothing uploaded
+faultypacket-audit alert example.com --state state.json --format slack   # webhook URL from $FAULTYPACKET_WEBHOOK_URL
+faultypacket-audit spf-drift example.com --include _spf.example.org      # flattened SPF vs live includes
+```
+
+Details: [docs/reports.md](docs/reports.md), [docs/alerts.md](docs/alerts.md), [docs/spf-drift.md](docs/spf-drift.md).
+
 ## Provider verdicts
 
 `bulk-sender` gives a separate verdict for Google, Yahoo and Outlook, with one row per published requirement and a link to the provider page. DKIM rows use the keys the `dkim` check found, including Google's rule that mail to personal Gmail accounts needs a DKIM key of 1024 bits or longer (support.google.com/a/answer/81126, checked 2026-10-29).
@@ -146,7 +156,7 @@ report = audit("example.com", Resolver(), load_rules())
   with: {sarif_file: "${{ steps.audit.outputs.sarif }}"}
 ```
 
-Outputs: `exit-code`, `json`, `sarif`, `html`. `@v1` follows the latest 1.x release; pin a tag such as `@v1.4.0` for fixed behaviour.
+Outputs: `exit-code`, `json`, `sarif`, `html`. `@v1` follows the latest 1.x release; pin a tag such as `@v1.5.0` for fixed behaviour.
 
 ## MCP server for AI agents
 

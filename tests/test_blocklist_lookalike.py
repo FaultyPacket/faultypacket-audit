@@ -17,7 +17,7 @@ def bl(extra, d="shop.test"):
 
 
 def test_opt_in_checks_not_in_default_order():
-    assert "blocklist" not in ORDER and "lookalike" not in ORDER and set(ALL) - set(ORDER) == {"blocklist", "lookalike"}
+    assert "blocklist" not in ORDER and "lookalike" not in ORDER and set(ALL) - set(ORDER) == {"blocklist", "lookalike", "security-txt"}
     assert [c["check"] for c in audit("good.test", Zone(GOOD), R)["checks"]] == ORDER
 
 

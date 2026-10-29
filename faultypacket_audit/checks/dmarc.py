@@ -98,6 +98,21 @@ def dmarc_records(txts):
     return [t for t in txts if re.match(r"^\s*[vV]\s*=\s*DMARC1\s*(;|$)", t)]
 
 
+def unparseable_records(txts):
+    """TXT records that begin with v=DMARC1 but do not match the RFC 9989 4.8
+    dmarc-record ABNF at the first separator (e.g. 'v=DMARC1 p=reject')."""
+    return [t for t in txts if re.match(r"^\s*[vV]\s*=\s*DMARC1", t) and not re.match(r"^\s*[vV]\s*=\s*DMARC1\s*(;|$)", t)]
+
+
+def unparseable_cause(t):
+    rest = re.sub(r"^\s*[vV]\s*=\s*DMARC1", "", t)
+    if re.match(r"\s*[,:]", rest):
+        return "the likely cause is a ',' or ':' used instead of ';' after v=DMARC1"
+    if re.match(r"\s+[A-Za-z]+\s*=", rest) or (";" not in t and re.search(r"\s[A-Za-z]+=", t)):
+        return "the likely cause is a missing ';' between tags (write 'v=DMARC1; p=reject; ...')"
+    return "the version tag must be followed by ';' or end the record"
+
+
 def near_miss_records(txts):
     """TXT that look like DMARC but fail the case-sensitive version check."""
     return [t for t in txts if re.match(r"^\s*v\s*=\s*dmarc1\s*(;|$)", t, re.I) and t not in dmarc_records([t])]
@@ -330,6 +345,11 @@ def check_domain(domain, res):
         elif recs:
             record, applied_from = recs[0], domain
         else:
+            bad = unparseable_records(txts)
+            for t in bad:
+                issues.append(("error", "unparseable_record", f"_dmarc.{domain} publishes {t[:60]!r}, which starts with v=DMARC1 "
+                                                              f"but is not a valid DMARC record, so receivers ignore it; {unparseable_cause(t)} "
+                                                              "(RFC 9989 4.8)"))
             # 4.10.1: Organizational Domain record, then PSD record
             od = org["tree_walk"]
             walk = tree_walk(domain, res, include_start=False)
@@ -339,7 +359,7 @@ def check_domain(domain, res):
             elif walk["found"]:
                 applied_from = sorted(walk["found"], key=lambda n: n.count("."))[0]
                 issues.append(("warning", "psd_policy", f"no DMARC record for {domain} or its Organizational Domain; a Public Suffix Domain record at _dmarc.{applied_from} applies (RFC 9989 4.10.1)"))
-            else:
+            elif not bad:
                 issues.append(("error", "no_record", f"no DMARC record at _dmarc.{domain} and none found by the Tree Walk: DMARC does not apply (RFC 9989 4.10.1)"))
         if record:
             tags, iss = validate(record)
@@ -348,10 +368,36 @@ def check_domain(domain, res):
                 if t in tags:
                     rows, iss = external_check(domain, parse_uris(tags[t]), res, t, org["tree_walk"])
                     dests += rows; issues += iss
+    issues += cname_issues(domain, res, record)
     issues = [{"severity": s, "code": c, "message": m} for s, c, m in issues]
     return {"domain": domain, "record": record, "policy": tags.get("p"),
             "policy_source": applied_from, "org_domain": org, "tags": tags,
             "destinations": dests, "issues": issues, "result": verdict(issues)}
+
+
+def cname_issues(domain, res, record):
+    """_dmarc.<domain> reached through a CNAME (common when a provider hosts the policy)."""
+    name = "_dmarc." + domain
+    out, seen, cur = [], [], name
+    for _ in range(8):
+        vals, st = res.query(cur, "CNAME")
+        if st != "ok" or not vals:
+            break
+        cur = vals[0].lower().rstrip(".")
+        if cur in seen or cur == name:
+            return [("error", "cname_dangling", f"{name} CNAME chain loops at {cur}; receivers get no record")]
+        seen.append(cur)
+    if not seen:
+        return []
+    chain = " -> ".join([name] + seen)
+    if record:
+        out.append(("info", "cname", f"DMARC record is served through a CNAME ({chain}); whoever controls {seen[-1]} controls your policy"))
+    else:
+        txts, st = res.query(seen[-1], "TXT")
+        if not st.startswith("error"):
+            out.append(("error", "cname_dangling", f"{chain}: the CNAME target has no valid DMARC record, so the policy is lost "
+                                                   "(check the provider still hosts it, or replace the CNAME with a TXT record)"))
+    return out
 
 
 def verdict(issues):

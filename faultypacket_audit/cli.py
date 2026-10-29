@@ -46,7 +46,7 @@ def main(argv=None, stdin=None, stdout=None, stderr=None):
                     "DNSSEC, DANE, CAA, reverse DNS, BIMI, and Google/Yahoo/Outlook sender requirements that DNS can show.")
     p.add_argument("domains", nargs="*", help="domains, URLs or email addresses")
     p.add_argument("-f", "--file", action="append", help="file with one input per line ('-' = stdin); repeatable")
-    p.add_argument("--checks", default=",".join(ORDER), help="comma list from: " + ", ".join(ALL) + " (default: all except the opt-in blocklist, lookalike)")
+    p.add_argument("--checks", default=",".join(ORDER), help="comma list from: " + ", ".join(ALL) + " (default: all except the opt-in blocklist, lookalike, security-txt)")
     p.add_argument("--json", metavar="FILE", help="write JSON ('-' = stdout)")
     p.add_argument("--csv", metavar="FILE", help="write CSV, one row per finding ('-' = stdout)")
     p.add_argument("--html", metavar="FILE", help="write a self-contained HTML report (prints to PDF from a browser)")
@@ -159,6 +159,14 @@ def entry():
     if sys.argv[1:2] == ["headers"]:
         from .headers import main as hmain
         sys.exit(hmain(sys.argv[2:], sys.stdin, sys.stdout, sys.stderr))
+    if sys.argv[1:2] == ["analyse"]:  # headers + DKIM re-verification
+        from .headers import main as hmain
+        sys.exit(hmain(sys.argv[2:], sys.stdin, sys.stdout, sys.stderr, prog="analyse", verify_default=True))
+    for name, mod in (("reports", "reports"), ("alert", "alerts"), ("spf-drift", "spfdrift")):
+        if sys.argv[1:2] == [name]:
+            import importlib
+            m = importlib.import_module(f".{mod}", __package__)
+            sys.exit(m.main(sys.argv[2:], sys.stdin, sys.stdout, sys.stderr))
     sys.exit(main())
 
 

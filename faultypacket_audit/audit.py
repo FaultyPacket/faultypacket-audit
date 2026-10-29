@@ -1,22 +1,22 @@
 """Run checks for one domain. Pure: returns a report dict, never prints."""
 import datetime as dt
 
-from .checks import spf, dmarc, dkim, bulk_sender, mx, mtasts, caa, rdns, dnssec, dane, bimi, blocklist, lookalike
+from .checks import spf, dmarc, dkim, bulk_sender, mx, mtasts, caa, rdns, dnssec, dane, bimi, blocklist, lookalike, securitytxt
 from .core.finding import worst
 from .core.resolver import Cached
 
 CHECKS = {"spf": spf.check, "dmarc": dmarc.check, "dkim": dkim.check, "mx": mx.check,
           "mta-sts": mtasts.check, "dnssec": dnssec.check, "dane": dane.check, "caa": caa.check,
           "rdns": rdns.check, "bimi": bimi.check, "bulk-sender": bulk_sender.check,
-          "blocklist": blocklist.check, "lookalike": lookalike.check}
+          "blocklist": blocklist.check, "lookalike": lookalike.check, "security-txt": securitytxt.check}
 # order matters: bulk-sender reuses spf, dmarc and dkim data; bimi reuses dmarc
 ORDER = ["spf", "dmarc", "dkim", "mx", "mta-sts", "dnssec", "dane", "caa", "rdns", "bimi", "bulk-sender"]
 # opt-in: they query third parties (blocklists) or many names (lookalike)
-EXTRA = ["blocklist", "lookalike"]
+EXTRA = ["blocklist", "lookalike", "security-txt"]  # security-txt: HTTPS fetch
 ALL = ORDER + EXTRA
 INTERNAL = {"spf": "spf.internal", "dmarc": "dmarc.internal", "bulk-sender": "bulk.internal",
             "mta-sts": "mtasts.internal",
-            "blocklist": "blocklist.internal", "lookalike": "lookalike.internal"}
+            "blocklist": "blocklist.internal", "lookalike": "lookalike.internal", "security-txt": "sectxt.internal"}
 
 
 def now_utc():
