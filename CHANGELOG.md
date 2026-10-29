@@ -4,6 +4,8 @@
 
 ## Unreleased
 
+- `security-txt` check (opt-in, RFC 9116): location, HTTPS, media type, syntax, Contact, Encryption, Expires, Canonical, Preferred-Languages, signature. See docs/security-txt.md.
+
 - `analyse` command and `headers --verify`: local DKIM re-verification (RFC 6376 canonicalisation, h= bottom-up selection, i= within d=, t=s, l=, x=/t=, key-record checks, RFC 8301 algorithm and key-size rules, RFC 8463 ed25519), with DMARC alignment of verified signatures. See docs/analyse.md.
 
 - Fix: a `_dmarc` TXT record that starts with `v=DMARC1` but does not parse (e.g. `v=DMARC1 p=reject sp=reject`, no `;`) was reported as `dmarc.no_record`. It now raises the new error `dmarc.unparseable_record` (RFC 9989 4.8), which says the record is published but invalid and names the likely cause.

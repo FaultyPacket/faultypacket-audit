@@ -2806,6 +2806,78 @@
    "source": "RFC 6376 3.6.1",
    "url": "https://www.rfc-editor.org/rfc/rfc6376#section-3.6.1",
    "verified": "2026-10-29"
+  },
+  {
+   "id": "sectxt.encoding",
+   "check": "security-txt",
+   "value": "UTF-8",
+   "level": "MUST",
+   "source": "RFC 9116 4",
+   "url": "https://www.rfc-editor.org/rfc/rfc9116#section-4",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "sectxt.unsigned",
+   "check": "security-txt",
+   "value": "OpenPGP cleartext signature RECOMMENDED",
+   "level": "SHOULD",
+   "source": "RFC 9116 2.3",
+   "url": "https://www.rfc-editor.org/rfc/rfc9116#section-2.3",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "sectxt.chained",
+   "check": "security-txt",
+   "value": "multiple values MUST NOT be chained in one field",
+   "level": "MUST",
+   "source": "RFC 9116 2",
+   "url": "https://www.rfc-editor.org/rfc/rfc9116#section-2",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "sectxt.encryption_key",
+   "check": "security-txt",
+   "value": "Encryption is a URI, keys MUST NOT appear",
+   "level": "MUST",
+   "source": "RFC 9116 2.5.4",
+   "url": "https://www.rfc-editor.org/rfc/rfc9116#section-2.5.4",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "sectxt.contact_unencrypted",
+   "check": "security-txt",
+   "value": "encryption RECOMMENDED for email contacts",
+   "level": "SHOULD",
+   "source": "RFC 9116 2.5.3",
+   "url": "https://www.rfc-editor.org/rfc/rfc9116#section-2.5.3",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "sectxt.languages",
+   "check": "security-txt",
+   "value": "at least one language tag",
+   "level": "MUST",
+   "source": "RFC 9116 2.5.8",
+   "url": "https://www.rfc-editor.org/rfc/rfc9116#section-2.5.8",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "sectxt.https",
+   "check": "security-txt",
+   "value": "file served over HTTPS",
+   "level": "MUST",
+   "source": "RFC 9116 5.7",
+   "url": "https://www.rfc-editor.org/rfc/rfc9116#section-5.7",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "sectxt.scope",
+   "check": "security-txt",
+   "value": "applies only to the host it was retrieved from",
+   "level": "MUST",
+   "source": "RFC 9116 3.1",
+   "url": "https://www.rfc-editor.org/rfc/rfc9116#section-3.1",
+   "verified": "2026-10-29"
   }
  ]
 }

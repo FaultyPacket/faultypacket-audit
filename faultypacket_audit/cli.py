@@ -46,7 +46,7 @@ def main(argv=None, stdin=None, stdout=None, stderr=None):
                     "DNSSEC, DANE, CAA, reverse DNS, BIMI, and Google/Yahoo/Outlook sender requirements that DNS can show.")
     p.add_argument("domains", nargs="*", help="domains, URLs or email addresses")
     p.add_argument("-f", "--file", action="append", help="file with one input per line ('-' = stdin); repeatable")
-    p.add_argument("--checks", default=",".join(ORDER), help="comma list from: " + ", ".join(ALL) + " (default: all except the opt-in blocklist, lookalike)")
+    p.add_argument("--checks", default=",".join(ORDER), help="comma list from: " + ", ".join(ALL) + " (default: all except the opt-in blocklist, lookalike, security-txt)")
     p.add_argument("--json", metavar="FILE", help="write JSON ('-' = stdout)")
     p.add_argument("--csv", metavar="FILE", help="write CSV, one row per finding ('-' = stdout)")
     p.add_argument("--html", metavar="FILE", help="write a self-contained HTML report (prints to PDF from a browser)")
