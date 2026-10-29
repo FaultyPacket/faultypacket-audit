@@ -15,7 +15,7 @@ jobs:
       - name: Tag only when the package version changes
         id: v
         run: |
-          V=$(python -c "import faultypacket_audit as f; print(f.__version__)")
+          V=$(sed -n 's/^__version__ = "\(.*\)"/\1/p' faultypacket_audit/__init__.py)
           echo "version=$V" >> "$GITHUB_OUTPUT"
           if git ls-remote --exit-code --tags origin "v$V" >/dev/null; then echo "new=false" >> "$GITHUB_OUTPUT"; else echo "new=true" >> "$GITHUB_OUTPUT"; fi
       - name: Create release with rules.json attached

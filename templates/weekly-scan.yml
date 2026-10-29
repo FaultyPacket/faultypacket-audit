@@ -45,6 +45,7 @@ jobs:
       - id: audit
         continue-on-error: true
         run: |
+          # shellcheck disable=SC2086 # AUDIT_FLAGS is intentionally split into separate flags
           faultypacket-audit -f domains.txt -q $AUDIT_FLAGS \
             --json results/audit.json --csv results/audit.csv --sarif results/audit.sarif \
             --baseline baseline/audit.json --diff results/changes.md --fail-on warning --fail-on-new
