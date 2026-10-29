@@ -1,0 +1,793 @@
+{
+ "checks": [
+  {
+   "check": "spf",
+   "data": {
+    "lookup_limit": 10,
+    "lookup_log": [
+     {
+      "lookup_no": 1,
+      "path": "council.gov.example",
+      "status": "ok",
+      "term": "include:a.test",
+      "void": false
+     },
+     {
+      "lookup_no": 2,
+      "path": "council.gov.example",
+      "status": "ok",
+      "term": "include:a.test",
+      "void": false
+     },
+     {
+      "lookup_no": 3,
+      "path": "council.gov.example",
+      "status": "dynamic",
+      "term": "ptr",
+      "void": false
+     }
+    ],
+    "lookups": 3,
+    "record": "v=spf1 include:a.test include:a.test ptr ~all",
+    "result": "ok",
+    "tree": {
+     "children": [
+      {
+       "children": [],
+       "domain": "a.test",
+       "lookups_subtree": 1,
+       "qualifier": "+",
+       "record": "v=spf1 ip4:192.0.2.0/24 -all",
+       "via": "include"
+      },
+      {
+       "children": [],
+       "domain": "a.test",
+       "duplicate": true,
+       "lookups_subtree": 1,
+       "qualifier": "+",
+       "record": "v=spf1 ip4:192.0.2.0/24 -all",
+       "via": "include"
+      }
+     ],
+     "domain": "council.gov.example",
+     "lookups_subtree": 3,
+     "qualifier": "+",
+     "record": "v=spf1 include:a.test include:a.test ptr ~all",
+     "via": "root"
+    },
+    "void_limit": 2,
+    "void_lookups": 0
+   },
+   "domain": "council.gov.example",
+   "findings": [
+    {
+     "check": "spf",
+     "citation": "RFC 7208 4.6.4",
+     "evidence": {
+      "spf_result": "warning"
+     },
+     "level": "SHOULD",
+     "message": "a.test evaluated more than once (via council.gov.example > a.test)",
+     "rule_id": "spf.duplicate",
+     "rules_version": "2026.10.29.3",
+     "severity": "warning",
+     "url": "https://www.rfc-editor.org/rfc/rfc7208#section-4.6.4"
+    },
+    {
+     "check": "spf",
+     "citation": "RFC 7208 5.5",
+     "evidence": {
+      "spf_result": "warning"
+     },
+     "level": "SHOULD",
+     "message": "council.gov.example: 'ptr' is deprecated (RFC 7208 5.5); its cost depends on the sender IP, counted as 1",
+     "rule_id": "spf.ptr",
+     "rules_version": "2026.10.29.3",
+     "severity": "warning",
+     "url": "https://www.rfc-editor.org/rfc/rfc7208#section-5.5"
+    }
+   ],
+   "status": "warning"
+  },
+  {
+   "check": "dmarc",
+   "data": {
+    "destinations": [
+     {
+      "authorised": false,
+      "external": true,
+      "external_psl": true,
+      "host": "reports.test",
+      "query": "council.gov.example._report._dmarc.reports.test",
+      "status": "missing",
+      "tag": "rua",
+      "uri": "mailto:r@reports.test!10m"
+     }
+    ],
+    "org_domain": {
+     "differs": true,
+     "name": "council.gov.example",
+     "psl": "gov.example",
+     "queries": 2,
+     "tree_walk": "council.gov.example",
+     "walk_errors": []
+    },
+    "policy": "quarantine",
+    "policy_source": "council.gov.example",
+    "record": "v=DMARC1; p=quarantine; pct=0; ri=3600; fo=0:1; rua=mailto:r@reports.test!10m",
+    "tags": {
+     "fo": "0:1",
+     "p": "quarantine",
+     "pct": "0",
+     "ri": "3600",
+     "rua": "mailto:r@reports.test!10m",
+     "v": "DMARC1"
+    }
+   },
+   "domain": "council.gov.example",
+   "findings": [
+    {
+     "check": "dmarc",
+     "citation": "RFC 9989 4.10.2, C.3",
+     "evidence": {},
+     "level": "MAY",
+     "message": "Organizational Domain: Tree Walk council.gov.example vs legacy PSL gov.example (RFC 9989 4.10.2)",
+     "rule_id": "dmarc.org_method_differs",
+     "rules_version": "2026.10.29.3",
+     "severity": "info",
+     "url": "https://www.rfc-editor.org/rfc/rfc9989#section-4.10.2"
+    },
+    {
+     "check": "dmarc",
+     "citation": "RFC 9989 9.3, A.6",
+     "evidence": {},
+     "level": "SHOULD",
+     "message": "pct=0 is historic and ignored by RFC 9989 receivers, so the full policy now applies; t=y is the replacement (RFC 9989 9.3, A.6)",
+     "rule_id": "dmarc.historic_pct",
+     "rules_version": "2026.10.29.3",
+     "severity": "warning",
+     "url": "https://www.rfc-editor.org/rfc/rfc9989#section-9.3"
+    },
+    {
+     "check": "dmarc",
+     "citation": "RFC 9989 9.3",
+     "evidence": {},
+     "level": "MAY",
+     "message": "tag 'ri' is historic in the DMARC Tags registry and ignored by RFC 9989 receivers; safe to remove (RFC 9989 9.3)",
+     "rule_id": "dmarc.historic_tag",
+     "rules_version": "2026.10.29.3",
+     "severity": "info",
+     "url": "https://www.rfc-editor.org/rfc/rfc9989#section-9.3"
+    },
+    {
+     "check": "dmarc",
+     "citation": "RFC 9989 4.8",
+     "evidence": {},
+     "level": "MUST",
+     "message": "fo='0:1': options 0,1,d,s separated by ':', 0 and 1 mutually exclusive, d and s at most once (RFC 9989 4.8)",
+     "rule_id": "dmarc.bad_fo",
+     "rules_version": "2026.10.29.3",
+     "severity": "error",
+     "url": "https://www.rfc-editor.org/rfc/rfc9989#section-4.8"
+    },
+    {
+     "check": "dmarc",
+     "citation": "RFC 9989 4.7",
+     "evidence": {},
+     "level": "MAY",
+     "message": "fo has no effect without ruf (RFC 9989 4.7)",
+     "rule_id": "dmarc.fo_without_ruf",
+     "rules_version": "2026.10.29.3",
+     "severity": "info",
+     "url": "https://www.rfc-editor.org/rfc/rfc9989#section-4.7"
+    },
+    {
+     "check": "dmarc",
+     "citation": "RFC 9989 4.8",
+     "evidence": {},
+     "level": "MAY",
+     "message": "rua URI 'mailto:r@reports.test!10m': the !size suffix is obsolete and ignored (RFC 9989 4.8)",
+     "rule_id": "dmarc.obsolete_size",
+     "rules_version": "2026.10.29.3",
+     "severity": "info",
+     "url": "https://www.rfc-editor.org/rfc/rfc9989#section-4.8"
+    },
+    {
+     "check": "dmarc",
+     "citation": "RFC 9990 4",
+     "evidence": {},
+     "level": "MUST",
+     "message": "rua destination reports.test has not authorised council.gov.example: no v=DMARC1 TXT at council.gov.example._report._dmarc.reports.test; compliant receivers MUST ignore this URI (RFC 9990 4)",
+     "rule_id": "dmarc.unauthorised_rua",
+     "rules_version": "2026.10.29.3",
+     "severity": "error",
+     "url": "https://www.rfc-editor.org/rfc/rfc9990#section-4"
+    }
+   ],
+   "status": "error"
+  },
+  {
+   "check": "dkim",
+   "data": {
+    "dns_errors": [],
+    "keys": [],
+    "min_rsa_bits": null,
+    "probed": 35,
+    "usable_selectors": []
+   },
+   "domain": "council.gov.example",
+   "findings": [
+    {
+     "check": "dkim",
+     "citation": "faultypacket-audit scope note (RFC 6376 3.1: selectors are not discoverable)",
+     "evidence": {},
+     "level": "TOOL",
+     "message": "no DKIM key at 35 common selectors; selectors can't be listed from DNS, give yours with --dkim-selector",
+     "rule_id": "dkim.not_found",
+     "rules_version": "2026.10.29.3",
+     "severity": "info",
+     "url": ""
+    }
+   ],
+   "status": "info"
+  },
+  {
+   "check": "mx",
+   "data": {
+    "mx": [],
+    "null_mx": false
+   },
+   "domain": "council.gov.example",
+   "findings": [
+    {
+     "check": "mx",
+     "citation": "RFC 5321 5.1 (implicit MX)",
+     "evidence": {},
+     "level": "MUST",
+     "message": "no MX; senders fall back to the A/AAAA of council.gov.example (none either: undeliverable)",
+     "rule_id": "mx.none",
+     "rules_version": "2026.10.29.3",
+     "severity": "info",
+     "url": "https://www.rfc-editor.org/rfc/rfc5321#section-5.1"
+    }
+   ],
+   "status": "info"
+  },
+  {
+   "check": "mta-sts",
+   "data": {
+    "max_age": null,
+    "mode": null,
+    "mx": [],
+    "policy_mx": null,
+    "result": "absent",
+    "smtp": [],
+    "smtp_status": "not requested",
+    "tlsrpt": {
+     "name": "_smtp._tls.council.gov.example",
+     "record": null,
+     "rua": []
+    },
+    "txt": {
+     "absent": true,
+     "id": null,
+     "name": "_mta-sts.council.gov.example",
+     "record": null
+    }
+   },
+   "domain": "council.gov.example",
+   "findings": [
+    {
+     "check": "mta-sts",
+     "citation": "RFC 8461 3.1",
+     "evidence": {
+      "code": "txt_absent"
+     },
+     "level": "MAY",
+     "message": "no v=STSv1 TXT at _mta-sts.council.gov.example: senders treat the domain as having no MTA-STS (RFC 8461 3.1)",
+     "rule_id": "mtasts.txt_absent",
+     "rules_version": "2026.10.29.3",
+     "severity": "info",
+     "url": "https://www.rfc-editor.org/rfc/rfc8461#section-3.1"
+    },
+    {
+     "check": "mta-sts",
+     "citation": "RFC 8460 3",
+     "evidence": {
+      "code": "tlsrpt_absent"
+     },
+     "level": "SHOULD",
+     "message": "no v=TLSRPTv1 TXT at _smtp._tls.council.gov.example: you get no reports of TLS delivery failures (RFC 8460 3)",
+     "rule_id": "tlsrpt.absent",
+     "rules_version": "2026.10.29.3",
+     "severity": "info",
+     "url": "https://www.rfc-editor.org/rfc/rfc8460#section-3"
+    }
+   ],
+   "status": "info"
+  },
+  {
+   "check": "dnssec",
+   "data": {
+    "ds": [],
+    "signed": false,
+    "validated": null
+   },
+   "domain": "council.gov.example",
+   "findings": [
+    {
+     "check": "dnssec",
+     "citation": "RFC 4033 2; RFC 4034 5 (DS)",
+     "evidence": {},
+     "level": "MAY",
+     "message": "no DS record at the parent: the zone is not DNSSEC-signed, so DANE cannot be used and MX/TXT answers can be spoofed",
+     "rule_id": "dnssec.unsigned",
+     "rules_version": "2026.10.29.3",
+     "severity": "info",
+     "url": "https://www.rfc-editor.org/rfc/rfc4034#section-5"
+    }
+   ],
+   "status": "info"
+  },
+  {
+   "check": "dane",
+   "data": {
+    "mx": []
+   },
+   "domain": "council.gov.example",
+   "findings": [
+    {
+     "check": "dane",
+     "citation": "RFC 7672 2.2.3",
+     "evidence": {},
+     "level": "MAY",
+     "message": "no TLSA records for any MX: DANE not deployed (MTA-STS is the non-DNSSEC alternative)",
+     "rule_id": "dane.absent",
+     "rules_version": "2026.10.29.3",
+     "severity": "info",
+     "url": "https://www.rfc-editor.org/rfc/rfc7672#section-2.2.3"
+    }
+   ],
+   "status": "info"
+  },
+  {
+   "check": "caa",
+   "data": {
+    "at": null,
+    "records": []
+   },
+   "domain": "council.gov.example",
+   "findings": [
+    {
+     "check": "caa",
+     "citation": "RFC 8659 3",
+     "evidence": {},
+     "level": "MAY",
+     "message": "no CAA records up the tree: any public CA may issue certificates for this domain",
+     "rule_id": "caa.absent",
+     "rules_version": "2026.10.29.3",
+     "severity": "info",
+     "url": "https://www.rfc-editor.org/rfc/rfc8659#section-3"
+    }
+   ],
+   "status": "info"
+  },
+  {
+   "check": "rdns",
+   "data": {
+    "targets": []
+   },
+   "domain": "council.gov.example",
+   "findings": [
+    {
+     "check": "rdns",
+     "citation": "faultypacket-audit scope note",
+     "evidence": {},
+     "level": "TOOL",
+     "message": "no sending IPs given and no MX addresses; pass --sending-ip to test your outbound IPs",
+     "rule_id": "rdns.no_targets",
+     "rules_version": "2026.10.29.3",
+     "severity": "info",
+     "url": ""
+    }
+   ],
+   "status": "info"
+  },
+  {
+   "check": "bimi",
+   "data": {
+    "evidence": null,
+    "logo": null,
+    "name": "default._bimi.council.gov.example",
+    "record": null
+   },
+   "domain": "council.gov.example",
+   "findings": [
+    {
+     "check": "bimi",
+     "citation": "draft-brand-indicators-for-message-identification-14 4.3",
+     "evidence": {},
+     "level": "MAY",
+     "message": "no BIMI record at default._bimi.council.gov.example",
+     "rule_id": "bimi.absent",
+     "rules_version": "2026.10.29.3",
+     "severity": "info",
+     "url": "https://datatracker.ietf.org/doc/html/draft-brand-indicators-for-message-identification-14#section-4.3"
+    }
+   ],
+   "status": "info"
+  },
+  {
+   "check": "bulk-sender",
+   "data": {
+    "dkim": "unknown",
+    "providers": [
+     {
+      "effective": "2024-02-01",
+      "not_dns_verifiable": [
+       "alignment",
+       "one_click_unsub",
+       "tls",
+       "spam_rate_max"
+      ],
+      "provider": "google",
+      "requirements": [
+       {
+        "audience": "5k",
+        "detail": "",
+        "requirement": "alignment",
+        "rule_id": "bulk.google.5k.alignment",
+        "status": "not-dns-verifiable"
+       },
+       {
+        "audience": "5k",
+        "detail": "p=quarantine at _dmarc.council.gov.example",
+        "requirement": "dmarc_min",
+        "rule_id": "bulk.google.5k.dmarc_min",
+        "status": "pass"
+       },
+       {
+        "audience": "5k",
+        "detail": "",
+        "requirement": "one_click_unsub",
+        "rule_id": "bulk.google.5k.one_click_unsub",
+        "status": "not-dns-verifiable"
+       },
+       {
+        "audience": "5k",
+        "detail": "SPF ok; DKIM unknown (no DKIM selector given)",
+        "requirement": "spf_and_dkim",
+        "rule_id": "bulk.google.5k.spf_and_dkim",
+        "status": "unknown"
+       },
+       {
+        "audience": "all",
+        "detail": "no DKIM key found (give --dkim-selector)",
+        "requirement": "dkim_min_bits",
+        "rule_id": "bulk.google.all.dkim_1024",
+        "status": "unknown"
+       },
+       {
+        "audience": "all",
+        "detail": "no sending IP given",
+        "requirement": "fcrdns",
+        "rule_id": "bulk.google.all.fcrdns",
+        "status": "unknown"
+       },
+       {
+        "audience": "all",
+        "detail": "SPF ok; DKIM unknown",
+        "requirement": "spf_or_dkim",
+        "rule_id": "bulk.google.all.spf_or_dkim",
+        "status": "pass"
+       },
+       {
+        "audience": "all",
+        "detail": "",
+        "requirement": "tls",
+        "rule_id": "bulk.google.all.tls",
+        "status": "not-dns-verifiable"
+       },
+       {
+        "audience": "5k",
+        "detail": "",
+        "requirement": "spam_rate_max",
+        "rule_id": "bulk.google.spam_rate_max",
+        "status": "not-dns-verifiable"
+       }
+      ],
+      "url": "https://support.google.com/a/answer/81126",
+      "verdict": "incomplete"
+     },
+     {
+      "effective": "2025-05-05",
+      "not_dns_verifiable": [
+       "alignment"
+      ],
+      "provider": "outlook",
+      "requirements": [
+       {
+        "audience": "5k",
+        "detail": "",
+        "requirement": "alignment",
+        "rule_id": "bulk.outlook.5k.alignment",
+        "status": "not-dns-verifiable"
+       },
+       {
+        "audience": "5k",
+        "detail": "p=quarantine at _dmarc.council.gov.example",
+        "requirement": "dmarc_min",
+        "rule_id": "bulk.outlook.5k.dmarc_min",
+        "status": "pass"
+       },
+       {
+        "audience": "5k",
+        "detail": "SPF ok; DKIM unknown (no DKIM selector given)",
+        "requirement": "spf_and_dkim",
+        "rule_id": "bulk.outlook.5k.spf_and_dkim",
+        "status": "unknown"
+       },
+       {
+        "audience": "all",
+        "detail": "no sending IP given",
+        "requirement": "rdns",
+        "rule_id": "bulk.outlook.all.rdns",
+        "status": "unknown"
+       }
+      ],
+      "url": "https://postmaster.outlook.com/policies.aspx",
+      "verdict": "incomplete"
+     },
+     {
+      "effective": "2024-02-01",
+      "not_dns_verifiable": [
+       "unsub_days_max"
+      ],
+      "provider": "yahoo",
+      "requirements": [
+       {
+        "audience": "all",
+        "detail": "no sending IP given",
+        "requirement": "fcrdns",
+        "rule_id": "bulk.yahoo.all.fcrdns",
+        "status": "unknown"
+       },
+       {
+        "audience": "bulk",
+        "detail": "p=quarantine at _dmarc.council.gov.example",
+        "requirement": "dmarc_min",
+        "rule_id": "bulk.yahoo.bulk.dmarc_min",
+        "status": "pass"
+       },
+       {
+        "audience": "bulk",
+        "detail": "SPF ok; DKIM unknown (no DKIM selector given)",
+        "requirement": "spf_and_dkim",
+        "rule_id": "bulk.yahoo.bulk.spf_and_dkim",
+        "status": "unknown"
+       },
+       {
+        "audience": "bulk",
+        "detail": "",
+        "requirement": "unsub_days_max",
+        "rule_id": "bulk.yahoo.unsub_days_max",
+        "status": "not-dns-verifiable"
+       }
+      ],
+      "url": "https://senders.yahooinc.com/best-practices/",
+      "verdict": "incomplete"
+     }
+    ],
+    "sending_ips": [],
+    "strict_bulk": false
+   },
+   "domain": "council.gov.example",
+   "findings": [
+    {
+     "check": "bulk-sender",
+     "citation": "faultypacket-audit scope note",
+     "evidence": {
+      "provider": "google",
+      "requirement": "alignment",
+      "rule": "bulk.google.5k.alignment"
+     },
+     "level": "TOOL",
+     "message": "google: 'alignment' (applies to senders of 5,000+ messages a day) cannot be checked from DNS; check your sending platform or postmaster data (source: https://support.google.com/a/answer/81126)",
+     "rule_id": "bulk.not_dns_verifiable",
+     "rules_version": "2026.10.29.3",
+     "severity": "info",
+     "url": ""
+    },
+    {
+     "check": "bulk-sender",
+     "citation": "faultypacket-audit scope note",
+     "evidence": {
+      "provider": "google",
+      "requirement": "one_click_unsub",
+      "rule": "bulk.google.5k.one_click_unsub"
+     },
+     "level": "TOOL",
+     "message": "google: 'one_click_unsub' (applies to senders of 5,000+ messages a day) cannot be checked from DNS; check your sending platform or postmaster data (source: https://support.google.com/a/answer/81126)",
+     "rule_id": "bulk.not_dns_verifiable",
+     "rules_version": "2026.10.29.3",
+     "severity": "info",
+     "url": ""
+    },
+    {
+     "check": "bulk-sender",
+     "citation": "faultypacket-audit scope note",
+     "evidence": {
+      "provider": "google",
+      "requirement": "spf_and_dkim",
+      "rule": "bulk.google.5k.spf_and_dkim"
+     },
+     "level": "TOOL",
+     "message": "google: 'spf_and_dkim' not verified: SPF ok; DKIM unknown (no DKIM selector given); needs DKIM selectors (--dkim-selector) for the DKIM half",
+     "rule_id": "bulk.needs_input",
+     "rules_version": "2026.10.29.3",
+     "severity": "info",
+     "url": ""
+    },
+    {
+     "check": "bulk-sender",
+     "citation": "faultypacket-audit scope note",
+     "evidence": {
+      "provider": "google",
+      "requirement": "dkim_min_bits",
+      "rule": "bulk.google.all.dkim_1024"
+     },
+     "level": "TOOL",
+     "message": "google: 'dkim_min_bits' not verified: no DKIM key found (give --dkim-selector); needs a DKIM selector (--dkim-selector) unless one is found by the dkim check",
+     "rule_id": "bulk.needs_input",
+     "rules_version": "2026.10.29.3",
+     "severity": "info",
+     "url": ""
+    },
+    {
+     "check": "bulk-sender",
+     "citation": "faultypacket-audit scope note",
+     "evidence": {
+      "provider": "google",
+      "requirement": "fcrdns",
+      "rule": "bulk.google.all.fcrdns"
+     },
+     "level": "TOOL",
+     "message": "google: 'fcrdns' not verified: no sending IP given; needs sending IPs (--sending-ip)",
+     "rule_id": "bulk.needs_input",
+     "rules_version": "2026.10.29.3",
+     "severity": "info",
+     "url": ""
+    },
+    {
+     "check": "bulk-sender",
+     "citation": "faultypacket-audit scope note",
+     "evidence": {
+      "provider": "google",
+      "requirement": "tls",
+      "rule": "bulk.google.all.tls"
+     },
+     "level": "TOOL",
+     "message": "google: 'tls' (applies to all senders) cannot be checked from DNS; check your sending platform or postmaster data (source: https://support.google.com/a/answer/81126)",
+     "rule_id": "bulk.not_dns_verifiable",
+     "rules_version": "2026.10.29.3",
+     "severity": "info",
+     "url": ""
+    },
+    {
+     "check": "bulk-sender",
+     "citation": "faultypacket-audit scope note",
+     "evidence": {
+      "provider": "google",
+      "requirement": "spam_rate_max",
+      "rule": "bulk.google.spam_rate_max"
+     },
+     "level": "TOOL",
+     "message": "google: 'spam_rate_max' (applies to senders of 5,000+ messages a day) cannot be checked from DNS; check your sending platform or postmaster data (source: https://support.google.com/a/answer/81126)",
+     "rule_id": "bulk.not_dns_verifiable",
+     "rules_version": "2026.10.29.3",
+     "severity": "info",
+     "url": ""
+    },
+    {
+     "check": "bulk-sender",
+     "citation": "faultypacket-audit scope note",
+     "evidence": {
+      "provider": "outlook",
+      "requirement": "alignment",
+      "rule": "bulk.outlook.5k.alignment"
+     },
+     "level": "TOOL",
+     "message": "outlook: 'alignment' (applies to senders of 5,000+ messages a day) cannot be checked from DNS; check your sending platform or postmaster data (source: https://postmaster.outlook.com/policies.aspx)",
+     "rule_id": "bulk.not_dns_verifiable",
+     "rules_version": "2026.10.29.3",
+     "severity": "info",
+     "url": ""
+    },
+    {
+     "check": "bulk-sender",
+     "citation": "faultypacket-audit scope note",
+     "evidence": {
+      "provider": "outlook",
+      "requirement": "spf_and_dkim",
+      "rule": "bulk.outlook.5k.spf_and_dkim"
+     },
+     "level": "TOOL",
+     "message": "outlook: 'spf_and_dkim' not verified: SPF ok; DKIM unknown (no DKIM selector given); needs DKIM selectors (--dkim-selector) for the DKIM half",
+     "rule_id": "bulk.needs_input",
+     "rules_version": "2026.10.29.3",
+     "severity": "info",
+     "url": ""
+    },
+    {
+     "check": "bulk-sender",
+     "citation": "faultypacket-audit scope note",
+     "evidence": {
+      "provider": "outlook",
+      "requirement": "rdns",
+      "rule": "bulk.outlook.all.rdns"
+     },
+     "level": "TOOL",
+     "message": "outlook: 'rdns' not verified: no sending IP given; needs sending IPs (--sending-ip)",
+     "rule_id": "bulk.needs_input",
+     "rules_version": "2026.10.29.3",
+     "severity": "info",
+     "url": ""
+    },
+    {
+     "check": "bulk-sender",
+     "citation": "faultypacket-audit scope note",
+     "evidence": {
+      "provider": "yahoo",
+      "requirement": "fcrdns",
+      "rule": "bulk.yahoo.all.fcrdns"
+     },
+     "level": "TOOL",
+     "message": "yahoo: 'fcrdns' not verified: no sending IP given; needs sending IPs (--sending-ip)",
+     "rule_id": "bulk.needs_input",
+     "rules_version": "2026.10.29.3",
+     "severity": "info",
+     "url": ""
+    },
+    {
+     "check": "bulk-sender",
+     "citation": "faultypacket-audit scope note",
+     "evidence": {
+      "provider": "yahoo",
+      "requirement": "spf_and_dkim",
+      "rule": "bulk.yahoo.bulk.spf_and_dkim"
+     },
+     "level": "TOOL",
+     "message": "yahoo: 'spf_and_dkim' not verified: SPF ok; DKIM unknown (no DKIM selector given); needs DKIM selectors (--dkim-selector) for the DKIM half",
+     "rule_id": "bulk.needs_input",
+     "rules_version": "2026.10.29.3",
+     "severity": "info",
+     "url": ""
+    },
+    {
+     "check": "bulk-sender",
+     "citation": "faultypacket-audit scope note",
+     "evidence": {
+      "provider": "yahoo",
+      "requirement": "unsub_days_max",
+      "rule": "bulk.yahoo.unsub_days_max"
+     },
+     "level": "TOOL",
+     "message": "yahoo: 'unsub_days_max' (applies to bulk senders) cannot be checked from DNS; check your sending platform or postmaster data (source: https://senders.yahooinc.com/best-practices/)",
+     "rule_id": "bulk.not_dns_verifiable",
+     "rules_version": "2026.10.29.3",
+     "severity": "info",
+     "url": ""
+    }
+   ],
+   "status": "info"
+  }
+ ],
+ "domain": "council.gov.example",
+ "resolvers": [
+  "fake"
+ ],
+ "status": "error",
+ "tool": "faultypacket-audit",
+ "version": "golden"
+}

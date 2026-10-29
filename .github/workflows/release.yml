@@ -1,0 +1,24 @@
+name: release
+on:
+  push:
+    branches: [main]
+    paths: ["faultypacket_audit/**", "pyproject.toml"]
+permissions: {contents: write}
+concurrency: {group: release}
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - name: Tag only when the package version changes
+        id: v
+        run: |
+          V=$(python -c "import faultypacket_audit as f; print(f.__version__)")
+          echo "version=$V" >> "$GITHUB_OUTPUT"
+          if git ls-remote --exit-code --tags origin "v$V" >/dev/null; then echo "new=false" >> "$GITHUB_OUTPUT"; else echo "new=true" >> "$GITHUB_OUTPUT"; fi
+      - name: Create release with rules.json attached
+        if: steps.v.outputs.new == 'true'
+        env: {GH_TOKEN: "${{ github.token }}", V: "${{ steps.v.outputs.version }}"}
+        run: gh release create "v$V" faultypacket_audit/data/rules.json --generate-notes --title "v$V"

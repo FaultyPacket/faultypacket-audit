@@ -1,0 +1,632 @@
+{
+ "checks": [
+  {
+   "check": "spf",
+   "data": {
+    "lookup_limit": 10,
+    "lookup_log": [
+     {
+      "lookup_no": 1,
+      "path": "shop.example",
+      "status": "ok",
+      "term": "mx",
+      "void": false
+     }
+    ],
+    "lookups": 1,
+    "record": "v=spf1 mx -all",
+    "result": "ok",
+    "tree": {
+     "children": [],
+     "domain": "shop.example",
+     "lookups_subtree": 1,
+     "qualifier": "+",
+     "record": "v=spf1 mx -all",
+     "via": "root"
+    },
+    "void_limit": 2,
+    "void_lookups": 0
+   },
+   "domain": "shop.example",
+   "findings": [],
+   "status": "ok"
+  },
+  {
+   "check": "dmarc",
+   "data": {
+    "destinations": [
+     {
+      "authorised": null,
+      "external": false,
+      "external_psl": false,
+      "host": "shop.example",
+      "query": null,
+      "status": "same-org",
+      "tag": "rua",
+      "uri": "mailto:d@shop.example"
+     }
+    ],
+    "org_domain": {
+     "differs": false,
+     "name": "shop.example",
+     "psl": "shop.example",
+     "queries": 2,
+     "tree_walk": "shop.example",
+     "walk_errors": []
+    },
+    "policy": "quarantine",
+    "policy_source": "shop.example",
+    "record": "v=DMARC1; p=quarantine; rua=mailto:d@shop.example",
+    "tags": {
+     "p": "quarantine",
+     "rua": "mailto:d@shop.example",
+     "v": "DMARC1"
+    }
+   },
+   "domain": "shop.example",
+   "findings": [],
+   "status": "ok"
+  },
+  {
+   "check": "dkim",
+   "data": {
+    "dns_errors": [],
+    "keys": [
+     {
+      "bits": 1024,
+      "k": "rsa",
+      "name": "selector1._domainkey.shop.example",
+      "record": "v=DKIM1; k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDXREoaTwngtqxjLrXkRhu5fosg91lF24zoxx4sbH95A+7LNBqVphzVUo6RQgjAqgjMniEphTKufzN1RePZ0AdTskKw0IWaqePhUW1gtn4m33z/I8Y1yh3ELJBbY/ixulcB476Eh118LkAJ10ba2ox1iTgRXPvGY9a+OD4FFIjwmQIDAQAB",
+      "revoked": false,
+      "selector": "selector1",
+      "testing": false
+     }
+    ],
+    "min_rsa_bits": 1024,
+    "probed": 35,
+    "usable_selectors": [
+     "selector1"
+    ]
+   },
+   "domain": "shop.example",
+   "findings": [
+    {
+     "check": "dkim",
+     "citation": "RFC 8301 3.2",
+     "evidence": {
+      "bits": 1024,
+      "selector": "selector1._domainkey.shop.example"
+     },
+     "level": "SHOULD",
+     "message": "selector1._domainkey.shop.example: RSA 1024-bit key; 2048 bits SHOULD be used",
+     "rule_id": "dkim.recommended_rsa_bits",
+     "rules_version": "2026.10.29.3",
+     "severity": "warning",
+     "url": "https://www.rfc-editor.org/rfc/rfc8301#section-3.2"
+    }
+   ],
+   "status": "warning"
+  },
+  {
+   "check": "mx",
+   "data": {
+    "mx": [
+     {
+      "addresses": [
+       "192.0.2.25"
+      ],
+      "cname": null,
+      "host": "mx1.shop.example",
+      "preference": 10
+     },
+     {
+      "addresses": [
+       "192.0.2.25"
+      ],
+      "cname": "mx1.shop.example",
+      "host": "mx2.shop.example",
+      "preference": 20
+     }
+    ],
+    "null_mx": false
+   },
+   "domain": "shop.example",
+   "findings": [
+    {
+     "check": "mx",
+     "citation": "RFC 2181 10.3",
+     "evidence": {},
+     "level": "MUST",
+     "message": "MX target mx2.shop.example is an alias (CNAME to mx1.shop.example); MX targets must not be aliases",
+     "rule_id": "mx.cname",
+     "rules_version": "2026.10.29.3",
+     "severity": "warning",
+     "url": "https://www.rfc-editor.org/rfc/rfc2181#section-10.3"
+    }
+   ],
+   "status": "warning"
+  },
+  {
+   "check": "mta-sts",
+   "data": {
+    "max_age": null,
+    "mode": null,
+    "mx": [],
+    "policy_mx": null,
+    "result": "absent",
+    "smtp": [],
+    "smtp_status": "not requested",
+    "tlsrpt": {
+     "name": "_smtp._tls.shop.example",
+     "record": "v=TLSRPTv1; rua=mailto:tls@shop.example",
+     "rua": [
+      "mailto:tls@shop.example"
+     ]
+    },
+    "txt": {
+     "absent": true,
+     "id": null,
+     "name": "_mta-sts.shop.example",
+     "record": null
+    }
+   },
+   "domain": "shop.example",
+   "findings": [
+    {
+     "check": "mta-sts",
+     "citation": "RFC 8461 3.1",
+     "evidence": {
+      "code": "txt_absent"
+     },
+     "level": "MAY",
+     "message": "no v=STSv1 TXT at _mta-sts.shop.example: senders treat the domain as having no MTA-STS (RFC 8461 3.1)",
+     "rule_id": "mtasts.txt_absent",
+     "rules_version": "2026.10.29.3",
+     "severity": "info",
+     "url": "https://www.rfc-editor.org/rfc/rfc8461#section-3.1"
+    }
+   ],
+   "status": "info"
+  },
+  {
+   "check": "dnssec",
+   "data": {
+    "ds": [],
+    "signed": false,
+    "validated": null
+   },
+   "domain": "shop.example",
+   "findings": [
+    {
+     "check": "dnssec",
+     "citation": "RFC 4033 2; RFC 4034 5 (DS)",
+     "evidence": {},
+     "level": "MAY",
+     "message": "no DS record at the parent: the zone is not DNSSEC-signed, so DANE cannot be used and MX/TXT answers can be spoofed",
+     "rule_id": "dnssec.unsigned",
+     "rules_version": "2026.10.29.3",
+     "severity": "info",
+     "url": "https://www.rfc-editor.org/rfc/rfc4034#section-5"
+    }
+   ],
+   "status": "info"
+  },
+  {
+   "check": "dane",
+   "data": {
+    "mx": [
+     {
+      "host": "mx1.shop.example",
+      "tlsa": [],
+      "validated": false
+     },
+     {
+      "host": "mx2.shop.example",
+      "tlsa": [],
+      "validated": false
+     }
+    ]
+   },
+   "domain": "shop.example",
+   "findings": [
+    {
+     "check": "dane",
+     "citation": "RFC 7672 2.2.3",
+     "evidence": {},
+     "level": "MAY",
+     "message": "no TLSA records for any MX: DANE not deployed (MTA-STS is the non-DNSSEC alternative)",
+     "rule_id": "dane.absent",
+     "rules_version": "2026.10.29.3",
+     "severity": "info",
+     "url": "https://www.rfc-editor.org/rfc/rfc7672#section-2.2.3"
+    }
+   ],
+   "status": "info"
+  },
+  {
+   "check": "caa",
+   "data": {
+    "at": "shop.example",
+    "issuers": [
+     "letsencrypt.org"
+    ],
+    "records": [
+     {
+      "flags": 0,
+      "tag": "issue",
+      "value": "letsencrypt.org"
+     },
+     {
+      "flags": 0,
+      "tag": "iodef",
+      "value": "mailto:sec@shop.example"
+     }
+    ]
+   },
+   "domain": "shop.example",
+   "findings": [],
+   "status": "ok"
+  },
+  {
+   "check": "rdns",
+   "data": {
+    "targets": [
+     {
+      "detail": "192.0.2.25 -> mx1.shop.example -> 192.0.2.25",
+      "ip": "192.0.2.25",
+      "source": "mx mx1.shop.example",
+      "status": "pass"
+     },
+     {
+      "detail": "192.0.2.25 -> mx1.shop.example -> 192.0.2.25",
+      "ip": "192.0.2.25",
+      "source": "mx mx2.shop.example",
+      "status": "pass"
+     }
+    ]
+   },
+   "domain": "shop.example",
+   "findings": [],
+   "status": "ok"
+  },
+  {
+   "check": "bimi",
+   "data": {
+    "evidence": null,
+    "logo": {
+     "content_type": "image/svg+xml",
+     "error": null,
+     "status": 200
+    },
+    "name": "default._bimi.shop.example",
+    "record": "v=BIMI1; l=https://shop.example/logo.svg"
+   },
+   "domain": "shop.example",
+   "findings": [
+    {
+     "check": "bimi",
+     "citation": "draft-brand-indicators-for-message-identification-14 3.5, 7.4",
+     "evidence": {},
+     "level": "MAY",
+     "message": "no a= mark certificate (VMC/CMC); Gmail and Apple Mail only show certified logos",
+     "rule_id": "bimi.no_certificate",
+     "rules_version": "2026.10.29.3",
+     "severity": "warning",
+     "url": "https://datatracker.ietf.org/doc/html/draft-brand-indicators-for-message-identification-14#section-3.5"
+    }
+   ],
+   "status": "warning"
+  },
+  {
+   "check": "bulk-sender",
+   "data": {
+    "dkim": "pass",
+    "providers": [
+     {
+      "effective": "2024-02-01",
+      "not_dns_verifiable": [
+       "alignment",
+       "one_click_unsub",
+       "tls",
+       "spam_rate_max"
+      ],
+      "provider": "google",
+      "requirements": [
+       {
+        "audience": "5k",
+        "detail": "",
+        "requirement": "alignment",
+        "rule_id": "bulk.google.5k.alignment",
+        "status": "not-dns-verifiable"
+       },
+       {
+        "audience": "5k",
+        "detail": "p=quarantine at _dmarc.shop.example",
+        "requirement": "dmarc_min",
+        "rule_id": "bulk.google.5k.dmarc_min",
+        "status": "pass"
+       },
+       {
+        "audience": "5k",
+        "detail": "",
+        "requirement": "one_click_unsub",
+        "rule_id": "bulk.google.5k.one_click_unsub",
+        "status": "not-dns-verifiable"
+       },
+       {
+        "audience": "5k",
+        "detail": "SPF ok; DKIM pass",
+        "requirement": "spf_and_dkim",
+        "rule_id": "bulk.google.5k.spf_and_dkim",
+        "status": "pass"
+       },
+       {
+        "audience": "all",
+        "detail": "selector1._domainkey.shop.example rsa 1024-bit",
+        "requirement": "dkim_min_bits",
+        "rule_id": "bulk.google.all.dkim_1024",
+        "status": "pass"
+       },
+       {
+        "audience": "all",
+        "detail": "no sending IP given",
+        "requirement": "fcrdns",
+        "rule_id": "bulk.google.all.fcrdns",
+        "status": "unknown"
+       },
+       {
+        "audience": "all",
+        "detail": "SPF ok; DKIM pass",
+        "requirement": "spf_or_dkim",
+        "rule_id": "bulk.google.all.spf_or_dkim",
+        "status": "pass"
+       },
+       {
+        "audience": "all",
+        "detail": "",
+        "requirement": "tls",
+        "rule_id": "bulk.google.all.tls",
+        "status": "not-dns-verifiable"
+       },
+       {
+        "audience": "5k",
+        "detail": "",
+        "requirement": "spam_rate_max",
+        "rule_id": "bulk.google.spam_rate_max",
+        "status": "not-dns-verifiable"
+       }
+      ],
+      "url": "https://support.google.com/a/answer/81126",
+      "verdict": "incomplete"
+     },
+     {
+      "effective": "2025-05-05",
+      "not_dns_verifiable": [
+       "alignment"
+      ],
+      "provider": "outlook",
+      "requirements": [
+       {
+        "audience": "5k",
+        "detail": "",
+        "requirement": "alignment",
+        "rule_id": "bulk.outlook.5k.alignment",
+        "status": "not-dns-verifiable"
+       },
+       {
+        "audience": "5k",
+        "detail": "p=quarantine at _dmarc.shop.example",
+        "requirement": "dmarc_min",
+        "rule_id": "bulk.outlook.5k.dmarc_min",
+        "status": "pass"
+       },
+       {
+        "audience": "5k",
+        "detail": "SPF ok; DKIM pass",
+        "requirement": "spf_and_dkim",
+        "rule_id": "bulk.outlook.5k.spf_and_dkim",
+        "status": "pass"
+       },
+       {
+        "audience": "all",
+        "detail": "no sending IP given",
+        "requirement": "rdns",
+        "rule_id": "bulk.outlook.all.rdns",
+        "status": "unknown"
+       }
+      ],
+      "url": "https://postmaster.outlook.com/policies.aspx",
+      "verdict": "incomplete"
+     },
+     {
+      "effective": "2024-02-01",
+      "not_dns_verifiable": [
+       "unsub_days_max"
+      ],
+      "provider": "yahoo",
+      "requirements": [
+       {
+        "audience": "all",
+        "detail": "no sending IP given",
+        "requirement": "fcrdns",
+        "rule_id": "bulk.yahoo.all.fcrdns",
+        "status": "unknown"
+       },
+       {
+        "audience": "bulk",
+        "detail": "p=quarantine at _dmarc.shop.example",
+        "requirement": "dmarc_min",
+        "rule_id": "bulk.yahoo.bulk.dmarc_min",
+        "status": "pass"
+       },
+       {
+        "audience": "bulk",
+        "detail": "SPF ok; DKIM pass",
+        "requirement": "spf_and_dkim",
+        "rule_id": "bulk.yahoo.bulk.spf_and_dkim",
+        "status": "pass"
+       },
+       {
+        "audience": "bulk",
+        "detail": "",
+        "requirement": "unsub_days_max",
+        "rule_id": "bulk.yahoo.unsub_days_max",
+        "status": "not-dns-verifiable"
+       }
+      ],
+      "url": "https://senders.yahooinc.com/best-practices/",
+      "verdict": "incomplete"
+     }
+    ],
+    "sending_ips": [],
+    "strict_bulk": false
+   },
+   "domain": "shop.example",
+   "findings": [
+    {
+     "check": "bulk-sender",
+     "citation": "faultypacket-audit scope note",
+     "evidence": {
+      "provider": "google",
+      "requirement": "alignment",
+      "rule": "bulk.google.5k.alignment"
+     },
+     "level": "TOOL",
+     "message": "google: 'alignment' (applies to senders of 5,000+ messages a day) cannot be checked from DNS; check your sending platform or postmaster data (source: https://support.google.com/a/answer/81126)",
+     "rule_id": "bulk.not_dns_verifiable",
+     "rules_version": "2026.10.29.3",
+     "severity": "info",
+     "url": ""
+    },
+    {
+     "check": "bulk-sender",
+     "citation": "faultypacket-audit scope note",
+     "evidence": {
+      "provider": "google",
+      "requirement": "one_click_unsub",
+      "rule": "bulk.google.5k.one_click_unsub"
+     },
+     "level": "TOOL",
+     "message": "google: 'one_click_unsub' (applies to senders of 5,000+ messages a day) cannot be checked from DNS; check your sending platform or postmaster data (source: https://support.google.com/a/answer/81126)",
+     "rule_id": "bulk.not_dns_verifiable",
+     "rules_version": "2026.10.29.3",
+     "severity": "info",
+     "url": ""
+    },
+    {
+     "check": "bulk-sender",
+     "citation": "faultypacket-audit scope note",
+     "evidence": {
+      "provider": "google",
+      "requirement": "fcrdns",
+      "rule": "bulk.google.all.fcrdns"
+     },
+     "level": "TOOL",
+     "message": "google: 'fcrdns' not verified: no sending IP given; needs sending IPs (--sending-ip)",
+     "rule_id": "bulk.needs_input",
+     "rules_version": "2026.10.29.3",
+     "severity": "info",
+     "url": ""
+    },
+    {
+     "check": "bulk-sender",
+     "citation": "faultypacket-audit scope note",
+     "evidence": {
+      "provider": "google",
+      "requirement": "tls",
+      "rule": "bulk.google.all.tls"
+     },
+     "level": "TOOL",
+     "message": "google: 'tls' (applies to all senders) cannot be checked from DNS; check your sending platform or postmaster data (source: https://support.google.com/a/answer/81126)",
+     "rule_id": "bulk.not_dns_verifiable",
+     "rules_version": "2026.10.29.3",
+     "severity": "info",
+     "url": ""
+    },
+    {
+     "check": "bulk-sender",
+     "citation": "faultypacket-audit scope note",
+     "evidence": {
+      "provider": "google",
+      "requirement": "spam_rate_max",
+      "rule": "bulk.google.spam_rate_max"
+     },
+     "level": "TOOL",
+     "message": "google: 'spam_rate_max' (applies to senders of 5,000+ messages a day) cannot be checked from DNS; check your sending platform or postmaster data (source: https://support.google.com/a/answer/81126)",
+     "rule_id": "bulk.not_dns_verifiable",
+     "rules_version": "2026.10.29.3",
+     "severity": "info",
+     "url": ""
+    },
+    {
+     "check": "bulk-sender",
+     "citation": "faultypacket-audit scope note",
+     "evidence": {
+      "provider": "outlook",
+      "requirement": "alignment",
+      "rule": "bulk.outlook.5k.alignment"
+     },
+     "level": "TOOL",
+     "message": "outlook: 'alignment' (applies to senders of 5,000+ messages a day) cannot be checked from DNS; check your sending platform or postmaster data (source: https://postmaster.outlook.com/policies.aspx)",
+     "rule_id": "bulk.not_dns_verifiable",
+     "rules_version": "2026.10.29.3",
+     "severity": "info",
+     "url": ""
+    },
+    {
+     "check": "bulk-sender",
+     "citation": "faultypacket-audit scope note",
+     "evidence": {
+      "provider": "outlook",
+      "requirement": "rdns",
+      "rule": "bulk.outlook.all.rdns"
+     },
+     "level": "TOOL",
+     "message": "outlook: 'rdns' not verified: no sending IP given; needs sending IPs (--sending-ip)",
+     "rule_id": "bulk.needs_input",
+     "rules_version": "2026.10.29.3",
+     "severity": "info",
+     "url": ""
+    },
+    {
+     "check": "bulk-sender",
+     "citation": "faultypacket-audit scope note",
+     "evidence": {
+      "provider": "yahoo",
+      "requirement": "fcrdns",
+      "rule": "bulk.yahoo.all.fcrdns"
+     },
+     "level": "TOOL",
+     "message": "yahoo: 'fcrdns' not verified: no sending IP given; needs sending IPs (--sending-ip)",
+     "rule_id": "bulk.needs_input",
+     "rules_version": "2026.10.29.3",
+     "severity": "info",
+     "url": ""
+    },
+    {
+     "check": "bulk-sender",
+     "citation": "faultypacket-audit scope note",
+     "evidence": {
+      "provider": "yahoo",
+      "requirement": "unsub_days_max",
+      "rule": "bulk.yahoo.unsub_days_max"
+     },
+     "level": "TOOL",
+     "message": "yahoo: 'unsub_days_max' (applies to bulk senders) cannot be checked from DNS; check your sending platform or postmaster data (source: https://senders.yahooinc.com/best-practices/)",
+     "rule_id": "bulk.not_dns_verifiable",
+     "rules_version": "2026.10.29.3",
+     "severity": "info",
+     "url": ""
+    }
+   ],
+   "status": "info"
+  }
+ ],
+ "domain": "shop.example",
+ "resolvers": [
+  "fake"
+ ],
+ "status": "warning",
+ "tool": "faultypacket-audit",
+ "version": "golden"
+}

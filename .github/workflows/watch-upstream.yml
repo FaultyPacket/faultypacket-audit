@@ -1,0 +1,33 @@
+name: watch-upstream
+on:
+  schedule: [{cron: "41 5 * * 1"}]
+  workflow_dispatch:
+permissions: {contents: write, issues: write}
+concurrency: {group: watch-upstream}
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: python maint/scripts/watch.py
+      - name: Open one issue per changed source (never edits code)
+        env: {GH_TOKEN: "${{ github.token }}"}
+        run: |
+          python - <<'PY'
+          import json, subprocess
+          c = json.load(open("maint/changes.json"))
+          for ch in c["changes"]:
+              body = f"Watched source changed: {ch['url']}\n\n{ch['note']}\n\n```diff\n{ch['diff'][:60000]}\n```\n\nReview against maint/rules.json. Close if not relevant."
+              subprocess.run(["gh","issue","create","--label","upstream-change","--title",f"Upstream change: {ch['id']}","--body",body], check=True)
+          if c["errors"]:
+              print("fetch errors (not alarming unless repeated):", c["errors"])
+          PY
+      - name: Persist watch state
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add maint/state
+          git diff --cached --quiet || git commit -m "chore: update watch state"
+          git push

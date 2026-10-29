@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "faultypacket-audit"
+dynamic = ["version"]
+description = "Cited mail and DNS security audit: SPF, DMARC (RFC 9989), DKIM, MTA-STS, TLS-RPT, DNSSEC, DANE, CAA, BIMI and mailbox-provider sender requirements"
+readme = "README.md"
+license = "AGPL-3.0-or-later"
+license-files = ["LICENSE", "NOTICE"]
+requires-python = ">=3.10"
+dependencies = ["dnspython>=2.6,<3", "publicsuffixlist>=1.0"]
+classifiers = ["Programming Language :: Python :: 3",
+               "Topic :: Communications :: Email", "Topic :: System :: Networking"]
+
+[project.urls]
+Homepage = "https://faultypacket.co.uk"
+
+[project.scripts]
+faultypacket-audit = "faultypacket_audit.cli:entry"
+
+[tool.setuptools.dynamic]
+version = {attr = "faultypacket_audit.__version__"}
+
+[tool.setuptools.packages.find]
+include = ["faultypacket_audit*"]
+
+[tool.setuptools.package-data]
+"faultypacket_audit.data" = ["rules.json"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

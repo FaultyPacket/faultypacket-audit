@@ -1,0 +1,1904 @@
+{
+ "schema": "faultypacket-rules/1",
+ "rules_version": "2026.10.29.3",
+ "note": "Every finding the tool emits references one of these rules. Provider (bulk-sender) rows are added only after reading the provider's live page; value, date and url are mandatory. RFC section numbers pinned against rfc-editor.org text on 2026-10-29.",
+ "rules": [
+  {
+   "id": "spf.lookup_limit",
+   "value": 10,
+   "level": "MUST",
+   "source": "RFC 7208 4.6.4",
+   "url": "https://www.rfc-editor.org/rfc/rfc7208#section-4.6.4",
+   "verified": "2026-10-29",
+   "check": "spf"
+  },
+  {
+   "id": "spf.void_limit",
+   "value": 2,
+   "level": "SHOULD",
+   "source": "RFC 7208 4.6.4",
+   "url": "https://www.rfc-editor.org/rfc/rfc7208#section-4.6.4",
+   "verified": "2026-10-29",
+   "check": "spf"
+  },
+  {
+   "id": "spf.mx_limit",
+   "value": 10,
+   "level": "MUST",
+   "source": "RFC 7208 4.6.4",
+   "url": "https://www.rfc-editor.org/rfc/rfc7208#section-4.6.4",
+   "verified": "2026-10-29",
+   "check": "spf"
+  },
+  {
+   "id": "spf.ptr_limit",
+   "value": 10,
+   "level": "MUST",
+   "source": "RFC 7208 4.6.4",
+   "url": "https://www.rfc-editor.org/rfc/rfc7208#section-4.6.4",
+   "verified": "2026-10-29",
+   "check": "spf"
+  },
+  {
+   "id": "dkim.min_rsa_bits",
+   "value": 1024,
+   "level": "MUST",
+   "source": "RFC 8301 3.2",
+   "url": "https://www.rfc-editor.org/rfc/rfc8301#section-3.2",
+   "verified": "2026-10-29",
+   "check": "dkim"
+  },
+  {
+   "id": "dkim.recommended_rsa_bits",
+   "value": 2048,
+   "level": "SHOULD",
+   "source": "RFC 8301 3.2",
+   "url": "https://www.rfc-editor.org/rfc/rfc8301#section-3.2",
+   "verified": "2026-10-29",
+   "check": "dkim"
+  },
+  {
+   "id": "dkim.revoked_empty_p",
+   "value": "p= empty means revoked",
+   "level": "MUST",
+   "source": "RFC 6376 3.6.1",
+   "url": "https://www.rfc-editor.org/rfc/rfc6376#section-3.6.1",
+   "verified": "2026-10-29",
+   "check": "dkim"
+  },
+  {
+   "id": "mtasts.max_age_max",
+   "value": 31557600,
+   "level": "MUST",
+   "source": "RFC 8461 3.2",
+   "url": "https://www.rfc-editor.org/rfc/rfc8461#section-3.2",
+   "verified": "2026-10-29",
+   "check": "mta-sts"
+  },
+  {
+   "id": "mtasts.policy_path",
+   "value": "/.well-known/mta-sts.txt",
+   "level": "MUST",
+   "source": "RFC 8461 3.3",
+   "url": "https://www.rfc-editor.org/rfc/rfc8461#section-3.3",
+   "verified": "2026-10-29",
+   "check": "mta-sts"
+  },
+  {
+   "id": "tlsrpt.record_prefix",
+   "value": "_smtp._tls",
+   "level": "MUST",
+   "source": "RFC 8460 3",
+   "url": "https://www.rfc-editor.org/rfc/rfc8460#section-3",
+   "verified": "2026-10-29",
+   "check": "tls-rpt"
+  },
+  {
+   "id": "dane.smtp_usage",
+   "value": [
+    2,
+    3
+   ],
+   "level": "SHOULD",
+   "source": "RFC 7672 3.1.3",
+   "url": "https://www.rfc-editor.org/rfc/rfc7672#section-3.1.3",
+   "verified": "2026-10-29",
+   "check": "dane"
+  },
+  {
+   "id": "mx.null_mx",
+   "value": "0 .",
+   "level": "MUST",
+   "source": "RFC 7505 3",
+   "url": "https://www.rfc-editor.org/rfc/rfc7505#section-3",
+   "verified": "2026-10-29",
+   "check": "mx"
+  },
+  {
+   "id": "caa.tags",
+   "value": [
+    "issue",
+    "issuewild",
+    "iodef"
+   ],
+   "level": "MUST",
+   "source": "RFC 8659 4.1",
+   "url": "https://www.rfc-editor.org/rfc/rfc8659#section-4.1",
+   "verified": "2026-10-29",
+   "check": "caa"
+  },
+  {
+   "id": "bimi.svg_profile",
+   "value": "SVG Tiny PS",
+   "level": "MUST",
+   "source": "draft-svg-tiny-ps-abrotman-12 2.1",
+   "url": "https://datatracker.ietf.org/doc/html/draft-svg-tiny-ps-abrotman-12#section-2.1",
+   "verified": "2026-10-29",
+   "check": "bimi"
+  },
+  {
+   "id": "spf.loop",
+   "check": "spf",
+   "value": "include/redirect loop (each lookup counts; evaluation ends in permerror)",
+   "level": "MUST",
+   "source": "RFC 7208 4.6.4",
+   "url": "https://www.rfc-editor.org/rfc/rfc7208#section-4.6.4",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "spf.duplicate",
+   "check": "spf",
+   "value": "same domain evaluated more than once wastes lookups",
+   "level": "SHOULD",
+   "source": "RFC 7208 4.6.4",
+   "url": "https://www.rfc-editor.org/rfc/rfc7208#section-4.6.4",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "spf.dns_error",
+   "check": "spf",
+   "value": "DNS lookup failed during SPF evaluation",
+   "level": "TOOL",
+   "source": "DNS resolution failure (temperror, RFC 7208 2.6.6)",
+   "url": "",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "spf.missing_record",
+   "check": "spf",
+   "value": "include/redirect target without an SPF record is permerror (RFC 7208 5.2, 6.1)",
+   "level": "MUST",
+   "source": "RFC 7208 5.2, 6.1",
+   "url": "https://www.rfc-editor.org/rfc/rfc7208#section-5.2",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "spf.no_record",
+   "check": "spf",
+   "value": "no SPF record: result none",
+   "level": "SHOULD",
+   "source": "RFC 7208 4.5",
+   "url": "https://www.rfc-editor.org/rfc/rfc7208#section-4.5",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "spf.multiple_records",
+   "check": "spf",
+   "value": "more than one SPF record is permerror",
+   "level": "MUST",
+   "source": "RFC 7208 4.5",
+   "url": "https://www.rfc-editor.org/rfc/rfc7208#section-4.5",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "spf.syntax",
+   "check": "spf",
+   "value": "invalid or unknown term (RFC 7208 4.6, 5, 7.1, 12)",
+   "level": "MUST",
+   "source": "RFC 7208 4.6",
+   "url": "https://www.rfc-editor.org/rfc/rfc7208#section-4.6",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "spf.duplicate_modifier",
+   "check": "spf",
+   "value": "redirect/exp at most once",
+   "level": "MUST",
+   "source": "RFC 7208 6",
+   "url": "https://www.rfc-editor.org/rfc/rfc7208#section-6",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "spf.macro",
+   "check": "spf",
+   "value": "macro: cost depends on the message, not resolved",
+   "level": "MAY",
+   "source": "RFC 7208 7",
+   "url": "https://www.rfc-editor.org/rfc/rfc7208#section-7",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "spf.ptr",
+   "check": "spf",
+   "value": "ptr SHOULD NOT be used",
+   "level": "SHOULD",
+   "source": "RFC 7208 5.5",
+   "url": "https://www.rfc-editor.org/rfc/rfc7208#section-5.5",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "spf.redirect_ignored",
+   "check": "spf",
+   "value": "redirect ignored when all is present",
+   "level": "MUST",
+   "source": "RFC 7208 6.1",
+   "url": "https://www.rfc-editor.org/rfc/rfc7208#section-6.1",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "spf.internal",
+   "check": "spf",
+   "value": "tool error while analysing SPF",
+   "level": "TOOL",
+   "source": "faultypacket-audit internal error",
+   "url": "",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "dmarc.version",
+   "check": "dmarc",
+   "value": "v=DMARC1 first, value case-sensitive",
+   "level": "MUST",
+   "source": "RFC 9989 4.7",
+   "url": "https://www.rfc-editor.org/rfc/rfc9989#section-4.7",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "dmarc.version_case",
+   "check": "dmarc",
+   "value": "'DMARC1' is case-sensitive; other case means no record",
+   "level": "MUST",
+   "source": "RFC 9989 4.7",
+   "url": "https://www.rfc-editor.org/rfc/rfc9989#section-4.7",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "dmarc.duplicate_tag",
+   "check": "dmarc",
+   "value": "tag repeated",
+   "level": "SHOULD",
+   "source": "RFC 9989 4.7",
+   "url": "https://www.rfc-editor.org/rfc/rfc9989#section-4.7",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "dmarc.historic_tag",
+   "check": "dmarc",
+   "value": "pct/rf/ri are historic; ignored",
+   "level": "MAY",
+   "source": "RFC 9989 9.3",
+   "url": "https://www.rfc-editor.org/rfc/rfc9989#section-9.3",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "dmarc.historic_pct",
+   "check": "dmarc",
+   "value": "pct below 100 no longer samples; t=y replaces pct=0",
+   "level": "SHOULD",
+   "source": "RFC 9989 9.3, A.6",
+   "url": "https://www.rfc-editor.org/rfc/rfc9989#section-9.3",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "dmarc.unknown_tag",
+   "check": "dmarc",
+   "value": "unknown tags MUST be ignored",
+   "level": "MUST",
+   "source": "RFC 9989 4.7",
+   "url": "https://www.rfc-editor.org/rfc/rfc9989#section-4.7",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "dmarc.no_p",
+   "check": "dmarc",
+   "value": "p RECOMMENDED; missing p treated as none",
+   "level": "SHOULD",
+   "source": "RFC 9989 4.7",
+   "url": "https://www.rfc-editor.org/rfc/rfc9989#section-4.7",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "dmarc.bad_p",
+   "check": "dmarc",
+   "value": "invalid p: p=none if rua valid, else no DMARC",
+   "level": "MUST",
+   "source": "RFC 9989 4.7, 4.10.1",
+   "url": "https://www.rfc-editor.org/rfc/rfc9989#section-4.10.1",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "dmarc.bad_sp",
+   "check": "dmarc",
+   "value": "sp none|quarantine|reject",
+   "level": "MUST",
+   "source": "RFC 9989 4.7",
+   "url": "https://www.rfc-editor.org/rfc/rfc9989#section-4.7",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "dmarc.bad_np",
+   "check": "dmarc",
+   "value": "np none|quarantine|reject",
+   "level": "MUST",
+   "source": "RFC 9989 4.7",
+   "url": "https://www.rfc-editor.org/rfc/rfc9989#section-4.7",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "dmarc.bad_adkim",
+   "check": "dmarc",
+   "value": "adkim r|s",
+   "level": "MUST",
+   "source": "RFC 9989 4.7",
+   "url": "https://www.rfc-editor.org/rfc/rfc9989#section-4.7",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "dmarc.bad_aspf",
+   "check": "dmarc",
+   "value": "aspf r|s",
+   "level": "MUST",
+   "source": "RFC 9989 4.7",
+   "url": "https://www.rfc-editor.org/rfc/rfc9989#section-4.7",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "dmarc.bad_psd",
+   "check": "dmarc",
+   "value": "psd y|n|u",
+   "level": "MUST",
+   "source": "RFC 9989 4.7",
+   "url": "https://www.rfc-editor.org/rfc/rfc9989#section-4.7",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "dmarc.bad_t",
+   "check": "dmarc",
+   "value": "t y|n",
+   "level": "MUST",
+   "source": "RFC 9989 4.7",
+   "url": "https://www.rfc-editor.org/rfc/rfc9989#section-4.7",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "dmarc.test_mode",
+   "check": "dmarc",
+   "value": "t=y: one level below stated policy",
+   "level": "MAY",
+   "source": "RFC 9989 4.7",
+   "url": "https://www.rfc-editor.org/rfc/rfc9989#section-4.7",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "dmarc.bad_fo",
+   "check": "dmarc",
+   "value": "fo ABNF",
+   "level": "MUST",
+   "source": "RFC 9989 4.8",
+   "url": "https://www.rfc-editor.org/rfc/rfc9989#section-4.8",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "dmarc.fo_without_ruf",
+   "check": "dmarc",
+   "value": "fo needs ruf",
+   "level": "MAY",
+   "source": "RFC 9989 4.7",
+   "url": "https://www.rfc-editor.org/rfc/rfc9989#section-4.7",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "dmarc.empty_rua",
+   "check": "dmarc",
+   "value": "rua empty",
+   "level": "MUST",
+   "source": "RFC 9989 4.7",
+   "url": "https://www.rfc-editor.org/rfc/rfc9989#section-4.7",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "dmarc.empty_ruf",
+   "check": "dmarc",
+   "value": "ruf empty",
+   "level": "MUST",
+   "source": "RFC 9989 4.7",
+   "url": "https://www.rfc-editor.org/rfc/rfc9989#section-4.7",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "dmarc.scheme_rua",
+   "check": "dmarc",
+   "value": "mailto is the scheme receivers MUST support",
+   "level": "SHOULD",
+   "source": "RFC 9989 4.6",
+   "url": "https://www.rfc-editor.org/rfc/rfc9989#section-4.6",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "dmarc.scheme_ruf",
+   "check": "dmarc",
+   "value": "mailto is the scheme receivers MUST support",
+   "level": "SHOULD",
+   "source": "RFC 9989 4.6",
+   "url": "https://www.rfc-editor.org/rfc/rfc9989#section-4.6",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "dmarc.bad_uri_rua",
+   "check": "dmarc",
+   "value": "URI without domain",
+   "level": "MUST",
+   "source": "RFC 9989 4.6",
+   "url": "https://www.rfc-editor.org/rfc/rfc9989#section-4.6",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "dmarc.bad_uri_ruf",
+   "check": "dmarc",
+   "value": "URI without domain",
+   "level": "MUST",
+   "source": "RFC 9989 4.6",
+   "url": "https://www.rfc-editor.org/rfc/rfc9989#section-4.6",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "dmarc.obsolete_size",
+   "check": "dmarc",
+   "value": "!size is obs-dmarc-report-size",
+   "level": "MAY",
+   "source": "RFC 9989 4.8",
+   "url": "https://www.rfc-editor.org/rfc/rfc9989#section-4.8",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "dmarc.no_rua",
+   "check": "dmarc",
+   "value": "no aggregate reports requested",
+   "level": "SHOULD",
+   "source": "RFC 9989 4.7",
+   "url": "https://www.rfc-editor.org/rfc/rfc9989#section-4.7",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "dmarc.p_none",
+   "check": "dmarc",
+   "value": "monitoring only",
+   "level": "MAY",
+   "source": "RFC 9989 4.7",
+   "url": "https://www.rfc-editor.org/rfc/rfc9989#section-4.7",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "dmarc.org_method_differs",
+   "check": "dmarc",
+   "value": "Tree Walk vs legacy PSL Organizational Domain differ",
+   "level": "MAY",
+   "source": "RFC 9989 4.10.2, C.3",
+   "url": "https://www.rfc-editor.org/rfc/rfc9989#section-4.10.2",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "dmarc.parent_psd_without_psd_y",
+   "check": "dmarc",
+   "value": "parent PSD record lacks psd=y; add psd=n",
+   "level": "SHOULD",
+   "source": "RFC 9989 5.2, 11.8",
+   "url": "https://www.rfc-editor.org/rfc/rfc9989#section-11.8",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "dmarc.multiple_records",
+   "check": "dmarc",
+   "value": "multiple records at a name are discarded",
+   "level": "MUST",
+   "source": "RFC 9989 4.10",
+   "url": "https://www.rfc-editor.org/rfc/rfc9989#section-4.10",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "dmarc.no_record_sub",
+   "check": "dmarc",
+   "value": "subdomain falls back to Organizational Domain record",
+   "level": "MAY",
+   "source": "RFC 9989 4.10.1",
+   "url": "https://www.rfc-editor.org/rfc/rfc9989#section-4.10.1",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "dmarc.psd_policy",
+   "check": "dmarc",
+   "value": "PSD record applies",
+   "level": "MAY",
+   "source": "RFC 9989 4.10.1",
+   "url": "https://www.rfc-editor.org/rfc/rfc9989#section-4.10.1",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "dmarc.no_record",
+   "check": "dmarc",
+   "value": "no DMARC record found: DMARC does not apply",
+   "level": "SHOULD",
+   "source": "RFC 9989 4.10.1",
+   "url": "https://www.rfc-editor.org/rfc/rfc9989#section-4.10.1",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "dmarc.unauthorised_rua",
+   "check": "dmarc",
+   "value": "<domain>._report._dmarc.<host> TXT v=DMARC1",
+   "level": "MUST",
+   "source": "RFC 9990 4",
+   "url": "https://www.rfc-editor.org/rfc/rfc9990#section-4",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "dmarc.verify_error_rua",
+   "check": "dmarc",
+   "value": "DNS error while verifying external destination",
+   "level": "TOOL",
+   "source": "RFC 9990 4 step 5 (temporary DNS error)",
+   "url": "",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "dmarc.verify_too_long_rua",
+   "check": "dmarc",
+   "value": "constructed name exceeds DNS limits",
+   "level": "MUST",
+   "source": "RFC 9990 4 step 4",
+   "url": "https://www.rfc-editor.org/rfc/rfc9990#section-4",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "dmarc.unauthorised_ruf",
+   "check": "dmarc",
+   "value": "<domain>._report._dmarc.<host> TXT v=DMARC1",
+   "level": "MUST",
+   "source": "RFC 9991 5; RFC 9990 4",
+   "url": "https://www.rfc-editor.org/rfc/rfc9991#section-5",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "dmarc.verify_error_ruf",
+   "check": "dmarc",
+   "value": "DNS error while verifying external destination",
+   "level": "TOOL",
+   "source": "RFC 9991 5; RFC 9990 4 step 5 (temporary DNS error)",
+   "url": "",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "dmarc.verify_too_long_ruf",
+   "check": "dmarc",
+   "value": "constructed name exceeds DNS limits",
+   "level": "MUST",
+   "source": "RFC 9991 5; RFC 9990 4 step 4",
+   "url": "https://www.rfc-editor.org/rfc/rfc9991#section-5",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "dmarc.dns_error",
+   "check": "dmarc",
+   "value": "DNS lookup failed",
+   "level": "TOOL",
+   "source": "DNS resolution failure",
+   "url": "",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "dmarc.internal",
+   "check": "dmarc",
+   "value": "tool error",
+   "level": "TOOL",
+   "source": "faultypacket-audit internal error",
+   "url": "",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "dmarc.historic_tags",
+   "check": "dmarc",
+   "value": [
+    "pct",
+    "rf",
+    "ri"
+   ],
+   "level": "MUST",
+   "source": "RFC 9989 9.3",
+   "url": "https://www.rfc-editor.org/rfc/rfc9989#section-9.3",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "dmarc.active_tags",
+   "check": "dmarc",
+   "value": [
+    "adkim",
+    "aspf",
+    "fo",
+    "np",
+    "p",
+    "psd",
+    "rua",
+    "ruf",
+    "sp",
+    "t",
+    "v"
+   ],
+   "level": "MUST",
+   "source": "RFC 9989 9.3",
+   "url": "https://www.rfc-editor.org/rfc/rfc9989#section-9.3",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "dmarc.valid_p",
+   "check": "dmarc",
+   "value": [
+    "none",
+    "quarantine",
+    "reject"
+   ],
+   "level": "MUST",
+   "source": "RFC 9989 4.7",
+   "url": "https://www.rfc-editor.org/rfc/rfc9989#section-4.7",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "dmarc.tree_walk_max_queries",
+   "check": "dmarc",
+   "value": 8,
+   "level": "MUST",
+   "source": "RFC 9989 4.10",
+   "url": "https://www.rfc-editor.org/rfc/rfc9989#section-4.10",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "dmarc.external_rua_auth",
+   "check": "dmarc",
+   "value": "<domain>._report._dmarc.<host> TXT v=DMARC1",
+   "level": "MUST",
+   "source": "RFC 9990 4 (RFC 9989 11.6 as corrected by verified erratum 9150)",
+   "url": "https://www.rfc-editor.org/rfc/rfc9990#section-4",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "bulk.google.all.spf_or_dkim",
+   "value": true,
+   "level": "PROVIDER",
+   "source": "Google sender guidelines (all senders, from 2024-02-01)",
+   "url": "https://support.google.com/a/answer/81126",
+   "verified": "2026-10-29",
+   "check": "bulk-sender",
+   "dns_verifiable": true,
+   "provider": "google",
+   "audience": "all",
+   "requirement": "spf_or_dkim",
+   "effective": "2024-02-01",
+   "needs": "DKIM selectors (--dkim-selector) for the DKIM half"
+  },
+  {
+   "id": "bulk.google.all.fcrdns",
+   "value": true,
+   "level": "PROVIDER",
+   "source": "Google sender guidelines: valid forward+reverse DNS",
+   "url": "https://support.google.com/a/answer/81126",
+   "verified": "2026-10-29",
+   "check": "bulk-sender",
+   "dns_verifiable": true,
+   "provider": "google",
+   "audience": "all",
+   "requirement": "fcrdns",
+   "effective": "2024-02-01",
+   "needs": "sending IPs (--sending-ip)"
+  },
+  {
+   "id": "bulk.google.all.tls",
+   "value": true,
+   "level": "PROVIDER",
+   "source": "Google sender guidelines: TLS",
+   "url": "https://support.google.com/a/answer/81126",
+   "verified": "2026-10-29",
+   "check": "bulk-sender",
+   "dns_verifiable": false,
+   "provider": "google",
+   "audience": "all",
+   "requirement": "tls",
+   "effective": "2024-02-01",
+   "note": "TLS is negotiated on SMTP, not visible in DNS (corrected from rules 2026.10.29.1)"
+  },
+  {
+   "id": "bulk.google.5k.spf_and_dkim",
+   "value": true,
+   "level": "PROVIDER",
+   "source": "Google >5,000/day",
+   "url": "https://support.google.com/a/answer/81126",
+   "verified": "2026-10-29",
+   "check": "bulk-sender",
+   "dns_verifiable": true,
+   "provider": "google",
+   "audience": "5k",
+   "requirement": "spf_and_dkim",
+   "effective": "2024-02-01",
+   "needs": "DKIM selectors (--dkim-selector) for the DKIM half"
+  },
+  {
+   "id": "bulk.google.5k.dmarc_min",
+   "value": "none",
+   "level": "PROVIDER",
+   "source": "Google >5,000/day: DMARC, p=none allowed",
+   "url": "https://support.google.com/a/answer/81126",
+   "verified": "2026-10-29",
+   "check": "bulk-sender",
+   "dns_verifiable": true,
+   "provider": "google",
+   "audience": "5k",
+   "requirement": "dmarc_min",
+   "effective": "2024-02-01"
+  },
+  {
+   "id": "bulk.google.5k.alignment",
+   "value": "spf_or_dkim",
+   "level": "PROVIDER",
+   "source": "Google >5,000/day",
+   "url": "https://support.google.com/a/answer/81126",
+   "verified": "2026-10-29",
+   "check": "bulk-sender",
+   "dns_verifiable": false,
+   "provider": "google",
+   "audience": "5k",
+   "requirement": "alignment",
+   "effective": "2024-02-01"
+  },
+  {
+   "id": "bulk.google.5k.one_click_unsub",
+   "value": "RFC 8058",
+   "level": "PROVIDER",
+   "source": "Google >5,000/day",
+   "url": "https://support.google.com/a/answer/81126",
+   "verified": "2026-10-29",
+   "check": "bulk-sender",
+   "dns_verifiable": false,
+   "provider": "google",
+   "audience": "5k",
+   "requirement": "one_click_unsub",
+   "effective": "2024-02-01"
+  },
+  {
+   "id": "bulk.google.spam_rate_max",
+   "value": 0.003,
+   "level": "PROVIDER",
+   "source": "Google: below 0.3%",
+   "url": "https://support.google.com/a/answer/81126",
+   "verified": "2026-10-29",
+   "check": "bulk-sender",
+   "dns_verifiable": false,
+   "provider": "google",
+   "audience": "5k",
+   "requirement": "spam_rate_max",
+   "effective": "2024-02-01"
+  },
+  {
+   "id": "bulk.yahoo.bulk.spf_and_dkim",
+   "value": true,
+   "level": "PROVIDER",
+   "source": "Yahoo bulk senders",
+   "url": "https://senders.yahooinc.com/best-practices/",
+   "verified": "2026-10-29",
+   "check": "bulk-sender",
+   "dns_verifiable": true,
+   "provider": "yahoo",
+   "audience": "bulk",
+   "requirement": "spf_and_dkim",
+   "effective": "2024-02-01",
+   "needs": "DKIM selectors (--dkim-selector) for the DKIM half"
+  },
+  {
+   "id": "bulk.yahoo.bulk.dmarc_min",
+   "value": "none",
+   "level": "PROVIDER",
+   "source": "Yahoo bulk: DMARC at least p=none, must pass",
+   "url": "https://senders.yahooinc.com/best-practices/",
+   "verified": "2026-10-29",
+   "check": "bulk-sender",
+   "dns_verifiable": true,
+   "provider": "yahoo",
+   "audience": "bulk",
+   "requirement": "dmarc_min",
+   "effective": "2024-02-01"
+  },
+  {
+   "id": "bulk.yahoo.all.fcrdns",
+   "value": true,
+   "level": "PROVIDER",
+   "source": "Yahoo all senders",
+   "url": "https://senders.yahooinc.com/best-practices/",
+   "verified": "2026-10-29",
+   "check": "bulk-sender",
+   "dns_verifiable": true,
+   "provider": "yahoo",
+   "audience": "all",
+   "requirement": "fcrdns",
+   "effective": "2024-02-01",
+   "needs": "sending IPs (--sending-ip)"
+  },
+  {
+   "id": "bulk.yahoo.unsub_days_max",
+   "value": 2,
+   "level": "PROVIDER",
+   "source": "Yahoo: honour unsubscribes within 2 days",
+   "url": "https://senders.yahooinc.com/best-practices/",
+   "verified": "2026-10-29",
+   "check": "bulk-sender",
+   "dns_verifiable": false,
+   "provider": "yahoo",
+   "audience": "bulk",
+   "requirement": "unsub_days_max",
+   "effective": "2024-02-01"
+  },
+  {
+   "id": "bulk.outlook.5k.spf_and_dkim",
+   "value": true,
+   "level": "PROVIDER",
+   "source": "Outlook.com high-volume, from 2025-05-05",
+   "url": "https://postmaster.outlook.com/policies.aspx",
+   "verified": "2026-10-29",
+   "check": "bulk-sender",
+   "dns_verifiable": true,
+   "provider": "outlook",
+   "audience": "5k",
+   "requirement": "spf_and_dkim",
+   "effective": "2025-05-05",
+   "needs": "DKIM selectors (--dkim-selector) for the DKIM half"
+  },
+  {
+   "id": "bulk.outlook.5k.dmarc_min",
+   "value": "none",
+   "level": "PROVIDER",
+   "source": "Outlook.com: at least p=none, aligned",
+   "url": "https://postmaster.outlook.com/policies.aspx",
+   "verified": "2026-10-29",
+   "check": "bulk-sender",
+   "dns_verifiable": true,
+   "provider": "outlook",
+   "audience": "5k",
+   "requirement": "dmarc_min",
+   "effective": "2025-05-05"
+  },
+  {
+   "id": "bulk.outlook.all.rdns",
+   "value": true,
+   "level": "PROVIDER",
+   "source": "Outlook.com policies: valid reverse DNS",
+   "url": "https://postmaster.outlook.com/policies.aspx",
+   "verified": "2026-10-29",
+   "check": "bulk-sender",
+   "dns_verifiable": true,
+   "provider": "outlook",
+   "audience": "all",
+   "requirement": "rdns",
+   "effective": "2025-05-05",
+   "needs": "sending IPs (--sending-ip)"
+  },
+  {
+   "id": "bulk.not_dns_verifiable",
+   "check": "bulk-sender",
+   "value": "requirement cannot be verified from DNS",
+   "level": "TOOL",
+   "source": "faultypacket-audit scope note",
+   "url": "",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "bulk.needs_input",
+   "check": "bulk-sender",
+   "value": "requirement needs extra input to verify",
+   "level": "TOOL",
+   "source": "faultypacket-audit scope note",
+   "url": "",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "dkim.no_key",
+   "check": "bulk-sender",
+   "value": "no DKIM key at <selector>._domainkey.<domain>",
+   "level": "MUST",
+   "source": "RFC 6376 3.6.2.1",
+   "url": "https://www.rfc-editor.org/rfc/rfc6376#section-3.6.2.1",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "bulk.internal",
+   "check": "bulk-sender",
+   "value": "tool error",
+   "level": "TOOL",
+   "source": "faultypacket-audit internal error",
+   "url": "",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "core.internal",
+   "check": "core",
+   "value": "tool error",
+   "level": "TOOL",
+   "source": "faultypacket-audit internal error",
+   "url": "",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "bulk.outlook.5k.alignment",
+   "value": "spf_or_dkim",
+   "level": "PROVIDER",
+   "source": "Outlook.com high-volume: DMARC alignment (same page as bulk.outlook.5k.dmarc_min)",
+   "url": "https://postmaster.outlook.com/policies.aspx",
+   "verified": "2026-10-29",
+   "check": "bulk-sender",
+   "dns_verifiable": false,
+   "provider": "outlook",
+   "audience": "5k",
+   "requirement": "alignment",
+   "effective": "2025-05-05"
+  },
+  {
+   "id": "dmarc.syntax",
+   "check": "dmarc",
+   "value": "tag-value pairs per the DMARC ABNF",
+   "level": "MUST",
+   "source": "RFC 9989 4.8",
+   "url": "https://www.rfc-editor.org/rfc/rfc9989#section-4.8",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "dkim.common_selectors",
+   "value": [
+    "default",
+    "google",
+    "selector1",
+    "selector2",
+    "k1",
+    "k2",
+    "k3",
+    "s1",
+    "s2",
+    "dkim",
+    "mail",
+    "smtp",
+    "mandrill",
+    "mxvault",
+    "everlytickey1",
+    "everlytickey2",
+    "zendesk1",
+    "zendesk2",
+    "sig1",
+    "pm",
+    "mailjet",
+    "sendgrid",
+    "s1024",
+    "s2048",
+    "fm1",
+    "fm2",
+    "fm3",
+    "protonmail",
+    "protonmail2",
+    "protonmail3",
+    "mailo",
+    "key1",
+    "key2",
+    "dk",
+    "em"
+   ],
+   "level": "TOOL",
+   "source": "faultypacket-audit selector probe list (selectors cannot be enumerated: RFC 6376 3.1)",
+   "url": "",
+   "verified": "2026-10-29",
+   "check": "dkim"
+  },
+  {
+   "id": "dkim.bad_version",
+   "value": "DKIM1",
+   "level": "MUST",
+   "source": "RFC 6376 3.6.1",
+   "url": "https://www.rfc-editor.org/rfc/rfc6376#section-3.6.1",
+   "verified": "2026-10-29",
+   "check": "dkim"
+  },
+  {
+   "id": "dkim.syntax",
+   "value": true,
+   "level": "MUST",
+   "source": "RFC 6376 3.2, 3.6.2.2",
+   "url": "https://www.rfc-editor.org/rfc/rfc6376#section-3.2",
+   "verified": "2026-10-29",
+   "check": "dkim"
+  },
+  {
+   "id": "dkim.no_p",
+   "value": true,
+   "level": "MUST",
+   "source": "RFC 6376 3.6.1 (p= REQUIRED)",
+   "url": "https://www.rfc-editor.org/rfc/rfc6376#section-3.6.1",
+   "verified": "2026-10-29",
+   "check": "dkim"
+  },
+  {
+   "id": "dkim.testing",
+   "value": "y",
+   "level": "MUST",
+   "source": "RFC 6376 3.6.1 (t=y)",
+   "url": "https://www.rfc-editor.org/rfc/rfc6376#section-3.6.1",
+   "verified": "2026-10-29",
+   "check": "dkim"
+  },
+  {
+   "id": "dkim.sha1_only",
+   "value": "rsa-sha1 MUST NOT be used for signing or verifying",
+   "level": "MUST",
+   "source": "RFC 8301 3.1",
+   "url": "https://www.rfc-editor.org/rfc/rfc8301#section-3.1",
+   "verified": "2026-10-29",
+   "check": "dkim"
+  },
+  {
+   "id": "dkim.ed25519_key",
+   "value": 32,
+   "level": "MUST",
+   "source": "RFC 8463 4.2",
+   "url": "https://www.rfc-editor.org/rfc/rfc8463#section-4.2",
+   "verified": "2026-10-29",
+   "check": "dkim"
+  },
+  {
+   "id": "dkim.unknown_k",
+   "value": [
+    "rsa",
+    "ed25519"
+   ],
+   "level": "MUST",
+   "source": "RFC 6376 3.6.1; RFC 8463 8.1",
+   "url": "https://www.rfc-editor.org/rfc/rfc6376#section-3.6.1",
+   "verified": "2026-10-29",
+   "check": "dkim"
+  },
+  {
+   "id": "dkim.bad_key",
+   "value": true,
+   "level": "MUST",
+   "source": "RFC 6376 3.6.1 (p= base64 public key)",
+   "url": "https://www.rfc-editor.org/rfc/rfc6376#section-3.6.1",
+   "verified": "2026-10-29",
+   "check": "dkim"
+  },
+  {
+   "id": "dkim.dns_error",
+   "value": true,
+   "level": "TOOL",
+   "source": "DNS resolution failure",
+   "url": "",
+   "verified": "2026-10-29",
+   "check": "dkim"
+  },
+  {
+   "id": "dkim.not_found",
+   "value": true,
+   "level": "TOOL",
+   "source": "faultypacket-audit scope note (RFC 6376 3.1: selectors are not discoverable)",
+   "url": "",
+   "verified": "2026-10-29",
+   "check": "dkim"
+  },
+  {
+   "id": "mx.dns_error",
+   "value": true,
+   "level": "TOOL",
+   "source": "DNS resolution failure",
+   "url": "",
+   "verified": "2026-10-29",
+   "check": "mx"
+  },
+  {
+   "id": "mx.none",
+   "value": true,
+   "level": "MUST",
+   "source": "RFC 5321 5.1 (implicit MX)",
+   "url": "https://www.rfc-editor.org/rfc/rfc5321#section-5.1",
+   "verified": "2026-10-29",
+   "check": "mx"
+  },
+  {
+   "id": "mx.ip_literal",
+   "value": true,
+   "level": "MUST",
+   "source": "RFC 5321 5.1; RFC 1035 3.3.9",
+   "url": "https://www.rfc-editor.org/rfc/rfc5321#section-5.1",
+   "verified": "2026-10-29",
+   "check": "mx"
+  },
+  {
+   "id": "mx.cname",
+   "value": true,
+   "level": "MUST",
+   "source": "RFC 2181 10.3",
+   "url": "https://www.rfc-editor.org/rfc/rfc2181#section-10.3",
+   "verified": "2026-10-29",
+   "check": "mx"
+  },
+  {
+   "id": "mx.unresolvable",
+   "value": true,
+   "level": "MUST",
+   "source": "RFC 5321 5.1",
+   "url": "https://www.rfc-editor.org/rfc/rfc5321#section-5.1",
+   "verified": "2026-10-29",
+   "check": "mx"
+  },
+  {
+   "id": "mx.spf_mx_limit",
+   "value": 10,
+   "level": "MUST",
+   "source": "RFC 7208 4.6.4",
+   "url": "https://www.rfc-editor.org/rfc/rfc7208#section-4.6.4",
+   "verified": "2026-10-29",
+   "check": "mx"
+  },
+  {
+   "id": "caa.dns_error",
+   "value": true,
+   "level": "SHOULD",
+   "source": "RFC 8659 3; RFC 8659 6.2",
+   "url": "https://www.rfc-editor.org/rfc/rfc8659#section-3",
+   "verified": "2026-10-29",
+   "check": "caa"
+  },
+  {
+   "id": "caa.absent",
+   "value": true,
+   "level": "MAY",
+   "source": "RFC 8659 3",
+   "url": "https://www.rfc-editor.org/rfc/rfc8659#section-3",
+   "verified": "2026-10-29",
+   "check": "caa"
+  },
+  {
+   "id": "caa.syntax",
+   "value": true,
+   "level": "MUST",
+   "source": "RFC 8659 4.1",
+   "url": "https://www.rfc-editor.org/rfc/rfc8659#section-4.1",
+   "verified": "2026-10-29",
+   "check": "caa"
+  },
+  {
+   "id": "caa.critical_unknown",
+   "value": true,
+   "level": "MUST",
+   "source": "RFC 8659 4.5",
+   "url": "https://www.rfc-editor.org/rfc/rfc8659#section-4.5",
+   "verified": "2026-10-29",
+   "check": "caa"
+  },
+  {
+   "id": "caa.iodef",
+   "value": true,
+   "level": "MUST",
+   "source": "RFC 8659 4.4",
+   "url": "https://www.rfc-editor.org/rfc/rfc8659#section-4.4",
+   "verified": "2026-10-29",
+   "check": "caa"
+  },
+  {
+   "id": "caa.no_issue",
+   "value": true,
+   "level": "MAY",
+   "source": "RFC 8659 4.2, 4.3",
+   "url": "https://www.rfc-editor.org/rfc/rfc8659#section-4.2",
+   "verified": "2026-10-29",
+   "check": "caa"
+  },
+  {
+   "id": "caa.inherited",
+   "value": true,
+   "level": "MAY",
+   "source": "RFC 8659 3",
+   "url": "https://www.rfc-editor.org/rfc/rfc8659#section-3",
+   "verified": "2026-10-29",
+   "check": "caa"
+  },
+  {
+   "id": "rdns.fcrdns",
+   "value": true,
+   "level": "SHOULD",
+   "source": "RFC 1912 2.1",
+   "url": "https://www.rfc-editor.org/rfc/rfc1912#section-2.1",
+   "verified": "2026-10-29",
+   "check": "rdns"
+  },
+  {
+   "id": "rdns.dns_error",
+   "value": true,
+   "level": "TOOL",
+   "source": "DNS resolution failure",
+   "url": "",
+   "verified": "2026-10-29",
+   "check": "rdns"
+  },
+  {
+   "id": "rdns.no_targets",
+   "value": true,
+   "level": "TOOL",
+   "source": "faultypacket-audit scope note",
+   "url": "",
+   "verified": "2026-10-29",
+   "check": "rdns"
+  },
+  {
+   "id": "dnssec.dns_error",
+   "value": true,
+   "level": "TOOL",
+   "source": "DNS resolution failure",
+   "url": "",
+   "verified": "2026-10-29",
+   "check": "dnssec"
+  },
+  {
+   "id": "dnssec.unsigned",
+   "value": true,
+   "level": "MAY",
+   "source": "RFC 4033 2; RFC 4034 5 (DS)",
+   "url": "https://www.rfc-editor.org/rfc/rfc4034#section-5",
+   "verified": "2026-10-29",
+   "check": "dnssec"
+  },
+  {
+   "id": "dnssec.bogus",
+   "value": true,
+   "level": "MUST",
+   "source": "RFC 4035 5.5",
+   "url": "https://www.rfc-editor.org/rfc/rfc4035#section-5.5",
+   "verified": "2026-10-29",
+   "check": "dnssec"
+  },
+  {
+   "id": "dnssec.not_validated",
+   "value": true,
+   "level": "MUST",
+   "source": "RFC 4035 3.2.3 (AD bit)",
+   "url": "https://www.rfc-editor.org/rfc/rfc4035#section-3.2.3",
+   "verified": "2026-10-29",
+   "check": "dnssec"
+  },
+  {
+   "id": "dnssec.not_tested",
+   "value": true,
+   "level": "TOOL",
+   "source": "faultypacket-audit scope note (AD needs a validating resolver, RFC 4035 3.2.3)",
+   "url": "",
+   "verified": "2026-10-29",
+   "check": "dnssec"
+  },
+  {
+   "id": "dane.dns_error",
+   "value": true,
+   "level": "TOOL",
+   "source": "DNS resolution failure",
+   "url": "",
+   "verified": "2026-10-29",
+   "check": "dane"
+  },
+  {
+   "id": "dane.syntax",
+   "value": true,
+   "level": "MUST",
+   "source": "RFC 6698 2.1",
+   "url": "https://www.rfc-editor.org/rfc/rfc6698#section-2.1",
+   "verified": "2026-10-29",
+   "check": "dane"
+  },
+  {
+   "id": "dane.dnssec_required",
+   "value": true,
+   "level": "MUST",
+   "source": "RFC 7672 2.2",
+   "url": "https://www.rfc-editor.org/rfc/rfc7672#section-2.2",
+   "verified": "2026-10-29",
+   "check": "dane"
+  },
+  {
+   "id": "dane.absent",
+   "value": true,
+   "level": "MAY",
+   "source": "RFC 7672 2.2.3",
+   "url": "https://www.rfc-editor.org/rfc/rfc7672#section-2.2.3",
+   "verified": "2026-10-29",
+   "check": "dane"
+  },
+  {
+   "id": "bimi.dns_error",
+   "value": true,
+   "level": "TOOL",
+   "source": "DNS resolution failure",
+   "url": "",
+   "verified": "2026-10-29",
+   "check": "bimi"
+  },
+  {
+   "id": "bimi.absent",
+   "value": true,
+   "level": "MAY",
+   "source": "draft-brand-indicators-for-message-identification-14 4.3",
+   "url": "https://datatracker.ietf.org/doc/html/draft-brand-indicators-for-message-identification-14#section-4.3",
+   "verified": "2026-10-29",
+   "check": "bimi"
+  },
+  {
+   "id": "bimi.record",
+   "value": true,
+   "level": "MUST",
+   "source": "draft-brand-indicators-for-message-identification-14 4.3",
+   "url": "https://datatracker.ietf.org/doc/html/draft-brand-indicators-for-message-identification-14#section-4.3",
+   "verified": "2026-10-29",
+   "check": "bimi"
+  },
+  {
+   "id": "bimi.declined",
+   "value": true,
+   "level": "MAY",
+   "source": "draft-brand-indicators-for-message-identification-14 4.3.1",
+   "url": "https://datatracker.ietf.org/doc/html/draft-brand-indicators-for-message-identification-14#section-4.3.1",
+   "verified": "2026-10-29",
+   "check": "bimi"
+  },
+  {
+   "id": "bimi.dmarc_enforcement",
+   "value": true,
+   "level": "MUST",
+   "source": "draft-brand-indicators-for-message-identification-14 7.1 (steps 7-9)",
+   "url": "https://datatracker.ietf.org/doc/html/draft-brand-indicators-for-message-identification-14#section-7.1",
+   "verified": "2026-10-29",
+   "check": "bimi"
+  },
+  {
+   "id": "bimi.no_certificate",
+   "value": true,
+   "level": "MAY",
+   "source": "draft-brand-indicators-for-message-identification-14 3.5, 7.4",
+   "url": "https://datatracker.ietf.org/doc/html/draft-brand-indicators-for-message-identification-14#section-3.5",
+   "verified": "2026-10-29",
+   "check": "bimi"
+  },
+  {
+   "id": "bimi.fetch",
+   "value": true,
+   "level": "MUST",
+   "source": "draft-brand-indicators-for-message-identification-14 4.3.2",
+   "url": "https://datatracker.ietf.org/doc/html/draft-brand-indicators-for-message-identification-14#section-4.3.2",
+   "verified": "2026-10-29",
+   "check": "bimi"
+  },
+  {
+   "id": "bimi.svg_format",
+   "value": true,
+   "level": "MUST",
+   "source": "draft-brand-indicators-for-message-identification-14 4.3.2",
+   "url": "https://datatracker.ietf.org/doc/html/draft-brand-indicators-for-message-identification-14#section-4.3.2",
+   "verified": "2026-10-29",
+   "check": "bimi"
+  },
+  {
+   "id": "bimi.svg_title",
+   "value": true,
+   "level": "MUST",
+   "source": "draft-svg-tiny-ps-abrotman-12 2.1",
+   "url": "https://datatracker.ietf.org/doc/html/draft-svg-tiny-ps-abrotman-12#section-2.1",
+   "verified": "2026-10-29",
+   "check": "bimi"
+  },
+  {
+   "id": "bimi.svg_disallowed",
+   "value": true,
+   "level": "MUST",
+   "source": "draft-svg-tiny-ps-abrotman-12 2.3",
+   "url": "https://datatracker.ietf.org/doc/html/draft-svg-tiny-ps-abrotman-12#section-2.3",
+   "verified": "2026-10-29",
+   "check": "bimi"
+  },
+  {
+   "id": "bimi.svg_size",
+   "value": 32768,
+   "level": "SHOULD",
+   "source": "draft-svg-tiny-ps-abrotman-12 2.4",
+   "url": "https://datatracker.ietf.org/doc/html/draft-svg-tiny-ps-abrotman-12#section-2.4",
+   "verified": "2026-10-29",
+   "check": "bimi"
+  },
+  {
+   "id": "bimi.certificate_format",
+   "value": true,
+   "level": "MUST",
+   "source": "draft-brand-indicators-for-message-identification-14 3.4, 3.5",
+   "url": "https://datatracker.ietf.org/doc/html/draft-brand-indicators-for-message-identification-14#section-3.4",
+   "verified": "2026-10-29",
+   "check": "bimi"
+  },
+  {
+   "id": "bimi.certificate_present",
+   "value": true,
+   "level": "MAY",
+   "source": "draft-brand-indicators-for-message-identification-14 3.5",
+   "url": "https://datatracker.ietf.org/doc/html/draft-brand-indicators-for-message-identification-14#section-3.5",
+   "verified": "2026-10-29",
+   "check": "bimi"
+  },
+  {
+   "id": "mtasts.txt_dns_error",
+   "value": true,
+   "level": "TOOL",
+   "source": "DNS resolution failure",
+   "url": "",
+   "verified": "2026-10-29",
+   "check": "mta-sts"
+  },
+  {
+   "id": "mtasts.txt_absent",
+   "value": true,
+   "level": "MAY",
+   "source": "RFC 8461 3.1",
+   "url": "https://www.rfc-editor.org/rfc/rfc8461#section-3.1",
+   "verified": "2026-10-29",
+   "check": "mta-sts"
+  },
+  {
+   "id": "mtasts.txt_multiple",
+   "value": true,
+   "level": "MUST",
+   "source": "RFC 8461 3.1",
+   "url": "https://www.rfc-editor.org/rfc/rfc8461#section-3.1",
+   "verified": "2026-10-29",
+   "check": "mta-sts"
+  },
+  {
+   "id": "mtasts.txt_version",
+   "value": true,
+   "level": "MUST",
+   "source": "RFC 8461 3.1",
+   "url": "https://www.rfc-editor.org/rfc/rfc8461#section-3.1",
+   "verified": "2026-10-29",
+   "check": "mta-sts"
+  },
+  {
+   "id": "mtasts.txt_syntax",
+   "value": true,
+   "level": "MUST",
+   "source": "RFC 8461 3.1",
+   "url": "https://www.rfc-editor.org/rfc/rfc8461#section-3.1",
+   "verified": "2026-10-29",
+   "check": "mta-sts"
+  },
+  {
+   "id": "mtasts.txt_no_id",
+   "value": true,
+   "level": "MUST",
+   "source": "RFC 8461 3.1",
+   "url": "https://www.rfc-editor.org/rfc/rfc8461#section-3.1",
+   "verified": "2026-10-29",
+   "check": "mta-sts"
+  },
+  {
+   "id": "mtasts.txt_bad_id",
+   "value": true,
+   "level": "MUST",
+   "source": "RFC 8461 3.1",
+   "url": "https://www.rfc-editor.org/rfc/rfc8461#section-3.1",
+   "verified": "2026-10-29",
+   "check": "mta-sts"
+  },
+  {
+   "id": "mtasts.policy_fetch",
+   "value": true,
+   "level": "MUST",
+   "source": "RFC 8461 3.3",
+   "url": "https://www.rfc-editor.org/rfc/rfc8461#section-3.3",
+   "verified": "2026-10-29",
+   "check": "mta-sts"
+  },
+  {
+   "id": "mtasts.policy_redirect",
+   "value": true,
+   "level": "MUST",
+   "source": "RFC 8461 3.3",
+   "url": "https://www.rfc-editor.org/rfc/rfc8461#section-3.3",
+   "verified": "2026-10-29",
+   "check": "mta-sts"
+  },
+  {
+   "id": "mtasts.policy_status",
+   "value": true,
+   "level": "MUST",
+   "source": "RFC 8461 3.3",
+   "url": "https://www.rfc-editor.org/rfc/rfc8461#section-3.3",
+   "verified": "2026-10-29",
+   "check": "mta-sts"
+  },
+  {
+   "id": "mtasts.policy_content_type",
+   "value": true,
+   "level": "SHOULD",
+   "source": "RFC 8461 3.2",
+   "url": "https://www.rfc-editor.org/rfc/rfc8461#section-3.2",
+   "verified": "2026-10-29",
+   "check": "mta-sts"
+  },
+  {
+   "id": "mtasts.policy_size",
+   "value": true,
+   "level": "SHOULD",
+   "source": "RFC 8461 3.3",
+   "url": "https://www.rfc-editor.org/rfc/rfc8461#section-3.3",
+   "verified": "2026-10-29",
+   "check": "mta-sts"
+  },
+  {
+   "id": "mtasts.policy_cert_expiring",
+   "value": true,
+   "level": "MUST",
+   "source": "RFC 8461 3.3 (PKIX-valid certificate)",
+   "url": "https://www.rfc-editor.org/rfc/rfc8461#section-3.3",
+   "verified": "2026-10-29",
+   "check": "mta-sts"
+  },
+  {
+   "id": "mtasts.policy_bom",
+   "value": true,
+   "level": "MUST",
+   "source": "RFC 8461 3.2 (ABNF)",
+   "url": "https://www.rfc-editor.org/rfc/rfc8461#section-3.2",
+   "verified": "2026-10-29",
+   "check": "mta-sts"
+  },
+  {
+   "id": "mtasts.policy_bare_cr",
+   "value": true,
+   "level": "MUST",
+   "source": "RFC 8461 3.2 (ABNF)",
+   "url": "https://www.rfc-editor.org/rfc/rfc8461#section-3.2",
+   "verified": "2026-10-29",
+   "check": "mta-sts"
+  },
+  {
+   "id": "mtasts.policy_mixed_eol",
+   "value": true,
+   "level": "MAY",
+   "source": "RFC 8461 3.2 (ABNF)",
+   "url": "https://www.rfc-editor.org/rfc/rfc8461#section-3.2",
+   "verified": "2026-10-29",
+   "check": "mta-sts"
+  },
+  {
+   "id": "mtasts.policy_blank_line",
+   "value": true,
+   "level": "MUST",
+   "source": "RFC 8461 3.2 (ABNF)",
+   "url": "https://www.rfc-editor.org/rfc/rfc8461#section-3.2",
+   "verified": "2026-10-29",
+   "check": "mta-sts"
+  },
+  {
+   "id": "mtasts.policy_leading_ws",
+   "value": true,
+   "level": "MUST",
+   "source": "RFC 8461 3.2 (ABNF)",
+   "url": "https://www.rfc-editor.org/rfc/rfc8461#section-3.2",
+   "verified": "2026-10-29",
+   "check": "mta-sts"
+  },
+  {
+   "id": "mtasts.policy_syntax",
+   "value": true,
+   "level": "MUST",
+   "source": "RFC 8461 3.2",
+   "url": "https://www.rfc-editor.org/rfc/rfc8461#section-3.2",
+   "verified": "2026-10-29",
+   "check": "mta-sts"
+  },
+  {
+   "id": "mtasts.policy_key_case",
+   "value": true,
+   "level": "MUST",
+   "source": "RFC 8461 3.2",
+   "url": "https://www.rfc-editor.org/rfc/rfc8461#section-3.2",
+   "verified": "2026-10-29",
+   "check": "mta-sts"
+  },
+  {
+   "id": "mtasts.policy_duplicate",
+   "value": true,
+   "level": "MUST",
+   "source": "RFC 8461 3.2",
+   "url": "https://www.rfc-editor.org/rfc/rfc8461#section-3.2",
+   "verified": "2026-10-29",
+   "check": "mta-sts"
+  },
+  {
+   "id": "mtasts.policy_unknown_field",
+   "value": true,
+   "level": "MAY",
+   "source": "RFC 8461 3.2",
+   "url": "https://www.rfc-editor.org/rfc/rfc8461#section-3.2",
+   "verified": "2026-10-29",
+   "check": "mta-sts"
+  },
+  {
+   "id": "mtasts.policy_version",
+   "value": true,
+   "level": "MUST",
+   "source": "RFC 8461 3.2",
+   "url": "https://www.rfc-editor.org/rfc/rfc8461#section-3.2",
+   "verified": "2026-10-29",
+   "check": "mta-sts"
+  },
+  {
+   "id": "mtasts.policy_mode",
+   "value": true,
+   "level": "MUST",
+   "source": "RFC 8461 3.2",
+   "url": "https://www.rfc-editor.org/rfc/rfc8461#section-3.2",
+   "verified": "2026-10-29",
+   "check": "mta-sts"
+  },
+  {
+   "id": "mtasts.policy_no_max_age",
+   "value": true,
+   "level": "MUST",
+   "source": "RFC 8461 3.2",
+   "url": "https://www.rfc-editor.org/rfc/rfc8461#section-3.2",
+   "verified": "2026-10-29",
+   "check": "mta-sts"
+  },
+  {
+   "id": "mtasts.policy_bad_max_age",
+   "value": true,
+   "level": "MUST",
+   "source": "RFC 8461 3.2",
+   "url": "https://www.rfc-editor.org/rfc/rfc8461#section-3.2",
+   "verified": "2026-10-29",
+   "check": "mta-sts"
+  },
+  {
+   "id": "mtasts.policy_max_age_high",
+   "value": true,
+   "level": "MUST",
+   "source": "RFC 8461 3.2",
+   "url": "https://www.rfc-editor.org/rfc/rfc8461#section-3.2",
+   "verified": "2026-10-29",
+   "check": "mta-sts"
+  },
+  {
+   "id": "mtasts.policy_max_age_short",
+   "value": true,
+   "level": "SHOULD",
+   "source": "RFC 8461 3.2 (weeks or greater)",
+   "url": "https://www.rfc-editor.org/rfc/rfc8461#section-3.2",
+   "verified": "2026-10-29",
+   "check": "mta-sts"
+  },
+  {
+   "id": "mtasts.policy_no_mx",
+   "value": true,
+   "level": "MUST",
+   "source": "RFC 8461 3.2",
+   "url": "https://www.rfc-editor.org/rfc/rfc8461#section-3.2",
+   "verified": "2026-10-29",
+   "check": "mta-sts"
+  },
+  {
+   "id": "mtasts.policy_bad_mx",
+   "value": true,
+   "level": "MUST",
+   "source": "RFC 8461 3.2",
+   "url": "https://www.rfc-editor.org/rfc/rfc8461#section-3.2",
+   "verified": "2026-10-29",
+   "check": "mta-sts"
+  },
+  {
+   "id": "mtasts.mx_dns_error",
+   "value": true,
+   "level": "TOOL",
+   "source": "DNS resolution failure",
+   "url": "",
+   "verified": "2026-10-29",
+   "check": "mta-sts"
+  },
+  {
+   "id": "mtasts.mx_none",
+   "value": true,
+   "level": "MAY",
+   "source": "RFC 8461 4.1",
+   "url": "https://www.rfc-editor.org/rfc/rfc8461#section-4.1",
+   "verified": "2026-10-29",
+   "check": "mta-sts"
+  },
+  {
+   "id": "mtasts.mx_null",
+   "value": true,
+   "level": "MAY",
+   "source": "RFC 7505 3; RFC 8461 4.1",
+   "url": "https://www.rfc-editor.org/rfc/rfc7505#section-3",
+   "verified": "2026-10-29",
+   "check": "mta-sts"
+  },
+  {
+   "id": "mtasts.mx_unmatched",
+   "value": true,
+   "level": "MUST",
+   "source": "RFC 8461 4.1, 5",
+   "url": "https://www.rfc-editor.org/rfc/rfc8461#section-4.1",
+   "verified": "2026-10-29",
+   "check": "mta-sts"
+  },
+  {
+   "id": "mtasts.mx_pattern_unused",
+   "value": true,
+   "level": "MAY",
+   "source": "RFC 8461 4.1",
+   "url": "https://www.rfc-editor.org/rfc/rfc8461#section-4.1",
+   "verified": "2026-10-29",
+   "check": "mta-sts"
+  },
+  {
+   "id": "mtasts.smtp_unreachable",
+   "value": true,
+   "level": "TOOL",
+   "source": "faultypacket-audit: port 25 blocked from this network, not tested",
+   "url": "",
+   "verified": "2026-10-29",
+   "check": "mta-sts"
+  },
+  {
+   "id": "mtasts.smtp_no_starttls",
+   "value": true,
+   "level": "MUST",
+   "source": "RFC 8461 4, 5",
+   "url": "https://www.rfc-editor.org/rfc/rfc8461#section-5",
+   "verified": "2026-10-29",
+   "check": "mta-sts"
+  },
+  {
+   "id": "mtasts.smtp_cert",
+   "value": true,
+   "level": "MUST",
+   "source": "RFC 8461 4.2",
+   "url": "https://www.rfc-editor.org/rfc/rfc8461#section-4.2",
+   "verified": "2026-10-29",
+   "check": "mta-sts"
+  },
+  {
+   "id": "mtasts.smtp_error",
+   "value": true,
+   "level": "TOOL",
+   "source": "SMTP probe error",
+   "url": "",
+   "verified": "2026-10-29",
+   "check": "mta-sts"
+  },
+  {
+   "id": "mtasts.mode_testing",
+   "value": true,
+   "level": "MAY",
+   "source": "RFC 8461 5",
+   "url": "https://www.rfc-editor.org/rfc/rfc8461#section-5",
+   "verified": "2026-10-29",
+   "check": "mta-sts"
+  },
+  {
+   "id": "mtasts.mode_none",
+   "value": true,
+   "level": "MAY",
+   "source": "RFC 8461 8.3",
+   "url": "https://www.rfc-editor.org/rfc/rfc8461#section-8.3",
+   "verified": "2026-10-29",
+   "check": "mta-sts"
+  },
+  {
+   "id": "mtasts.internal",
+   "value": true,
+   "level": "TOOL",
+   "source": "faultypacket-audit internal error",
+   "url": "",
+   "verified": "2026-10-29",
+   "check": "mta-sts"
+  },
+  {
+   "id": "tlsrpt.dns_error",
+   "value": true,
+   "level": "TOOL",
+   "source": "DNS resolution failure",
+   "url": "",
+   "verified": "2026-10-29",
+   "check": "tls-rpt"
+  },
+  {
+   "id": "tlsrpt.absent",
+   "value": true,
+   "level": "SHOULD",
+   "source": "RFC 8460 3",
+   "url": "https://www.rfc-editor.org/rfc/rfc8460#section-3",
+   "verified": "2026-10-29",
+   "check": "tls-rpt"
+  },
+  {
+   "id": "tlsrpt.multiple",
+   "value": true,
+   "level": "MUST",
+   "source": "RFC 8460 3",
+   "url": "https://www.rfc-editor.org/rfc/rfc8460#section-3",
+   "verified": "2026-10-29",
+   "check": "tls-rpt"
+  },
+  {
+   "id": "tlsrpt.syntax",
+   "value": true,
+   "level": "MUST",
+   "source": "RFC 8460 3",
+   "url": "https://www.rfc-editor.org/rfc/rfc8460#section-3",
+   "verified": "2026-10-29",
+   "check": "tls-rpt"
+  },
+  {
+   "id": "tlsrpt.no_rua",
+   "value": true,
+   "level": "MUST",
+   "source": "RFC 8460 3",
+   "url": "https://www.rfc-editor.org/rfc/rfc8460#section-3",
+   "verified": "2026-10-29",
+   "check": "tls-rpt"
+  },
+  {
+   "id": "tlsrpt.bad_uri",
+   "value": true,
+   "level": "MUST",
+   "source": "RFC 8460 3",
+   "url": "https://www.rfc-editor.org/rfc/rfc8460#section-3",
+   "verified": "2026-10-29",
+   "check": "tls-rpt"
+  },
+  {
+   "id": "tlsrpt.scheme",
+   "value": true,
+   "level": "MUST",
+   "source": "RFC 8460 3",
+   "url": "https://www.rfc-editor.org/rfc/rfc8460#section-3",
+   "verified": "2026-10-29",
+   "check": "tls-rpt"
+  },
+  {
+   "id": "tlsrpt.enforce_without_tlsrpt",
+   "value": true,
+   "level": "MAY",
+   "source": "RFC 8460 1 (failure reporting); RFC 8461 5",
+   "url": "https://www.rfc-editor.org/rfc/rfc8460#section-1",
+   "verified": "2026-10-29",
+   "check": "tls-rpt"
+  },
+  {
+   "id": "bulk.google.all.dkim_1024",
+   "value": 1024,
+   "level": "PROVIDER",
+   "source": "Google sender guidelines: DKIM key of 1024 bits or longer to send to personal Gmail accounts",
+   "url": "https://support.google.com/a/answer/81126",
+   "verified": "2026-10-29",
+   "check": "bulk-sender",
+   "dns_verifiable": true,
+   "provider": "google",
+   "audience": "all",
+   "requirement": "dkim_min_bits",
+   "effective": "2024-02-01",
+   "needs": "a DKIM selector (--dkim-selector) unless one is found by the dkim check"
+  }
+ ]
+}

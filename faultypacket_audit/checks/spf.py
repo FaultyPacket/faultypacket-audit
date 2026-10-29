@@ -1,0 +1,245 @@
+"""SPF check (ported from spf-tree 1.0.0): expand an SPF record recursively
+and count DNS lookups the way RFC 7208 section 4.6.4 does.
+
+analyse(domain, res) -> raw result (tree, lookup log, issues), unchanged from
+spf-tree so its tests keep passing. check(domain, res, rules) -> CheckResult
+with cited findings. Neither prints.
+"""
+import ipaddress, re
+
+LOOKUP_LIMIT = 10   # RFC 7208 4.6.4: DNS-querying terms per evaluation (MUST)
+VOID_LIMIT = 2      # RFC 7208 4.6.4: void lookups (SHOULD)
+MX_LIMIT = 10       # RFC 7208 4.6.4: MX records per mx term (MUST, else permerror)
+PTR_LIMIT = 10      # RFC 7208 4.6.4: PTR names used per ptr term (extras ignored)
+MECHANISMS = {"all", "include", "a", "mx", "ptr", "ip4", "ip6", "exists"}
+NAME = "spf"
+
+# spf-tree severities -> audit severities
+SEVERITY = {"permerror": "error", "temperror": "error", "none": "warning",
+            "warning": "warning", "info": "info", "error": "error"}
+
+
+def get_spf(res, domain):
+    """RFC 7208 4.5: records starting 'v=spf1' (case-insensitive) then space or end."""
+    txts, status = res.query(domain, "TXT")
+    recs = [t.strip() for t in txts
+            if re.match(r"(?i)^v=spf1( |$)", t.strip())]
+    return recs, status
+
+
+# ------------------------------------------------------------------ parsing
+def parse_term(term):
+    """-> (kind, name, arg, cidr, qualifier). RFC 7208 4.6.1 / 12."""
+    qual = "+"
+    if term[0] in "+-~?":
+        qual, term = term[0], term[1:]
+    m = re.match(r"^([A-Za-z][A-Za-z0-9_.-]*)=(.*)$", term)
+    if m:
+        return "modifier", m.group(1).lower(), m.group(2), None, qual
+    m = re.match(r"^([A-Za-z][A-Za-z0-9_.-]*)(.*)$", term)
+    if not m:
+        return "invalid", term, None, None, qual
+    name, rest = m.group(1).lower(), m.group(2)
+    arg = cidr = None
+    if name in ("ip4", "ip6"):
+        return "mechanism", name, rest[1:] if rest.startswith(":") else None, None, qual
+    if rest.startswith(":"):
+        rest = rest[1:]
+        # domain-spec then optional dual-cidr; macros may contain '/' only inside %{...}
+        cm = re.search(r"(/\d+)?(//\d+)?$", rest) if name in ("a", "mx") else None
+        if cm and cm.group(0):
+            arg, cidr = rest[:cm.start()], cm.group(0)
+        else:
+            arg = rest
+        if arg == "":
+            return "invalid", term, None, None, qual
+    elif rest:
+        if name in ("a", "mx") and re.fullmatch(r"(/\d+)?(//\d+)?", rest):
+            cidr = rest
+        else:
+            return "invalid", term, None, None, qual
+    return "mechanism", name, arg, cidr, qual
+
+
+def valid_cidr(cidr):
+    if not cidr:
+        return True
+    m = re.fullmatch(r"(?:/(\d+))?(?://(\d+))?", cidr)
+    return bool(m) and (m.group(1) is None or int(m.group(1)) <= 32) and \
+        (m.group(2) is None or int(m.group(2)) <= 128)
+
+
+def valid_ip(name, arg):
+    try:
+        net = ipaddress.ip_network(arg, strict=False)
+    except (ValueError, TypeError):
+        return False
+    return net.version == (4 if name == "ip4" else 6)
+
+
+# ---------------------------------------------------------------- expansion
+class Expander:
+    def __init__(self, res):
+        self.res, self.lookups, self.voids = res, 0, 0
+        self.issues, self.rows, self.seen = [], [], {}
+
+    def issue(self, sev, code, msg):
+        self.issues.append({"severity": sev, "code": code, "message": msg})
+
+    def count(self, path, term, status):
+        """One DNS-querying term (RFC 7208 4.6.4)."""
+        self.lookups += 1
+        void = status == "void"
+        self.voids += void
+        self.rows.append({"lookup_no": self.lookups, "path": path, "term": term,
+                          "void": void, "status": status})
+        if self.lookups == LOOKUP_LIMIT + 1:
+            self.issue("permerror", "lookup_limit",
+                       f"more than {LOOKUP_LIMIT} DNS-querying terms; exceeded at '{term}' ({path})")
+        if void and self.voids == VOID_LIMIT + 1:
+            self.issue("permerror", "void_limit",
+                       f"more than {VOID_LIMIT} void lookups; exceeded at '{term}' ({path})")
+        if status.startswith("error"):
+            self.issue("temperror", "dns_error", f"'{term}' ({path}): DNS {status}")
+
+    def expand(self, domain, stack=(), qualifier="+", via="root"):
+        domain = domain.rstrip(".").lower()
+        node = {"domain": domain, "via": via, "qualifier": qualifier, "record": None,
+                "lookups_subtree": 0, "children": []}
+        path = " > ".join(list(stack) + [domain])
+        start = self.lookups
+        if stack:  # the TXT fetch of an include/redirect target is the counted lookup
+            recs, status = get_spf(self.res, domain)
+            self.count(" > ".join(stack), f"{via}:{domain}", status)
+        else:
+            recs, status = get_spf(self.res, domain)
+        if domain in stack:
+            self.issue("permerror", "loop", f"loop: {path}")
+            node["error"] = "loop"
+            node["lookups_subtree"] = self.lookups - start
+            return node
+        if domain in self.seen:
+            self.issue("warning", "duplicate", f"{domain} evaluated more than once (via {path})")
+            node["duplicate"] = True
+        self.seen[domain] = self.seen.get(domain, 0) + 1
+        if status.startswith("error"):
+            node["error"] = status
+            if not stack:
+                self.issue("temperror", "dns_error", f"{domain}: DNS {status}")
+            node["lookups_subtree"] = self.lookups - start
+            return node
+        if not recs:
+            node["error"] = "no SPF record"
+            if stack:  # RFC 7208 5.2 (include) / 6.1 (redirect): permerror
+                self.issue("permerror", "missing_record",
+                           f"{domain}: no SPF record at {via} target ({path})")
+            else:
+                self.issue("none", "no_record", f"{domain}: no SPF record published")
+            node["lookups_subtree"] = self.lookups - start
+            return node
+        if len(recs) > 1:  # RFC 7208 4.5
+            self.issue("permerror", "multiple_records", f"{domain}: {len(recs)} SPF records")
+            node["records"] = recs
+        rec = recs[0]
+        node["record"] = rec
+        terms = rec.split()[1:]
+        mods = {}
+        has_all = False
+        for term in terms:
+            kind, name, arg, cidr, qual = parse_term(term)
+            if kind == "invalid" or (kind == "mechanism" and name not in MECHANISMS):
+                self.issue("permerror", "syntax", f"{domain}: invalid or unknown term '{term}'")
+                continue
+            if kind == "modifier":
+                if name in ("redirect", "exp"):
+                    if name in mods:  # RFC 7208 6
+                        self.issue("permerror", "duplicate_modifier",
+                                   f"{domain}: '{name}' appears more than once")
+                    mods.setdefault(name, arg)
+                if "%" in arg:
+                    self.issue("info", "macro", f"{domain}: macro in '{term}'")
+                continue
+            if name == "all":
+                has_all = True
+            elif name in ("ip4", "ip6"):
+                if not valid_ip(name, arg):
+                    self.issue("permerror", "syntax", f"{domain}: invalid address in '{term}'")
+            elif name in ("include", "exists") and not arg:  # RFC 7208 5.2, 5.7
+                self.issue("permerror", "syntax", f"{domain}: '{term}' needs a domain")
+            elif arg and "%" not in arg and not re.fullmatch(
+                    r"(?:[A-Za-z0-9_](?:[A-Za-z0-9_-]{0,61}[A-Za-z0-9_])?\.)+[A-Za-z0-9-]+\.?", arg):
+                self.issue("permerror", "syntax", f"{domain}: invalid domain in '{term}'")  # RFC 7208 7.1
+            elif not valid_cidr(cidr):
+                self.issue("permerror", "syntax", f"{domain}: invalid CIDR length in '{term}'")
+            elif arg and "%" in arg:
+                # RFC 7208 7: macros expand per message; we never guess an expansion
+                self.issue("info", "macro",
+                           f"{domain}: macro in '{term}'; counted as 1 lookup, not resolved")
+                self.count(path, term, "dynamic")
+            elif name == "include":
+                node["children"].append(self.expand(arg, tuple(stack) + (domain,), qual, "include"))
+            elif name == "exists":
+                _, st = self.res.query(arg, "A")  # RFC 7208 5.7: always A
+                self.count(path, term, st)
+            elif name == "ptr":
+                self.issue("warning", "ptr", f"{domain}: 'ptr' is deprecated (RFC 7208 5.5); "
+                           f"its cost depends on the sender IP, counted as 1")
+                self.count(path, term, "dynamic")
+            elif name == "a":
+                target = arg or domain
+                vals, st = self.res.query(target, "A")
+                vals6, st6 = self.res.query(target, "AAAA")
+                # a receiver queries A or AAAA per the sender's IP family; void only if both are
+                if st == "ok" or st6 == "ok":
+                    st = "ok"
+                elif st.startswith("error") or st6.startswith("error"):
+                    st = st if st.startswith("error") else st6
+                self.count(path, term, st)
+            elif name == "mx":
+                target = arg or domain
+                mx, st = self.res.query(target, "MX")
+                self.count(path, term, st)
+                if len(mx) > MX_LIMIT:
+                    self.issue("permerror", "mx_limit",
+                               f"{domain}: '{term}' returns {len(mx)} MX records (> {MX_LIMIT})")
+        if "redirect" in mods:
+            if has_all:  # RFC 7208 6.1
+                self.issue("info", "redirect_ignored",
+                           f"{domain}: redirect ignored because 'all' is present")
+            elif "%" in mods["redirect"]:
+                self.count(path, "redirect=" + mods["redirect"], "dynamic")
+            else:
+                node["children"].append(
+                    self.expand(mods["redirect"], tuple(stack) + (domain,), "+", "redirect"))
+        node["lookups_subtree"] = self.lookups - start
+        return node
+
+
+def verdict(issues):
+    sevs = {i["severity"] for i in issues}
+    for v in ("permerror", "temperror", "none"):
+        if v in sevs:
+            return v
+    return "ok"
+
+
+def analyse(domain, res):
+    e = Expander(res)
+    tree = e.expand(domain)
+    return {"domain": domain, "lookups": e.lookups, "lookup_limit": LOOKUP_LIMIT,
+            "void_lookups": e.voids, "void_limit": VOID_LIMIT,
+            "result": verdict(e.issues), "issues": e.issues,
+            "lookup_log": e.rows, "tree": tree}
+
+
+def check(domain, res, rules, options=None):
+    """-> CheckResult dict. Every finding is created through rules.finding()."""
+    r = analyse(domain, res)
+    findings = [rules.finding(NAME, SEVERITY[i["severity"]], "spf." + i["code"], i["message"],
+                              spf_result=i["severity"])
+                for i in r["issues"]]
+    return {"check": NAME, "domain": domain, "findings": findings,
+            "data": {"result": r["result"], "lookups": r["lookups"], "lookup_limit": LOOKUP_LIMIT,
+                     "void_lookups": r["void_lookups"], "void_limit": VOID_LIMIT,
+                     "record": (r["tree"] or {}).get("record"),
+                     "lookup_log": r["lookup_log"], "tree": r["tree"]}}

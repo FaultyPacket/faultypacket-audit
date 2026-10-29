@@ -1,0 +1,28 @@
+name: ci
+on:
+  push: {branches: [main]}
+  pull_request:
+permissions: {contents: read}
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy: {matrix: {python: ["3.10", "3.12", "3.13"]}}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "${{ matrix.python }}"}
+      - run: pip install -r requirements-dev.txt
+      - run: python maint/scripts/check_rules.py
+      - run: python -m pytest -q
+      - name: Package builds and the CLI runs
+        run: |
+          pip install .
+          faultypacket-audit --version
+  actionlint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: actionlint
+        run: |
+          bash <(curl -sSfL https://raw.githubusercontent.com/rhysd/actionlint/v1.7.7/scripts/download-actionlint.bash) 1.7.7
+          ./actionlint -color .github/workflows/*.yml templates/*.yml

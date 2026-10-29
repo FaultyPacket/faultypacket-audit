@@ -1,0 +1,37 @@
+name: weekly-verify
+on:
+  schedule: [{cron: "17 6 * * 1"}]
+  workflow_dispatch:
+permissions: {contents: write, issues: write}
+concurrency: {group: weekly-verify}
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install -r requirements.txt -r requirements-dev.txt
+      - id: tests
+        continue-on-error: true
+        run: python maint/scripts/check_rules.py && pytest -q
+      - id: canary
+        continue-on-error: true
+        run: python maint/scripts/canary.py
+      - name: Update status + badge (honest)
+        env:
+          OK: ${{ steps.tests.outcome == 'success' && steps.canary.outcome == 'success' }}
+        run: |
+          python maint/scripts/health.py $([ "$OK" = "true" ] && echo ok || echo fail)
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add README.md maint/status.json
+          git diff --cached --quiet || git commit -m "chore: weekly verification $(date -u +%F)"
+          git push
+      - name: Open issue on failure
+        if: steps.tests.outcome != 'success' || steps.canary.outcome != 'success'
+        env: {GH_TOKEN: "${{ github.token }}"}
+        run: |
+          gh issue list --label verify-failed --state open --json number -q '.[0].number' | grep -q . && exit 0
+          gh issue create --label verify-failed --title "Weekly verification failed $(date -u +%F)" \
+            --body "Tests: ${{ steps.tests.outcome }} / canary: ${{ steps.canary.outcome }}. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"

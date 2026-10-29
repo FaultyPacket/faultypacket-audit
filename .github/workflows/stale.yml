@@ -1,0 +1,14 @@
+name: stale
+on:
+  schedule: [{cron: "0 4 * * 0"}]
+permissions: {issues: write, pull-requests: write}
+jobs:
+  stale:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/stale@v9
+        with:
+          days-before-stale: 60
+          days-before-close: 14
+          exempt-issue-labels: "upstream-change,verify-failed,security"
+          stale-issue-message: "No activity for 60 days. This project is maintained on a monthly review cycle; comment to keep open."

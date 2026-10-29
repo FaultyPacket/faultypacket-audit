@@ -1,0 +1,82 @@
+# Weekly mail-security scan for your own domains, in your own GitHub repo.
+# A self-hosted replacement for a weekly DMARC/SPF/MTA-STS health check.
+#
+# Setup: copy to .github/workflows/weekly-scan.yml, add domains.txt (one
+# domain per line, '#' comments allowed), commit. Nothing leaves the GitHub
+# runner except DNS/HTTPS queries to the domains' own servers.
+#
+# Each run:
+#   * uploads SARIF to the Security tab (code scanning), one alert per finding,
+#     each citing rule id, RFC/guideline section and rules version;
+#   * keeps JSON/CSV/diff as an artifact (90 days) and the JSON as the
+#     baseline for next week;
+#   * writes "what changed since last run" to the job summary;
+#   * opens ONE issue (label mail-scan) when there are new or worsened
+#     problems, and comments on it on later runs; closes it when clean.
+name: weekly-mail-scan
+on:
+  schedule: [{cron: "23 6 * * 1"}]     # Mondays 06:23 UTC
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read            # download last run's baseline artifact
+  security-events: write   # upload SARIF to code scanning
+  issues: write            # alert issue
+concurrency: {group: weekly-mail-scan}
+env:
+  AUDIT_VERSION: "v1.0.0"  # pin a release; bump deliberately
+  # Extra flags: e.g. "--dkim-selector s1 --sending-ip 192.0.2.10 --bulk"
+  AUDIT_FLAGS: ""
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install "git+https://github.com/FaultyPacket/faultypacket-audit@${AUDIT_VERSION}"
+      - name: Fetch last run's baseline (if any)
+        env: {GH_TOKEN: "${{ github.token }}"}
+        run: |
+          mkdir -p baseline results
+          id=$(gh run list --workflow weekly-scan.yml --status success --limit 1 --json databaseId -q '.[0].databaseId' || true)
+          if [ -n "$id" ]; then gh run download "$id" -n mail-scan-baseline -D baseline || true; fi
+          [ -f baseline/audit.json ] || echo '[]' > baseline/audit.json
+      - id: audit
+        continue-on-error: true
+        run: |
+          faultypacket-audit -f domains.txt -q $AUDIT_FLAGS \
+            --json results/audit.json --csv results/audit.csv --sarif results/audit.sarif \
+            --baseline baseline/audit.json --diff results/changes.md --fail-on warning --fail-on-new
+      - name: Job summary
+        if: always()
+        run: cat results/changes.md >> "$GITHUB_STEP_SUMMARY"
+      - uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: results/audit.sarif
+          category: faultypacket-audit
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: {name: "mail-scan-${{ github.run_id }}", path: results/, retention-days: 90}
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: {name: mail-scan-baseline, path: results/audit.json, retention-days: 90}
+      - name: Alert issue (open / comment / close)
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          OUTCOME: ${{ steps.audit.outcome }}
+        run: |
+          gh label create mail-scan --color B60205 2>/dev/null || true
+          n=$(gh issue list --label mail-scan --state open --json number -q '.[0].number')
+          body="$(cat results/changes.md)
+
+          Full results: $RUN_URL (Security tab, and the JSON/CSV artifact)."
+          if [ "$OUTCOME" = "failure" ]; then
+            if [ -n "$n" ]; then gh issue comment "$n" --body "$body"; else
+              gh issue create --label mail-scan --title "Mail-security scan: new problems $(date -u +%F)" --body "$body"; fi
+          elif [ -n "$n" ] && [ "$(jq '[.[]|select(.status=="error" or .status=="warning")]|length' results/audit.json)" = "0" ]; then
+            gh issue close "$n" --comment "All domains clean (no warnings or errors). $RUN_URL"
+          fi

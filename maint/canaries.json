@@ -1,0 +1,10 @@
+{
+ "note": "Stable public domains. Expectations are shapes and ranges, so normal churn does not alarm. One flaky domain is tolerated.",
+ "canaries": [
+  {"domain": "faultypacket.co.uk", "spf_result": "ok", "lookups_range": [1, 10], "dmarc_record": true},
+  {"domain": "gov.uk", "lookups_range": [0, 10], "dmarc_record": true},
+  {"domain": "ietf.org", "lookups_range": [0, 10]},
+  {"domain": "example.com", "spf_result": "ok", "lookups_range": [0, 0], "dmarc_record": true},
+  {"domain": "gmail.com", "spf_result": "ok", "lookups_range": [1, 10], "dmarc_record": true}
+ ]
+}

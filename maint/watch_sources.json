@@ -1,0 +1,91 @@
+{
+ "sources": [
+  {
+   "id": "rfc7208-errata",
+   "kind": "page-hash",
+   "url": "https://www.rfc-editor.org/errata/rfc7208",
+   "note": "SPF errata"
+  },
+  {
+   "id": "dmarc-wg-docs",
+   "kind": "json",
+   "url": "https://datatracker.ietf.org/api/v1/doc/document/?group__acronym=dmarc&type=draft&format=json&limit=100",
+   "select": "objects[].name+rev",
+   "note": "DMARCbis and friends"
+  },
+  {
+   "id": "rfc8461-errata",
+   "kind": "page-hash",
+   "url": "https://www.rfc-editor.org/errata/rfc8461",
+   "note": "MTA-STS errata"
+  },
+  {
+   "id": "rfc8460-errata",
+   "kind": "page-hash",
+   "url": "https://www.rfc-editor.org/errata/rfc8460",
+   "note": "TLS-RPT errata"
+  },
+  {
+   "id": "bimi-drafts",
+   "kind": "json",
+   "url": "https://datatracker.ietf.org/api/v1/doc/document/?name__contains=bimi&type=draft&format=json",
+   "select": "objects[].name+rev",
+   "note": "BIMI drafts"
+  },
+  {
+   "id": "dnspython-advisories",
+   "kind": "json",
+   "url": "https://api.osv.dev/v1/query",
+   "post": {
+    "package": {
+     "name": "dnspython",
+     "ecosystem": "PyPI"
+    }
+   },
+   "select": "vulns[].id",
+   "note": "CVE/GHSA for dnspython"
+  },
+  {
+   "id": "rfc9989-errata",
+   "kind": "page-hash",
+   "url": "https://www.rfc-editor.org/errata/rfc9989",
+   "note": "DMARC (current) errata"
+  },
+  {
+   "id": "dmarc-iana-tags",
+   "kind": "page-hash",
+   "url": "https://www.iana.org/assignments/dmarc-parameters/tag.csv",
+   "note": "DMARC tag registry"
+  },
+  {
+   "id": "provider-google",
+   "kind": "page-hash",
+   "url": "https://support.google.com/a/answer/81126",
+   "note": "internal: provider sender rules"
+  },
+  {
+   "id": "provider-yahoo",
+   "kind": "page-hash",
+   "url": "https://senders.yahooinc.com/best-practices/",
+   "note": "internal: provider sender rules"
+  },
+  {
+   "id": "provider-outlook",
+   "kind": "page-hash",
+   "url": "https://postmaster.outlook.com/policies.aspx",
+   "note": "internal: provider sender rules"
+  },
+  {
+   "id": "rfc9990-errata",
+   "kind": "page-hash",
+   "url": "https://www.rfc-editor.org/errata/rfc9990",
+   "note": "DMARC aggregate reporting (RFC 9990) errata"
+  },
+  {
+   "id": "rfc9991-errata",
+   "kind": "page-hash",
+   "url": "https://www.rfc-editor.org/errata/rfc9991",
+   "note": "DMARC failure reporting (RFC 9991) errata"
+  }
+ ]
+}
