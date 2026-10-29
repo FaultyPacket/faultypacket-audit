@@ -1,0 +1,14 @@
+name: Bug or wrong finding
+description: A crash, or a finding you think is wrong
+labels: [bug]
+body:
+  - type: input
+    attributes: {label: Version, description: "faultypacket-audit --version and rules_version from the output"}
+    validations: {required: true}
+  - type: input
+    attributes: {label: Rule ID, description: "e.g. dmarc.historic_pct (leave blank for a crash)"}
+  - type: textarea
+    attributes: {label: Command and output, description: "Exact command and the relevant output. Use example.com if the domain is private.", render: text}
+    validations: {required: true}
+  - type: textarea
+    attributes: {label: Why it is wrong, description: "Quote the RFC section or provider page that disagrees."}

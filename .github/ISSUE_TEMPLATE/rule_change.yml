@@ -1,0 +1,12 @@
+name: Rule source changed
+description: An RFC erratum, new RFC or provider-page change that a rule should follow
+labels: [rules]
+body:
+  - type: input
+    attributes: {label: Rule ID(s) affected}
+  - type: input
+    attributes: {label: Source URL}
+    validations: {required: true}
+  - type: textarea
+    attributes: {label: What changed, description: "Quote the old and new text, with the date you saw it."}
+    validations: {required: true}
