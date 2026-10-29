@@ -416,12 +416,16 @@ def check_tlsrpt(domain, res):
             rua = v
     if not rua:
         out["issues"].append(issue("error", "tlsrpt_no_rua", "rua is required (RFC 8460 3)")); return out
-    for u in [x.strip() for x in rua.split(",") if x.strip()]:
+    for u in [x.strip() for x in rua.split(",")]:
+        if not u:
+            out["issues"].append(issue("error", "tlsrpt_bad_uri", "empty entry in the rua list (RFC 8460 3: rua=uri *(\",\" uri))")); continue
         out["rua"].append(u)
         sch = u.split(":", 1)[0].lower() if ":" in u else ""
-        if sch == "mailto":
-            if "@" not in u:
-                out["issues"].append(issue("error", "tlsrpt_bad_uri", f"mailto URI {u!r} has no address (RFC 8460 3)"))
+        if re.search(r"\s", u):
+            out["issues"].append(issue("error", "tlsrpt_bad_uri", f"rua URI {u!r} contains whitespace, so it is not a valid URI (RFC 8460 3; RFC 3986)"))
+        elif sch == "mailto":
+            if urllib.parse.unquote(u.split(":", 1)[1].split("?", 1)[0]).count("@") != 1:
+                out["issues"].append(issue("error", "tlsrpt_bad_uri", f"mailto URI {u!r} needs exactly one address (RFC 8460 3; RFC 6068)"))
         elif sch == "https":
             if not urllib.parse.urlsplit(u).hostname:
                 out["issues"].append(issue("error", "tlsrpt_bad_uri", f"https URI {u!r} has no host (RFC 8460 3)"))

@@ -1,6 +1,6 @@
 {
  "schema": "faultypacket-rules/1",
- "rules_version": "2026.10.29.4",
+ "rules_version": "2026.10.29.5",
  "note": "Every finding the tool emits references one of these rules. Provider (bulk-sender) rows are added only after reading the provider's live page; value, date and url are mandatory. RFC section numbers pinned against rfc-editor.org text on 2026-10-29.",
  "rules": [
   {
@@ -233,6 +233,15 @@
    "level": "MUST",
    "source": "RFC 7208 6.1",
    "url": "https://www.rfc-editor.org/rfc/rfc7208#section-6.1",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "spf.after_all",
+   "check": "spf",
+   "value": "mechanisms after all are never tested",
+   "level": "MUST",
+   "source": "RFC 7208 5.1",
+   "url": "https://www.rfc-editor.org/rfc/rfc7208#section-5.1",
    "verified": "2026-10-29"
   },
   {

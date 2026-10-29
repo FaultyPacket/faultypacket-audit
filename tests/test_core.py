@@ -9,7 +9,7 @@ R = load_rules()
 
 
 def test_bundled_rules_valid_and_versioned():
-    assert R.version == "2026.10.29.4"
+    assert R.version == "2026.10.29.5"
     assert not validate(json.loads(open(R.origin if R.origin.endswith(".json") and "/" in R.origin else
                                         "faultypacket_audit/data/rules.json").read()))
 

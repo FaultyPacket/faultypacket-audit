@@ -101,7 +101,7 @@
      "level": "SHOULD",
      "message": "selector1._domainkey.shop.example: RSA 1024-bit key; 2048 bits SHOULD be used",
      "rule_id": "dkim.recommended_rsa_bits",
-     "rules_version": "2026.10.29.4",
+     "rules_version": "2026.10.29.5",
      "severity": "warning",
      "url": "https://www.rfc-editor.org/rfc/rfc8301#section-3.2"
     }
@@ -140,7 +140,7 @@
      "level": "MUST",
      "message": "MX target mx2.shop.example is an alias (CNAME to mx1.shop.example); MX targets must not be aliases",
      "rule_id": "mx.cname",
-     "rules_version": "2026.10.29.4",
+     "rules_version": "2026.10.29.5",
      "severity": "warning",
      "url": "https://www.rfc-editor.org/rfc/rfc2181#section-10.3"
     }
@@ -182,7 +182,7 @@
      "level": "MAY",
      "message": "no v=STSv1 TXT at _mta-sts.shop.example: senders treat the domain as having no MTA-STS (RFC 8461 3.1)",
      "rule_id": "mtasts.txt_absent",
-     "rules_version": "2026.10.29.4",
+     "rules_version": "2026.10.29.5",
      "severity": "info",
      "url": "https://www.rfc-editor.org/rfc/rfc8461#section-3.1"
     }
@@ -205,7 +205,7 @@
      "level": "MAY",
      "message": "no DS record at the parent: the zone is not DNSSEC-signed, so DANE cannot be used and MX/TXT answers can be spoofed",
      "rule_id": "dnssec.unsigned",
-     "rules_version": "2026.10.29.4",
+     "rules_version": "2026.10.29.5",
      "severity": "info",
      "url": "https://www.rfc-editor.org/rfc/rfc4034#section-5"
     }
@@ -237,7 +237,7 @@
      "level": "MAY",
      "message": "no TLSA records for any MX: DANE not deployed (MTA-STS is the non-DNSSEC alternative)",
      "rule_id": "dane.absent",
-     "rules_version": "2026.10.29.4",
+     "rules_version": "2026.10.29.5",
      "severity": "info",
      "url": "https://www.rfc-editor.org/rfc/rfc7672#section-2.2.3"
     }
@@ -311,7 +311,7 @@
      "level": "MAY",
      "message": "no a= mark certificate (VMC/CMC); Gmail and Apple Mail only show certified logos",
      "rule_id": "bimi.no_certificate",
-     "rules_version": "2026.10.29.4",
+     "rules_version": "2026.10.29.5",
      "severity": "warning",
      "url": "https://datatracker.ietf.org/doc/html/draft-brand-indicators-for-message-identification-14#section-3.5"
     }
@@ -495,7 +495,7 @@
      "level": "TOOL",
      "message": "google: 'alignment' (applies to senders of 5,000+ messages a day) cannot be checked from DNS; check your sending platform or postmaster data (source: https://support.google.com/a/answer/81126)",
      "rule_id": "bulk.not_dns_verifiable",
-     "rules_version": "2026.10.29.4",
+     "rules_version": "2026.10.29.5",
      "severity": "info",
      "url": ""
     },
@@ -510,7 +510,7 @@
      "level": "TOOL",
      "message": "google: 'one_click_unsub' (applies to senders of 5,000+ messages a day) cannot be checked from DNS; check your sending platform or postmaster data (source: https://support.google.com/a/answer/81126)",
      "rule_id": "bulk.not_dns_verifiable",
-     "rules_version": "2026.10.29.4",
+     "rules_version": "2026.10.29.5",
      "severity": "info",
      "url": ""
     },
@@ -525,7 +525,7 @@
      "level": "TOOL",
      "message": "google: 'fcrdns' not verified: no sending IP given; needs sending IPs (--sending-ip)",
      "rule_id": "bulk.needs_input",
-     "rules_version": "2026.10.29.4",
+     "rules_version": "2026.10.29.5",
      "severity": "info",
      "url": ""
     },
@@ -540,7 +540,7 @@
      "level": "TOOL",
      "message": "google: 'tls' (applies to all senders) cannot be checked from DNS; check your sending platform or postmaster data (source: https://support.google.com/a/answer/81126)",
      "rule_id": "bulk.not_dns_verifiable",
-     "rules_version": "2026.10.29.4",
+     "rules_version": "2026.10.29.5",
      "severity": "info",
      "url": ""
     },
@@ -555,7 +555,7 @@
      "level": "TOOL",
      "message": "google: 'spam_rate_max' (applies to senders of 5,000+ messages a day) cannot be checked from DNS; check your sending platform or postmaster data (source: https://support.google.com/a/answer/81126)",
      "rule_id": "bulk.not_dns_verifiable",
-     "rules_version": "2026.10.29.4",
+     "rules_version": "2026.10.29.5",
      "severity": "info",
      "url": ""
     },
@@ -570,7 +570,7 @@
      "level": "TOOL",
      "message": "outlook: 'alignment' (applies to senders of 5,000+ messages a day) cannot be checked from DNS; check your sending platform or postmaster data (source: https://postmaster.outlook.com/policies.aspx)",
      "rule_id": "bulk.not_dns_verifiable",
-     "rules_version": "2026.10.29.4",
+     "rules_version": "2026.10.29.5",
      "severity": "info",
      "url": ""
     },
@@ -585,7 +585,7 @@
      "level": "TOOL",
      "message": "outlook: 'rdns' not verified: no sending IP given; needs sending IPs (--sending-ip)",
      "rule_id": "bulk.needs_input",
-     "rules_version": "2026.10.29.4",
+     "rules_version": "2026.10.29.5",
      "severity": "info",
      "url": ""
     },
@@ -600,7 +600,7 @@
      "level": "TOOL",
      "message": "yahoo: 'fcrdns' not verified: no sending IP given; needs sending IPs (--sending-ip)",
      "rule_id": "bulk.needs_input",
-     "rules_version": "2026.10.29.4",
+     "rules_version": "2026.10.29.5",
      "severity": "info",
      "url": ""
     },
@@ -615,7 +615,7 @@
      "level": "TOOL",
      "message": "yahoo: 'unsub_days_max' (applies to bulk senders) cannot be checked from DNS; check your sending platform or postmaster data (source: https://senders.yahooinc.com/best-practices/)",
      "rule_id": "bulk.not_dns_verifiable",
-     "rules_version": "2026.10.29.4",
+     "rules_version": "2026.10.29.5",
      "severity": "info",
      "url": ""
     }

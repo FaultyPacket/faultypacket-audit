@@ -21,7 +21,7 @@ Sample output (live run, 2026-10-29 11:45 UTC, trimmed):
 europa.eu: ERROR
   dmarc: error
     [error] no DMARC record at _dmarc.europa.eu and none found by the Tree Walk: DMARC does not apply (RFC 9989 4.10.1)
-      rule dmarc.no_record | RFC 9989 4.10.1 | https://www.rfc-editor.org/rfc/rfc9989#section-4.10.1 | rules 2026.10.29.4
+      rule dmarc.no_record | RFC 9989 4.10.1 | https://www.rfc-editor.org/rfc/rfc9989#section-4.10.1 | rules 2026.10.29.5
   bulk-sender: warning
     google: fail (not checkable from DNS: alignment, one_click_unsub, tls, spam_rate_max)
     outlook: fail (not checkable from DNS: alignment)
@@ -30,7 +30,7 @@ europa.eu: ERROR
 
 Runs locally. No account, no upload. Also a [GitHub Action](#github-action), an [MCP server](#mcp-server-for-ai-agents) and a [weekly scan](#weekly-scan-in-your-own-repo) for your own repo. AI agents: see [AGENTS.md](AGENTS.md).
 
-> Status: v1.3.0 (2026-10-29). JSON fields are stable within 1.x ([schema](schema/audit.schema.json)); rule changes bump `rules_version`.
+> Status: v1.4.0 (2026-10-29). JSON fields are stable within 1.x ([schema](schema/audit.schema.json)); rule changes bump `rules_version`.
 
 ## Checks
 
@@ -85,7 +85,7 @@ Each finding has these fields:
 * `citation` (for example `RFC 9989 9.3`)
 * `url`
 * `level`, which is `MUST`, `SHOULD`, `MAY`, `PROVIDER` or `TOOL`. `TOOL` covers the tool's own conditions, such as DNS errors.
-* `rules_version` (for example `2026.10.29.4`), so a finding can be traced to the exact rule set that produced it. SARIF messages end with `[rule_id | citation | rules version]`.
+* `rules_version` (for example `2026.10.29.5`), so a finding can be traced to the exact rule set that produced it. SARIF messages end with `[rule_id | citation | rules version]`.
 
 ## Suggested fixes
 
@@ -146,7 +146,7 @@ report = audit("example.com", Resolver(), load_rules())
   with: {sarif_file: "${{ steps.audit.outputs.sarif }}"}
 ```
 
-Outputs: `exit-code`, `json`, `sarif`, `html`. `@v1` follows the latest 1.x release; pin a tag such as `@v1.3.0` for fixed behaviour.
+Outputs: `exit-code`, `json`, `sarif`, `html`. `@v1` follows the latest 1.x release; pin a tag such as `@v1.4.0` for fixed behaviour.
 
 ## MCP server for AI agents
 

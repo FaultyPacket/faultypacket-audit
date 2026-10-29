@@ -106,9 +106,12 @@ def near_miss_records(txts):
 def parse_tags(record):
     """-> (ordered list of (tag, value), issues). Tag names case-insensitive."""
     tags, issues = [], []
-    for part in record.split(";"):
+    parts = record.split(";")
+    for n, part in enumerate(parts):
         part = part.strip()
         if not part:
+            if 0 < n < len(parts) - 1 and not any(c == "syntax" and "empty" in m for _, c, m in issues):
+                issues.append(("warning", "syntax", "empty tag between ';' separators; receivers discard it (RFC 9989 4.8 ABNF: one trailing ';' only)"))
             continue
         if "=" not in part:
             issues.append(("error", "syntax", f"tag without '=': {part!r} (RFC 9989 4.8)"))
@@ -167,10 +170,20 @@ def validate(record):
     """Syntax/semantics per RFC 9989 4.7/4.8/9.3. -> (tags dict, issues list).
     Never prints; issues are (severity, code, message)."""
     tags, issues = parse_tags(record)
+    if re.search(r"[\x00-\x08\x0a-\x1f\x7f]", record):
+        issues.append(("warning", "syntax", "record contains a control character (e.g. a line break); only space and tab may separate tags, and receivers may discard the affected tag (RFC 9989 4.8)"))
     d = {}
     if not tags or tags[0][0] != "v" or tags[0][1] != "DMARC1":
         issues.append(("error", "version", "v=DMARC1 must be the first tag; the value is case-sensitive, otherwise the record is ignored (RFC 9989 4.7)"))
     for k, v in tags:
+        if not re.fullmatch(r"[a-z]+", k):
+            near = re.sub(r"[^a-z]", "", k)
+            hint = f"; it looks like {near!r}, which therefore does not apply" if near in ACTIVE_TAGS | HISTORIC_TAGS else ""
+            issues.append(("warning", "syntax", f"tag name {k!r} is not letters only, so receivers discard it{hint} (RFC 9989 4.8: dmarc-tag = 1*ALPHA equals 1*dmarc-value)"))
+            continue
+        if v == "" and k not in ("rua", "ruf"):
+            issues.append(("warning", "syntax", f"tag {k} has no value, so receivers discard it (RFC 9989 4.8)"))
+            continue
         if k in d:
             issues.append(("warning", "duplicate_tag", f"tag {k} appears more than once; first value used"))
             continue
@@ -211,6 +224,8 @@ def validate(record):
     for k in ("rua", "ruf"):
         if k in d:
             uris = parse_uris(d[k])
+            if uris and any(not x.strip() for x in d[k].split(",")):
+                issues.append(("warning", "syntax", f"{k} has an empty entry (stray or doubled comma); strict receivers may discard the whole {k} tag (RFC 9989 4.8 dmarc-urilist)"))
             if not uris:
                 issues.append(("error", "empty_" + k, f"{k} is present but empty (RFC 9989 4.7)"))
             for u in uris:
@@ -218,6 +233,8 @@ def validate(record):
                     issues.append(("warning", "scheme_" + k, f"{k} URI {u['uri']!r} is not mailto; mailto is the scheme receivers MUST support (RFC 9989 4.6)"))
                 elif not u["host"]:
                     issues.append(("error", "bad_uri_" + k, f"{k} URI {u['uri']!r} has no domain (RFC 9989 4.6)"))
+                elif re.search(r"\s", u["uri"]) or u["address"].count("@") != 1:
+                    issues.append(("error", "bad_uri_" + k, f"{k} URI {u['uri']!r} is not a valid mailto URI: no spaces and exactly one '@' (RFC 9989 4.8; RFC 3986; RFC 6068)"))
                 if u["size"]:
                     issues.append(("info", "obsolete_size", f"{k} URI {u['uri']!r}: the !size suffix is obsolete and ignored (RFC 9989 4.8)"))
     if "rua" not in d:

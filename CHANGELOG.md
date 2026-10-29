@@ -2,6 +2,18 @@
 
 
 
+## 1.4.0 (2026-10-29)
+
+Bugs found by differential testing against real published records (details in docs/differential-findings.md):
+
+- SPF: mechanisms after `all` are no longer counted towards the 10-lookup limit (RFC 7208 5.1); they are still syntax-checked (new info finding `spf.after_all`).
+- SPF: a qualified modifier such as `-allgoogle-site-verification=...` (TXT strings joined without a space) is now a syntax permerror (RFC 7208 12) instead of being accepted.
+- DMARC: a report URI containing whitespace (e.g. `ruf=mailto:x@example.org fo=1`, a missing `;`) or more than one `@` is now an error.
+- DMARC: control characters, empty tags, tag names that are not letters only (`+p=`, `p ct=`), empty values and empty `rua`/`ruf` list entries now raise a `syntax` warning; malformed tags are discarded as RFC 9989 4.8 requires, with a hint when they look like a known tag.
+- TLS-RPT: URIs with whitespace, empty list items or not exactly one `@` are now `tlsrpt_bad_uri`.
+
+Tests: 510 to 13,282 collected. 12,743 frozen corpus cases (6,087 anonymised real records, 2,790 census edge records, 3,866 synthetic mutations), 13 hypothesis property tests, 14 regression tests, plus the existing suite. Rules 2026.10.29.5 (207 rules).
+
 ## 1.3.0 (2026-10-29)
 
 - HTML report: `--html FILE`, one self-contained file (no scripts or remote assets) with executive summary, per-provider verdicts, findings with linked sources and suggested fixes; prints to PDF. Optional `--pdf FILE` with `pip install fpdf2`. The GitHub Action now also writes `audit.html` (output `html`).

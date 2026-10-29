@@ -33,8 +33,13 @@ def parse_term(term):
     qual = "+"
     if term[0] in "+-~?":
         qual, term = term[0], term[1:]
+        explicit = True
+    else:
+        explicit = False
     m = re.match(r"^([A-Za-z][A-Za-z0-9_.-]*)=(.*)$", term)
     if m:
+        if explicit:  # RFC 7208 12: modifiers take no qualifier (e.g. "-allfoo=bar" from joined TXT strings)
+            return "invalid", term, None, None, qual
         return "modifier", m.group(1).lower(), m.group(2), None, qual
     m = re.match(r"^([A-Za-z][A-Za-z0-9_.-]*)(.*)$", term)
     if not m:
@@ -144,7 +149,7 @@ class Expander:
         node["record"] = rec
         terms = rec.split()[1:]
         mods = {}
-        has_all = False
+        has_all = after_all_noted = False
         for term in terms:
             kind, name, arg, cidr, qual = parse_term(term)
             if kind == "invalid" or (kind == "mechanism" and name not in MECHANISMS):
@@ -159,6 +164,11 @@ class Expander:
                 if "%" in arg:
                     self.issue("info", "macro", f"{domain}: macro in '{term}'")
                 continue
+            if has_all and name != "all" and not after_all_noted:
+                # RFC 7208 5.1: mechanisms after "all" are never tested, so they cost no lookups
+                self.issue("info", "after_all", f"{domain}: '{term}' and any later mechanisms follow 'all' and are never evaluated")
+                after_all_noted = True
+            skip = has_all
             if name == "all":
                 has_all = True
             elif name in ("ip4", "ip6"):
@@ -171,6 +181,8 @@ class Expander:
                 self.issue("permerror", "syntax", f"{domain}: invalid domain in '{term}'")  # RFC 7208 7.1
             elif not valid_cidr(cidr):
                 self.issue("permerror", "syntax", f"{domain}: invalid CIDR length in '{term}'")
+            elif skip:
+                pass
             elif arg and "%" in arg:
                 # RFC 7208 7: macros expand per message; we never guess an expansion
                 self.issue("info", "macro",
