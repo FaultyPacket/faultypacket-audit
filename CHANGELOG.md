@@ -2,7 +2,7 @@
 
 
 
-## Unreleased
+## 1.5.0 (2026-10-29)
 
 - `security-txt` check (opt-in, RFC 9116): location, HTTPS, media type, syntax, Contact, Encryption, Expires, Canonical, Preferred-Languages, signature. See docs/security-txt.md.
 

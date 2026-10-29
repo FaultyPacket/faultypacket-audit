@@ -30,7 +30,7 @@ europa.eu: ERROR
 
 Runs locally. No account, no upload. Also a [GitHub Action](#github-action), an [MCP server](#mcp-server-for-ai-agents) and a [weekly scan](#weekly-scan-in-your-own-repo) for your own repo. AI agents: see [AGENTS.md](AGENTS.md).
 
-> Status: v1.4.0 (2026-10-29). JSON fields are stable within 1.x ([schema](schema/audit.schema.json)); rule changes bump `rules_version`.
+> Status: v1.5.0 (2026-10-29). JSON fields are stable within 1.x ([schema](schema/audit.schema.json)); rule changes bump `rules_version`.
 
 ## Checks
 
@@ -156,7 +156,7 @@ report = audit("example.com", Resolver(), load_rules())
   with: {sarif_file: "${{ steps.audit.outputs.sarif }}"}
 ```
 
-Outputs: `exit-code`, `json`, `sarif`, `html`. `@v1` follows the latest 1.x release; pin a tag such as `@v1.4.0` for fixed behaviour.
+Outputs: `exit-code`, `json`, `sarif`, `html`. `@v1` follows the latest 1.x release; pin a tag such as `@v1.5.0` for fixed behaviour.
 
 ## MCP server for AI agents
 
