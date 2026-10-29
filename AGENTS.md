@@ -20,7 +20,18 @@ faultypacket-audit --doh -q -f domains.txt --json out.json # batch
 faultypacket-audit --doh --checks dmarc,spf example.com --json -
 ```
 
-Use `--doh` in sandboxes: many block outbound port 53. Add `--dkim-selector`
+faultypacket-audit --doh --checks mx,blocklist,lookalike example.com --json -   # opt-in checks
+faultypacket-audit --doh example.com --html report.html    # human report (print to PDF)
+faultypacket-audit headers message.eml --json             # alignment verdict from saved headers
+```
+
+`blocklist` and `lookalike` run only when named in `--checks`. A blocklist
+row with `tested: false` means the list refused the resolver: report it as
+"not tested", never as "not listed". Lookalike rows are observations; never
+call a registered lookalike malicious.
+
+```
+: many block outbound port 53. Add `--dkim-selector`
 and `--sending-ip` when the user knows them; DKIM selectors can't be listed from DNS.
 
 ## Invoke (MCP, stdio)
@@ -48,7 +59,7 @@ Example client config:
 * Bulk-sender rows can be `not-dns-verifiable`. Never present those as passes,
   and never call a domain "compliant"; the verdicts are `fail`, `incomplete` or `dns-checks-pass`.
 
-* `fixes`: per report, copy-paste TXT records `{rule_id, name, type, value, note}`. Values containing `REPLACE-` need the owner's input; say so when you pass them on.
+* `fixes`: per report, `{rule_id, name, type, value, note}`; `type` is `TXT`, `MX`, `CAA`, `FILE` (name is the URL to publish at) or `STEPS` (numbered instructions). Values containing `REPLACE-` need the owner's input; say so when you pass them on.
 
 ## Exit codes
 

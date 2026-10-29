@@ -6,7 +6,7 @@ Tools: ``audit_domain`` and ``list_rules``. No third-party MCP SDK needed.
 import argparse, json, sys
 
 from . import __version__
-from .audit import audit, ORDER
+from .audit import audit, ORDER, ALL
 from .core.resolver import Cached, Resolver, DEFAULT_DOH
 from .core.rules import load_rules
 from .core.inputs import extract_domain
@@ -22,7 +22,7 @@ TOOLS = [
                      "Read-only DNS/HTTPS lookups; nothing is sent to FaultyPacket."),
      "inputSchema": {"type": "object", "required": ["domain"], "additionalProperties": False, "properties": {
          "domain": {"type": "string", "description": "domain, URL or email address"},
-         "checks": {"type": "array", "items": {"type": "string", "enum": ORDER},
+         "checks": {"type": "array", "items": {"type": "string", "enum": ALL},
                     "description": "subset of checks (default all)"},
          "dkim_selectors": {"type": "array", "items": {"type": "string"}},
          "sending_ips": {"type": "array", "items": {"type": "string"}},
@@ -44,7 +44,7 @@ class Server:
             raise KeyError(name)
         domain = extract_domain(str(args.get("domain", "")).strip())
         checks = args.get("checks") or ORDER
-        bad = [c for c in checks if c not in ORDER]
+        bad = [c for c in checks if c not in ALL]
         if bad:
             raise ValueError(f"unknown check(s): {', '.join(bad)}")
         opts = {"sending_ips": list(args.get("sending_ips") or []),

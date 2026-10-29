@@ -3,6 +3,7 @@
   {
    "check": "spf",
    "data": {
+    "all": "-",
     "lookup_limit": 10,
     "lookup_log": [],
     "lookups": 0,
@@ -99,7 +100,7 @@
      "level": "MUST",
      "message": "no MX; senders fall back to the A/AAAA of good.test (none either: undeliverable)",
      "rule_id": "mx.none",
-     "rules_version": "2026.10.29.3",
+     "rules_version": "2026.10.29.4",
      "severity": "info",
      "url": "https://www.rfc-editor.org/rfc/rfc5321#section-5.1"
     }
@@ -139,7 +140,7 @@
      "level": "MAY",
      "message": "no v=STSv1 TXT at _mta-sts.good.test: senders treat the domain as having no MTA-STS (RFC 8461 3.1)",
      "rule_id": "mtasts.txt_absent",
-     "rules_version": "2026.10.29.3",
+     "rules_version": "2026.10.29.4",
      "severity": "info",
      "url": "https://www.rfc-editor.org/rfc/rfc8461#section-3.1"
     },
@@ -152,7 +153,7 @@
      "level": "SHOULD",
      "message": "no v=TLSRPTv1 TXT at _smtp._tls.good.test: you get no reports of TLS delivery failures (RFC 8460 3)",
      "rule_id": "tlsrpt.absent",
-     "rules_version": "2026.10.29.3",
+     "rules_version": "2026.10.29.4",
      "severity": "info",
      "url": "https://www.rfc-editor.org/rfc/rfc8460#section-3"
     }
@@ -175,7 +176,7 @@
      "level": "MAY",
      "message": "no DS record at the parent: the zone is not DNSSEC-signed, so DANE cannot be used and MX/TXT answers can be spoofed",
      "rule_id": "dnssec.unsigned",
-     "rules_version": "2026.10.29.3",
+     "rules_version": "2026.10.29.4",
      "severity": "info",
      "url": "https://www.rfc-editor.org/rfc/rfc4034#section-5"
     }
@@ -196,7 +197,7 @@
      "level": "MAY",
      "message": "no TLSA records for any MX: DANE not deployed (MTA-STS is the non-DNSSEC alternative)",
      "rule_id": "dane.absent",
-     "rules_version": "2026.10.29.3",
+     "rules_version": "2026.10.29.4",
      "severity": "info",
      "url": "https://www.rfc-editor.org/rfc/rfc7672#section-2.2.3"
     }
@@ -218,7 +219,7 @@
      "level": "MAY",
      "message": "no CAA records up the tree: any public CA may issue certificates for this domain",
      "rule_id": "caa.absent",
-     "rules_version": "2026.10.29.3",
+     "rules_version": "2026.10.29.4",
      "severity": "info",
      "url": "https://www.rfc-editor.org/rfc/rfc8659#section-3"
     }
@@ -258,7 +259,7 @@
      "level": "MAY",
      "message": "no BIMI record at default._bimi.good.test",
      "rule_id": "bimi.absent",
-     "rules_version": "2026.10.29.3",
+     "rules_version": "2026.10.29.4",
      "severity": "info",
      "url": "https://datatracker.ietf.org/doc/html/draft-brand-indicators-for-message-identification-14#section-4.3"
     }
@@ -444,7 +445,7 @@
      "level": "TOOL",
      "message": "google: 'alignment' (applies to senders of 5,000+ messages a day) cannot be checked from DNS; check your sending platform or postmaster data (source: https://support.google.com/a/answer/81126)",
      "rule_id": "bulk.not_dns_verifiable",
-     "rules_version": "2026.10.29.3",
+     "rules_version": "2026.10.29.4",
      "severity": "info",
      "url": ""
     },
@@ -459,7 +460,7 @@
      "level": "TOOL",
      "message": "google: 'one_click_unsub' (applies to senders of 5,000+ messages a day) cannot be checked from DNS; check your sending platform or postmaster data (source: https://support.google.com/a/answer/81126)",
      "rule_id": "bulk.not_dns_verifiable",
-     "rules_version": "2026.10.29.3",
+     "rules_version": "2026.10.29.4",
      "severity": "info",
      "url": ""
     },
@@ -474,7 +475,7 @@
      "level": "TOOL",
      "message": "google: 'tls' (applies to all senders) cannot be checked from DNS; check your sending platform or postmaster data (source: https://support.google.com/a/answer/81126)",
      "rule_id": "bulk.not_dns_verifiable",
-     "rules_version": "2026.10.29.3",
+     "rules_version": "2026.10.29.4",
      "severity": "info",
      "url": ""
     },
@@ -489,7 +490,7 @@
      "level": "TOOL",
      "message": "google: 'spam_rate_max' (applies to senders of 5,000+ messages a day) cannot be checked from DNS; check your sending platform or postmaster data (source: https://support.google.com/a/answer/81126)",
      "rule_id": "bulk.not_dns_verifiable",
-     "rules_version": "2026.10.29.3",
+     "rules_version": "2026.10.29.4",
      "severity": "info",
      "url": ""
     },
@@ -504,7 +505,7 @@
      "level": "TOOL",
      "message": "outlook: 'alignment' (applies to senders of 5,000+ messages a day) cannot be checked from DNS; check your sending platform or postmaster data (source: https://postmaster.outlook.com/policies.aspx)",
      "rule_id": "bulk.not_dns_verifiable",
-     "rules_version": "2026.10.29.3",
+     "rules_version": "2026.10.29.4",
      "severity": "info",
      "url": ""
     },
@@ -519,7 +520,7 @@
      "level": "TOOL",
      "message": "yahoo: 'unsub_days_max' (applies to bulk senders) cannot be checked from DNS; check your sending platform or postmaster data (source: https://senders.yahooinc.com/best-practices/)",
      "rule_id": "bulk.not_dns_verifiable",
-     "rules_version": "2026.10.29.3",
+     "rules_version": "2026.10.29.4",
      "severity": "info",
      "url": ""
     }
@@ -530,11 +531,46 @@
  "domain": "good.test",
  "fixes": [
   {
+   "name": "https://mta-sts.good.test/.well-known/mta-sts.txt",
+   "note": "RFC 8461 3.2. Serve over HTTPS with a valid certificate for mta-sts.good.test (CRLF or LF line endings, text/plain). Start in testing; move to enforce after TLS-RPT is clean.",
+   "rule_id": "mtasts.txt_absent",
+   "type": "FILE",
+   "value": "version: STSv1\nmode: testing\nmx: REPLACE-mx.good.test\nmax_age: 604800\n"
+  },
+  {
+   "name": "_mta-sts.good.test",
+   "note": "RFC 8461 3.1. id is 1-32 letters or digits: use the date and time, and change it every time you change the policy file.",
+   "rule_id": "mtasts.txt_absent",
+   "type": "TXT",
+   "value": "v=STSv1; id=REPLACEwithYYYYMMDDhhmmss"
+  },
+  {
    "name": "_smtp._tls.good.test",
    "note": "RFC 8460 3. Replace the mailbox with one you read.",
    "rule_id": "tlsrpt.absent",
    "type": "TXT",
    "value": "v=TLSRPTv1; rua=mailto:REPLACE-tls-reports@good.test"
+  },
+  {
+   "name": "good.test",
+   "note": "RFC 8659 4.2. Add one issue record per CA you use (e.g. your web host's CA), plus 0 iodef \"mailto:REPLACE-security@good.test\" for violation reports. Check before publishing: a wrong CAA blocks your own certificate renewals, including mta-sts.good.test.",
+   "rule_id": "caa.absent",
+   "type": "CAA",
+   "value": "0 issue \"REPLACE-your-ca.example\""
+  },
+  {
+   "name": "good.test",
+   "note": "RFC 4033 / RFC 4035. Optional, but required for DANE.",
+   "rule_id": "dnssec.unsigned",
+   "type": "STEPS",
+   "value": "1. Turn on DNSSEC signing at your DNS host.\n2. Copy the DS record it shows you to your registrar (the parent zone).\n3. Re-run the audit with --doh to confirm the AD bit (validated)."
+  },
+  {
+   "name": "default._bimi.good.test",
+   "note": "draft-brand-indicators-for-message-identification-14 4.3. Needs DMARC at p=quarantine or p=reject; most mailbox providers also need a VMC or CMC certificate (a=).",
+   "rule_id": "bimi.absent",
+   "type": "TXT",
+   "value": "v=BIMI1; l=https://REPLACE-good.test/bimi/logo.svg; a=REPLACE-or-empty"
   }
  ],
  "resolvers": [

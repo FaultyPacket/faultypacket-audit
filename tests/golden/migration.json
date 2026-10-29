@@ -3,6 +3,7 @@
   {
    "check": "spf",
    "data": {
+    "all": "~",
     "lookup_limit": 10,
     "lookup_log": [
      {
@@ -70,7 +71,7 @@
      "level": "SHOULD",
      "message": "a.test evaluated more than once (via council.gov.example > a.test)",
      "rule_id": "spf.duplicate",
-     "rules_version": "2026.10.29.3",
+     "rules_version": "2026.10.29.4",
      "severity": "warning",
      "url": "https://www.rfc-editor.org/rfc/rfc7208#section-4.6.4"
     },
@@ -83,9 +84,20 @@
      "level": "SHOULD",
      "message": "council.gov.example: 'ptr' is deprecated (RFC 7208 5.5); its cost depends on the sender IP, counted as 1",
      "rule_id": "spf.ptr",
-     "rules_version": "2026.10.29.3",
+     "rules_version": "2026.10.29.4",
      "severity": "warning",
      "url": "https://www.rfc-editor.org/rfc/rfc7208#section-5.5"
+    },
+    {
+     "check": "spf",
+     "citation": "RFC 7208 8.5",
+     "evidence": {},
+     "level": "MAY",
+     "message": "'~all' (softfail): unlisted hosts are 'probably not authorised'; '-all' asserts they are not",
+     "rule_id": "spf.all_softfail",
+     "rules_version": "2026.10.29.4",
+     "severity": "info",
+     "url": "https://www.rfc-editor.org/rfc/rfc7208#section-8.5"
     }
    ],
    "status": "warning"
@@ -134,7 +146,7 @@
      "level": "MAY",
      "message": "Organizational Domain: Tree Walk council.gov.example vs legacy PSL gov.example (RFC 9989 4.10.2)",
      "rule_id": "dmarc.org_method_differs",
-     "rules_version": "2026.10.29.3",
+     "rules_version": "2026.10.29.4",
      "severity": "info",
      "url": "https://www.rfc-editor.org/rfc/rfc9989#section-4.10.2"
     },
@@ -145,7 +157,7 @@
      "level": "SHOULD",
      "message": "pct=0 is historic and ignored by RFC 9989 receivers, so the full policy now applies; t=y is the replacement (RFC 9989 9.3, A.6)",
      "rule_id": "dmarc.historic_pct",
-     "rules_version": "2026.10.29.3",
+     "rules_version": "2026.10.29.4",
      "severity": "warning",
      "url": "https://www.rfc-editor.org/rfc/rfc9989#section-9.3"
     },
@@ -156,7 +168,7 @@
      "level": "MAY",
      "message": "tag 'ri' is historic in the DMARC Tags registry and ignored by RFC 9989 receivers; safe to remove (RFC 9989 9.3)",
      "rule_id": "dmarc.historic_tag",
-     "rules_version": "2026.10.29.3",
+     "rules_version": "2026.10.29.4",
      "severity": "info",
      "url": "https://www.rfc-editor.org/rfc/rfc9989#section-9.3"
     },
@@ -167,7 +179,7 @@
      "level": "MUST",
      "message": "fo='0:1': options 0,1,d,s separated by ':', 0 and 1 mutually exclusive, d and s at most once (RFC 9989 4.8)",
      "rule_id": "dmarc.bad_fo",
-     "rules_version": "2026.10.29.3",
+     "rules_version": "2026.10.29.4",
      "severity": "error",
      "url": "https://www.rfc-editor.org/rfc/rfc9989#section-4.8"
     },
@@ -178,7 +190,7 @@
      "level": "MAY",
      "message": "fo has no effect without ruf (RFC 9989 4.7)",
      "rule_id": "dmarc.fo_without_ruf",
-     "rules_version": "2026.10.29.3",
+     "rules_version": "2026.10.29.4",
      "severity": "info",
      "url": "https://www.rfc-editor.org/rfc/rfc9989#section-4.7"
     },
@@ -189,7 +201,7 @@
      "level": "MAY",
      "message": "rua URI 'mailto:r@reports.test!10m': the !size suffix is obsolete and ignored (RFC 9989 4.8)",
      "rule_id": "dmarc.obsolete_size",
-     "rules_version": "2026.10.29.3",
+     "rules_version": "2026.10.29.4",
      "severity": "info",
      "url": "https://www.rfc-editor.org/rfc/rfc9989#section-4.8"
     },
@@ -200,7 +212,7 @@
      "level": "MUST",
      "message": "rua destination reports.test has not authorised council.gov.example: no v=DMARC1 TXT at council.gov.example._report._dmarc.reports.test; compliant receivers MUST ignore this URI (RFC 9990 4)",
      "rule_id": "dmarc.unauthorised_rua",
-     "rules_version": "2026.10.29.3",
+     "rules_version": "2026.10.29.4",
      "severity": "error",
      "url": "https://www.rfc-editor.org/rfc/rfc9990#section-4"
     }
@@ -225,7 +237,7 @@
      "level": "TOOL",
      "message": "no DKIM key at 35 common selectors; selectors can't be listed from DNS, give yours with --dkim-selector",
      "rule_id": "dkim.not_found",
-     "rules_version": "2026.10.29.3",
+     "rules_version": "2026.10.29.4",
      "severity": "info",
      "url": ""
     }
@@ -247,7 +259,7 @@
      "level": "MUST",
      "message": "no MX; senders fall back to the A/AAAA of council.gov.example (none either: undeliverable)",
      "rule_id": "mx.none",
-     "rules_version": "2026.10.29.3",
+     "rules_version": "2026.10.29.4",
      "severity": "info",
      "url": "https://www.rfc-editor.org/rfc/rfc5321#section-5.1"
     }
@@ -287,7 +299,7 @@
      "level": "MAY",
      "message": "no v=STSv1 TXT at _mta-sts.council.gov.example: senders treat the domain as having no MTA-STS (RFC 8461 3.1)",
      "rule_id": "mtasts.txt_absent",
-     "rules_version": "2026.10.29.3",
+     "rules_version": "2026.10.29.4",
      "severity": "info",
      "url": "https://www.rfc-editor.org/rfc/rfc8461#section-3.1"
     },
@@ -300,7 +312,7 @@
      "level": "SHOULD",
      "message": "no v=TLSRPTv1 TXT at _smtp._tls.council.gov.example: you get no reports of TLS delivery failures (RFC 8460 3)",
      "rule_id": "tlsrpt.absent",
-     "rules_version": "2026.10.29.3",
+     "rules_version": "2026.10.29.4",
      "severity": "info",
      "url": "https://www.rfc-editor.org/rfc/rfc8460#section-3"
     }
@@ -323,7 +335,7 @@
      "level": "MAY",
      "message": "no DS record at the parent: the zone is not DNSSEC-signed, so DANE cannot be used and MX/TXT answers can be spoofed",
      "rule_id": "dnssec.unsigned",
-     "rules_version": "2026.10.29.3",
+     "rules_version": "2026.10.29.4",
      "severity": "info",
      "url": "https://www.rfc-editor.org/rfc/rfc4034#section-5"
     }
@@ -344,7 +356,7 @@
      "level": "MAY",
      "message": "no TLSA records for any MX: DANE not deployed (MTA-STS is the non-DNSSEC alternative)",
      "rule_id": "dane.absent",
-     "rules_version": "2026.10.29.3",
+     "rules_version": "2026.10.29.4",
      "severity": "info",
      "url": "https://www.rfc-editor.org/rfc/rfc7672#section-2.2.3"
     }
@@ -366,7 +378,7 @@
      "level": "MAY",
      "message": "no CAA records up the tree: any public CA may issue certificates for this domain",
      "rule_id": "caa.absent",
-     "rules_version": "2026.10.29.3",
+     "rules_version": "2026.10.29.4",
      "severity": "info",
      "url": "https://www.rfc-editor.org/rfc/rfc8659#section-3"
     }
@@ -387,7 +399,7 @@
      "level": "TOOL",
      "message": "no sending IPs given and no MX addresses; pass --sending-ip to test your outbound IPs",
      "rule_id": "rdns.no_targets",
-     "rules_version": "2026.10.29.3",
+     "rules_version": "2026.10.29.4",
      "severity": "info",
      "url": ""
     }
@@ -411,7 +423,7 @@
      "level": "MAY",
      "message": "no BIMI record at default._bimi.council.gov.example",
      "rule_id": "bimi.absent",
-     "rules_version": "2026.10.29.3",
+     "rules_version": "2026.10.29.4",
      "severity": "info",
      "url": "https://datatracker.ietf.org/doc/html/draft-brand-indicators-for-message-identification-14#section-4.3"
     }
@@ -595,7 +607,7 @@
      "level": "TOOL",
      "message": "google: 'alignment' (applies to senders of 5,000+ messages a day) cannot be checked from DNS; check your sending platform or postmaster data (source: https://support.google.com/a/answer/81126)",
      "rule_id": "bulk.not_dns_verifiable",
-     "rules_version": "2026.10.29.3",
+     "rules_version": "2026.10.29.4",
      "severity": "info",
      "url": ""
     },
@@ -610,7 +622,7 @@
      "level": "TOOL",
      "message": "google: 'one_click_unsub' (applies to senders of 5,000+ messages a day) cannot be checked from DNS; check your sending platform or postmaster data (source: https://support.google.com/a/answer/81126)",
      "rule_id": "bulk.not_dns_verifiable",
-     "rules_version": "2026.10.29.3",
+     "rules_version": "2026.10.29.4",
      "severity": "info",
      "url": ""
     },
@@ -625,7 +637,7 @@
      "level": "TOOL",
      "message": "google: 'spf_and_dkim' not verified: SPF ok; DKIM unknown (no DKIM selector given); needs DKIM selectors (--dkim-selector) for the DKIM half",
      "rule_id": "bulk.needs_input",
-     "rules_version": "2026.10.29.3",
+     "rules_version": "2026.10.29.4",
      "severity": "info",
      "url": ""
     },
@@ -640,7 +652,7 @@
      "level": "TOOL",
      "message": "google: 'dkim_min_bits' not verified: no DKIM key found (give --dkim-selector); needs a DKIM selector (--dkim-selector) unless one is found by the dkim check",
      "rule_id": "bulk.needs_input",
-     "rules_version": "2026.10.29.3",
+     "rules_version": "2026.10.29.4",
      "severity": "info",
      "url": ""
     },
@@ -655,7 +667,7 @@
      "level": "TOOL",
      "message": "google: 'fcrdns' not verified: no sending IP given; needs sending IPs (--sending-ip)",
      "rule_id": "bulk.needs_input",
-     "rules_version": "2026.10.29.3",
+     "rules_version": "2026.10.29.4",
      "severity": "info",
      "url": ""
     },
@@ -670,7 +682,7 @@
      "level": "TOOL",
      "message": "google: 'tls' (applies to all senders) cannot be checked from DNS; check your sending platform or postmaster data (source: https://support.google.com/a/answer/81126)",
      "rule_id": "bulk.not_dns_verifiable",
-     "rules_version": "2026.10.29.3",
+     "rules_version": "2026.10.29.4",
      "severity": "info",
      "url": ""
     },
@@ -685,7 +697,7 @@
      "level": "TOOL",
      "message": "google: 'spam_rate_max' (applies to senders of 5,000+ messages a day) cannot be checked from DNS; check your sending platform or postmaster data (source: https://support.google.com/a/answer/81126)",
      "rule_id": "bulk.not_dns_verifiable",
-     "rules_version": "2026.10.29.3",
+     "rules_version": "2026.10.29.4",
      "severity": "info",
      "url": ""
     },
@@ -700,7 +712,7 @@
      "level": "TOOL",
      "message": "outlook: 'alignment' (applies to senders of 5,000+ messages a day) cannot be checked from DNS; check your sending platform or postmaster data (source: https://postmaster.outlook.com/policies.aspx)",
      "rule_id": "bulk.not_dns_verifiable",
-     "rules_version": "2026.10.29.3",
+     "rules_version": "2026.10.29.4",
      "severity": "info",
      "url": ""
     },
@@ -715,7 +727,7 @@
      "level": "TOOL",
      "message": "outlook: 'spf_and_dkim' not verified: SPF ok; DKIM unknown (no DKIM selector given); needs DKIM selectors (--dkim-selector) for the DKIM half",
      "rule_id": "bulk.needs_input",
-     "rules_version": "2026.10.29.3",
+     "rules_version": "2026.10.29.4",
      "severity": "info",
      "url": ""
     },
@@ -730,7 +742,7 @@
      "level": "TOOL",
      "message": "outlook: 'rdns' not verified: no sending IP given; needs sending IPs (--sending-ip)",
      "rule_id": "bulk.needs_input",
-     "rules_version": "2026.10.29.3",
+     "rules_version": "2026.10.29.4",
      "severity": "info",
      "url": ""
     },
@@ -745,7 +757,7 @@
      "level": "TOOL",
      "message": "yahoo: 'fcrdns' not verified: no sending IP given; needs sending IPs (--sending-ip)",
      "rule_id": "bulk.needs_input",
-     "rules_version": "2026.10.29.3",
+     "rules_version": "2026.10.29.4",
      "severity": "info",
      "url": ""
     },
@@ -760,7 +772,7 @@
      "level": "TOOL",
      "message": "yahoo: 'spf_and_dkim' not verified: SPF ok; DKIM unknown (no DKIM selector given); needs DKIM selectors (--dkim-selector) for the DKIM half",
      "rule_id": "bulk.needs_input",
-     "rules_version": "2026.10.29.3",
+     "rules_version": "2026.10.29.4",
      "severity": "info",
      "url": ""
     },
@@ -775,7 +787,7 @@
      "level": "TOOL",
      "message": "yahoo: 'unsub_days_max' (applies to bulk senders) cannot be checked from DNS; check your sending platform or postmaster data (source: https://senders.yahooinc.com/best-practices/)",
      "rule_id": "bulk.not_dns_verifiable",
-     "rules_version": "2026.10.29.3",
+     "rules_version": "2026.10.29.4",
      "severity": "info",
      "url": ""
     }
@@ -787,10 +799,45 @@
  "fixes": [
   {
    "name": "_dmarc.council.gov.example",
-   "note": "Same record without pct, ri, which RFC 9989 9.3 retired, the invalid fo value (RFC 9989 4.8) and the obsolete !size suffix (RFC 9989 4.8). Without pct the full policy applies to all mail; receivers following RFC 9989 already do this.",
+   "note": "Your record with: retired tags pct, ri removed (RFC 9989 9.3); invalid fo (RFC 9989 4.8); obsolete !size on rua (RFC 9989 4.8). Without pct the full policy applies to all mail; RFC 9989 receivers already do this.",
    "rule_id": "dmarc.historic_pct",
    "type": "TXT",
    "value": "v=DMARC1; p=quarantine; rua=mailto:r@reports.test"
+  },
+  {
+   "name": "council.gov.example._report._dmarc.reports.test",
+   "note": "Published by the report receiver, not by you (RFC 9990 4 / RFC 9991 5). Ask your report provider to add it, or remove that address.",
+   "rule_id": "dmarc.unauthorised_rua",
+   "type": "TXT",
+   "value": "v=DMARC1"
+  },
+  {
+   "name": "council.gov.example",
+   "note": "RFC 7208 5.5: ptr SHOULD NOT be used.",
+   "rule_id": "spf.ptr",
+   "type": "STEPS",
+   "value": "1. Replace 'ptr' with the ip4:/ip6: ranges or include: of the hosts it was meant to cover."
+  },
+  {
+   "name": "council.gov.example",
+   "note": "RFC 7208 5.1 / 8.4. Change only once every sender is listed (check your DMARC reports first). With DMARC at p=quarantine/reject, ~all is a common, acceptable choice.",
+   "rule_id": "spf.all_softfail",
+   "type": "TXT",
+   "value": "v=spf1 include:a.test include:a.test ptr -all"
+  },
+  {
+   "name": "https://mta-sts.council.gov.example/.well-known/mta-sts.txt",
+   "note": "RFC 8461 3.2. Serve over HTTPS with a valid certificate for mta-sts.council.gov.example (CRLF or LF line endings, text/plain). Start in testing; move to enforce after TLS-RPT is clean.",
+   "rule_id": "mtasts.txt_absent",
+   "type": "FILE",
+   "value": "version: STSv1\nmode: testing\nmx: REPLACE-mx.council.gov.example\nmax_age: 604800\n"
+  },
+  {
+   "name": "_mta-sts.council.gov.example",
+   "note": "RFC 8461 3.1. id is 1-32 letters or digits: use the date and time, and change it every time you change the policy file.",
+   "rule_id": "mtasts.txt_absent",
+   "type": "TXT",
+   "value": "v=STSv1; id=REPLACEwithYYYYMMDDhhmmss"
   },
   {
    "name": "_smtp._tls.council.gov.example",
@@ -798,6 +845,27 @@
    "rule_id": "tlsrpt.absent",
    "type": "TXT",
    "value": "v=TLSRPTv1; rua=mailto:REPLACE-tls-reports@council.gov.example"
+  },
+  {
+   "name": "council.gov.example",
+   "note": "RFC 8659 4.2. Add one issue record per CA you use (e.g. your web host's CA), plus 0 iodef \"mailto:REPLACE-security@council.gov.example\" for violation reports. Check before publishing: a wrong CAA blocks your own certificate renewals, including mta-sts.council.gov.example.",
+   "rule_id": "caa.absent",
+   "type": "CAA",
+   "value": "0 issue \"REPLACE-your-ca.example\""
+  },
+  {
+   "name": "council.gov.example",
+   "note": "RFC 4033 / RFC 4035. Optional, but required for DANE.",
+   "rule_id": "dnssec.unsigned",
+   "type": "STEPS",
+   "value": "1. Turn on DNSSEC signing at your DNS host.\n2. Copy the DS record it shows you to your registrar (the parent zone).\n3. Re-run the audit with --doh to confirm the AD bit (validated)."
+  },
+  {
+   "name": "default._bimi.council.gov.example",
+   "note": "draft-brand-indicators-for-message-identification-14 4.3. Needs DMARC at p=quarantine or p=reject; most mailbox providers also need a VMC or CMC certificate (a=).",
+   "rule_id": "bimi.absent",
+   "type": "TXT",
+   "value": "v=BIMI1; l=https://REPLACE-council.gov.example/bimi/logo.svg; a=REPLACE-or-empty"
   }
  ],
  "resolvers": [

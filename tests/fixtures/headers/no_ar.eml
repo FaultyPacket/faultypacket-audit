@@ -1,0 +1,5 @@
+DKIM-Signature: v=1; a=rsa-sha256; d=shop.example; s=s1; h=from; bh=x; b=y
+From: a@shop.example
+Subject: unscanned
+
+x

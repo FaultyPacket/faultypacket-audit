@@ -49,3 +49,38 @@ def test_dmarc_constants_match_rules():
     assert dmarc.TREE_WALK_MAX == R.value("dmarc.tree_walk_max_queries")
     assert sorted(dmarc.HISTORIC_TAGS) == sorted(R.value("dmarc.historic_tags"))
     assert sorted(dmarc.ACTIVE_TAGS) == sorted(R.value("dmarc.active_tags"))
+
+
+import pytest
+
+LITERAL = r'(?:R|rules)\.finding\([^,]+,\s*(?:"[a-z]+"|[^,]+),\s*"([a-z0-9_.-]+)"'
+F_CALL = r'\bF\(\s*"[a-z]+",\s*"([a-z0-9_.-]+)"'
+
+
+@pytest.mark.parametrize("mod", ["spf", "blocklist", "lookalike", "mx", "caa", "bimi", "dnssec", "dane", "rdns", "dkim"])
+def test_literal_rule_ids_in_module_exist(mod):
+    src = (PKG / f"checks/{mod}.py").read_text()
+    ids = set(re.findall(LITERAL, src)) | set(re.findall(F_CALL, src))
+    ids = {i for i in ids if "." in i and not i.endswith(".")}
+    missing = [i for i in ids if i not in R]
+    assert not missing, missing
+
+
+def test_fix_rule_ids_exist():
+    src = (PKG / "fixes.py").read_text()
+    ids = set(re.findall(r'_fix\(\s*"([a-z0-9_.-]+)"', src)) | set(re.findall(r'"((?:spf|dmarc|dkim|mtasts|tlsrpt|mx|caa|dnssec|bimi)\.[a-z_]+)"', src))
+    missing = [i for i in ids if i not in R]
+    assert ids and not missing, missing
+
+
+@pytest.mark.parametrize("rid", ["spf.all_pass", "spf.all_neutral", "spf.all_softfail", "spf.no_all",
+                                 "blocklist.listed_ip", "blocklist.listed_domain", "blocklist.not_tested",
+                                 "blocklist.no_ipv4", "lookalike.registered"])
+def test_new_rules_cite_a_url_and_date(rid):
+    r = R.get(rid)
+    assert r["verified"] == "2026-10-29" and r["url"].startswith("https://www.rfc-editor.org/rfc/")
+
+
+def test_blocklist_terms_urls_are_operator_pages():
+    for z in R.value("blocklist.zones"):
+        assert z["terms"].split("/")[2] in ("www.spamhaus.org", "www.spamcop.net", "psbl.org")

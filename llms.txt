@@ -1,6 +1,6 @@
 # FaultyPacket Audit
 
-> Free, open-source (AGPL-3.0) command-line and GitHub Action mail/DNS security audit by FaultyPacket™. Checks SPF, DMARC (RFC 9989/9990/9991), DKIM, MX, MTA-STS, TLS-RPT, DNSSEC, DANE, CAA, reverse DNS, BIMI and Google/Yahoo/Outlook bulk-sender requirements. Every finding has a rule ID, an RFC or provider citation and a link. Runs locally; no account.
+> Free, open-source (AGPL-3.0) command-line and GitHub Action mail/DNS security audit by FaultyPacket™. Checks SPF, DMARC (RFC 9989/9990/9991), DKIM, MX, MTA-STS, TLS-RPT, DNSSEC, DANE, CAA, reverse DNS, BIMI and Google/Yahoo/Outlook bulk-sender requirements, with opt-in DNS blocklist and lookalike-domain checks, a message-header alignment analyser and a printable HTML report. Every finding has a rule ID, an RFC or provider citation and a link. Runs locally; no account.
 
 ## Use
 - [AGENTS.md](https://github.com/FaultyPacket/faultypacket-audit/blob/main/AGENTS.md): CLI, MCP server (`faultypacket-audit mcp`), exit codes, output contract

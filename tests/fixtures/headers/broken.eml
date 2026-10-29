@@ -1,0 +1,11 @@
+ARC-Seal: i=1; a=rsa-sha256; cv=pass; d=relay.example; s=arc; b=x
+ARC-Seal: i=3; a=rsa-sha256; cv=fail; d=relay2.example; s=arc; b=x
+Authentication-Results: mx.receiver.example; spf=none smtp.mailfrom=x.example
+Received: from b (b [192.0.2.2]) by c with SMTP; Thu, 29 Oct 2026 09:00:00 +0000
+Received: from a (a [192.0.2.1]) by b with SMTP; Thu, 29 Oct 2026 10:00:00 +0000
+DKIM-Signature: v=1; a=rsa-sha1; d=x.example; s=old; h=subject:date; l=100; b=y
+From: a@x.example
+From: b@y.example
+Subject: bad
+
+x

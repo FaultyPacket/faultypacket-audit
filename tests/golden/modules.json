@@ -3,6 +3,7 @@
   {
    "check": "spf",
    "data": {
+    "all": "-",
     "lookup_limit": 10,
     "lookup_log": [
      {
@@ -100,7 +101,7 @@
      "level": "SHOULD",
      "message": "selector1._domainkey.shop.example: RSA 1024-bit key; 2048 bits SHOULD be used",
      "rule_id": "dkim.recommended_rsa_bits",
-     "rules_version": "2026.10.29.3",
+     "rules_version": "2026.10.29.4",
      "severity": "warning",
      "url": "https://www.rfc-editor.org/rfc/rfc8301#section-3.2"
     }
@@ -139,7 +140,7 @@
      "level": "MUST",
      "message": "MX target mx2.shop.example is an alias (CNAME to mx1.shop.example); MX targets must not be aliases",
      "rule_id": "mx.cname",
-     "rules_version": "2026.10.29.3",
+     "rules_version": "2026.10.29.4",
      "severity": "warning",
      "url": "https://www.rfc-editor.org/rfc/rfc2181#section-10.3"
     }
@@ -181,7 +182,7 @@
      "level": "MAY",
      "message": "no v=STSv1 TXT at _mta-sts.shop.example: senders treat the domain as having no MTA-STS (RFC 8461 3.1)",
      "rule_id": "mtasts.txt_absent",
-     "rules_version": "2026.10.29.3",
+     "rules_version": "2026.10.29.4",
      "severity": "info",
      "url": "https://www.rfc-editor.org/rfc/rfc8461#section-3.1"
     }
@@ -204,7 +205,7 @@
      "level": "MAY",
      "message": "no DS record at the parent: the zone is not DNSSEC-signed, so DANE cannot be used and MX/TXT answers can be spoofed",
      "rule_id": "dnssec.unsigned",
-     "rules_version": "2026.10.29.3",
+     "rules_version": "2026.10.29.4",
      "severity": "info",
      "url": "https://www.rfc-editor.org/rfc/rfc4034#section-5"
     }
@@ -236,7 +237,7 @@
      "level": "MAY",
      "message": "no TLSA records for any MX: DANE not deployed (MTA-STS is the non-DNSSEC alternative)",
      "rule_id": "dane.absent",
-     "rules_version": "2026.10.29.3",
+     "rules_version": "2026.10.29.4",
      "severity": "info",
      "url": "https://www.rfc-editor.org/rfc/rfc7672#section-2.2.3"
     }
@@ -310,7 +311,7 @@
      "level": "MAY",
      "message": "no a= mark certificate (VMC/CMC); Gmail and Apple Mail only show certified logos",
      "rule_id": "bimi.no_certificate",
-     "rules_version": "2026.10.29.3",
+     "rules_version": "2026.10.29.4",
      "severity": "warning",
      "url": "https://datatracker.ietf.org/doc/html/draft-brand-indicators-for-message-identification-14#section-3.5"
     }
@@ -494,7 +495,7 @@
      "level": "TOOL",
      "message": "google: 'alignment' (applies to senders of 5,000+ messages a day) cannot be checked from DNS; check your sending platform or postmaster data (source: https://support.google.com/a/answer/81126)",
      "rule_id": "bulk.not_dns_verifiable",
-     "rules_version": "2026.10.29.3",
+     "rules_version": "2026.10.29.4",
      "severity": "info",
      "url": ""
     },
@@ -509,7 +510,7 @@
      "level": "TOOL",
      "message": "google: 'one_click_unsub' (applies to senders of 5,000+ messages a day) cannot be checked from DNS; check your sending platform or postmaster data (source: https://support.google.com/a/answer/81126)",
      "rule_id": "bulk.not_dns_verifiable",
-     "rules_version": "2026.10.29.3",
+     "rules_version": "2026.10.29.4",
      "severity": "info",
      "url": ""
     },
@@ -524,7 +525,7 @@
      "level": "TOOL",
      "message": "google: 'fcrdns' not verified: no sending IP given; needs sending IPs (--sending-ip)",
      "rule_id": "bulk.needs_input",
-     "rules_version": "2026.10.29.3",
+     "rules_version": "2026.10.29.4",
      "severity": "info",
      "url": ""
     },
@@ -539,7 +540,7 @@
      "level": "TOOL",
      "message": "google: 'tls' (applies to all senders) cannot be checked from DNS; check your sending platform or postmaster data (source: https://support.google.com/a/answer/81126)",
      "rule_id": "bulk.not_dns_verifiable",
-     "rules_version": "2026.10.29.3",
+     "rules_version": "2026.10.29.4",
      "severity": "info",
      "url": ""
     },
@@ -554,7 +555,7 @@
      "level": "TOOL",
      "message": "google: 'spam_rate_max' (applies to senders of 5,000+ messages a day) cannot be checked from DNS; check your sending platform or postmaster data (source: https://support.google.com/a/answer/81126)",
      "rule_id": "bulk.not_dns_verifiable",
-     "rules_version": "2026.10.29.3",
+     "rules_version": "2026.10.29.4",
      "severity": "info",
      "url": ""
     },
@@ -569,7 +570,7 @@
      "level": "TOOL",
      "message": "outlook: 'alignment' (applies to senders of 5,000+ messages a day) cannot be checked from DNS; check your sending platform or postmaster data (source: https://postmaster.outlook.com/policies.aspx)",
      "rule_id": "bulk.not_dns_verifiable",
-     "rules_version": "2026.10.29.3",
+     "rules_version": "2026.10.29.4",
      "severity": "info",
      "url": ""
     },
@@ -584,7 +585,7 @@
      "level": "TOOL",
      "message": "outlook: 'rdns' not verified: no sending IP given; needs sending IPs (--sending-ip)",
      "rule_id": "bulk.needs_input",
-     "rules_version": "2026.10.29.3",
+     "rules_version": "2026.10.29.4",
      "severity": "info",
      "url": ""
     },
@@ -599,7 +600,7 @@
      "level": "TOOL",
      "message": "yahoo: 'fcrdns' not verified: no sending IP given; needs sending IPs (--sending-ip)",
      "rule_id": "bulk.needs_input",
-     "rules_version": "2026.10.29.3",
+     "rules_version": "2026.10.29.4",
      "severity": "info",
      "url": ""
     },
@@ -614,7 +615,7 @@
      "level": "TOOL",
      "message": "yahoo: 'unsub_days_max' (applies to bulk senders) cannot be checked from DNS; check your sending platform or postmaster data (source: https://senders.yahooinc.com/best-practices/)",
      "rule_id": "bulk.not_dns_verifiable",
-     "rules_version": "2026.10.29.3",
+     "rules_version": "2026.10.29.4",
      "severity": "info",
      "url": ""
     }
@@ -623,7 +624,43 @@
   }
  ],
  "domain": "shop.example",
- "fixes": [],
+ "fixes": [
+  {
+   "name": "selector1._domainkey.shop.example",
+   "note": "Key below the recommended 2048 bits (RFC 8301 3.2). Rotation steps follow M3AAWG DKIM key rotation practice.",
+   "rule_id": "dkim.recommended_rsa_bits",
+   "type": "STEPS",
+   "value": "1. In your mail provider, generate a new 2048-bit RSA DKIM key under a NEW selector (e.g. REPLACE-s2026).\n2. Publish its TXT at REPLACE-s2026._domainkey.shop.example and switch signing to it.\n3. Wait at least 7 days (mail in transit is still verified with the old key).\n4. Revoke the old key: set selector1._domainkey.shop.example TXT to 'v=DKIM1; p=' (empty p = revoked, RFC 6376 3.6.1)."
+  },
+  {
+   "name": "https://mta-sts.shop.example/.well-known/mta-sts.txt",
+   "note": "RFC 8461 3.2. Serve over HTTPS with a valid certificate for mta-sts.shop.example (CRLF or LF line endings, text/plain). Start in testing; move to enforce after TLS-RPT is clean.",
+   "rule_id": "mtasts.txt_absent",
+   "type": "FILE",
+   "value": "version: STSv1\nmode: testing\nmx: mx1.shop.example\nmx: mx2.shop.example\nmax_age: 604800\n"
+  },
+  {
+   "name": "_mta-sts.shop.example",
+   "note": "RFC 8461 3.1. id is 1-32 letters or digits: use the date and time, and change it every time you change the policy file.",
+   "rule_id": "mtasts.txt_absent",
+   "type": "TXT",
+   "value": "v=STSv1; id=REPLACEwithYYYYMMDDhhmmss"
+  },
+  {
+   "name": "shop.example",
+   "note": "Point the MX at the canonical name mx1.shop.example instead of the alias mx2.shop.example (RFC 2181 10.3; RFC 5321 5.1).",
+   "rule_id": "mx.cname",
+   "type": "MX",
+   "value": "20 mx1.shop.example."
+  },
+  {
+   "name": "shop.example",
+   "note": "RFC 4033 / RFC 4035. Optional, but required for DANE.",
+   "rule_id": "dnssec.unsigned",
+   "type": "STEPS",
+   "value": "1. Turn on DNSSEC signing at your DNS host.\n2. Copy the DS record it shows you to your registrar (the parent zone).\n3. Re-run the audit with --doh to confirm the AD bit (validated)."
+  }
+ ],
  "resolvers": [
   "fake"
  ],

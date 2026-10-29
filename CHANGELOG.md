@@ -2,6 +2,17 @@
 
 
 
+## 1.3.0 (2026-10-29)
+
+- HTML report: `--html FILE`, one self-contained file (no scripts or remote assets) with executive summary, per-provider verdicts, findings with linked sources and suggested fixes; prints to PDF. Optional `--pdf FILE` with `pip install fpdf2`. The GitHub Action now also writes `audit.html` (output `html`).
+- Suggested fixes for every fixable finding class: SPF lookup-limit steps (heaviest includes, when flattening is safe), void lookups, `~all`/`?all`/`+all`/no `all`, `ptr`, missing include targets, multiple records; DMARC `p=none` staging, missing `rua`, `t=y`, third-party report authorisation record; DKIM weak-key rotation; MTA-STS policy file and TXT; TLS-RPT; MX CNAME; CAA; DNSSEC; BIMI. New fix types `MX`, `CAA`, `FILE`, `STEPS`.
+- New opt-in check `blocklist`: Spamhaus ZEN/DBL, SpamCop, PSBL via DNS, with RFC 5782 test-point probing so a refused resolver is "not tested", never "clean".
+- New opt-in check `lookalike`: typo, homoglyph and TLD-swap candidates (max 60), reporting which resolve and which have MX.
+- New subcommand `faultypacket-audit headers msg.eml`: Authentication-Results (RFC 8601), ARC (RFC 8617), DKIM-Signature, Received chain, and a DMARC alignment verdict (RFC 9989 3.2.10, 4.4).
+- New SPF findings: `spf.all_pass`, `spf.all_neutral`, `spf.all_softfail`, `spf.no_all` (RFC 7208 4.7, 5.1, 8.2, 8.5).
+- Tests: 239 to 510, including hypothesis property tests on the SPF, DMARC and header parsers and golden fixtures from RFC 7208 App. A, RFC 9989 App. B and RFC 8601 App. B.
+- Rules 2026.10.29.4 (206 rules).
+
 ## 1.2.0 (2026-10-29)
 
 - Suggested fixes: each report has a `fixes` list of copy-paste TXT records where the correct record follows from the standard (missing DMARC, RFC 9989 retired tags / invalid `fo` / obsolete `!size`, missing TLS-RPT). Owner-specific values are `REPLACE-` placeholders. Shown in text output, JSON and MCP.

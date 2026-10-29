@@ -1,0 +1,13 @@
+Return-Path: <bounces+123@em.esp-mailer.example>
+Authentication-Results: mx.receiver.example;
+	dkim=pass header.d=esp-mailer.example header.s=s1;
+	spf=pass smtp.mailfrom=bounces+123@em.esp-mailer.example;
+	dmarc=fail (p=QUARANTINE) header.from=shop.example
+Received: from o1.esp-mailer.example (o1.esp-mailer.example [203.0.113.5])
+	by mx.receiver.example with ESMTPS id x; Thu, 29 Oct 2026 10:00:02 +0000
+DKIM-Signature: v=1; a=rsa-sha256; d=esp-mailer.example; s=s1; c=relaxed/relaxed;
+	h=from:subject:date; bh=AAAA; b=BBBB
+From: hello@shop.example
+Subject: x
+
+x

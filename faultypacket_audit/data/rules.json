@@ -1,6 +1,6 @@
 {
  "schema": "faultypacket-rules/1",
- "rules_version": "2026.10.29.3",
+ "rules_version": "2026.10.29.4",
  "note": "Every finding the tool emits references one of these rules. Provider (bulk-sender) rows are added only after reading the provider's live page; value, date and url are mandatory. RFC section numbers pinned against rfc-editor.org text on 2026-10-29.",
  "rules": [
   {
@@ -1899,6 +1899,148 @@
    "requirement": "dkim_min_bits",
    "effective": "2024-02-01",
    "needs": "a DKIM selector (--dkim-selector) unless one is found by the dkim check"
+  },
+  {
+   "id": "spf.all_pass",
+   "value": true,
+   "level": "SHOULD",
+   "source": "RFC 7208 5.1; RFC 7208 8.3",
+   "url": "https://www.rfc-editor.org/rfc/rfc7208#section-5.1",
+   "verified": "2026-10-29",
+   "check": "spf"
+  },
+  {
+   "id": "spf.all_neutral",
+   "value": true,
+   "level": "MAY",
+   "source": "RFC 7208 8.2",
+   "url": "https://www.rfc-editor.org/rfc/rfc7208#section-8.2",
+   "verified": "2026-10-29",
+   "check": "spf"
+  },
+  {
+   "id": "spf.all_softfail",
+   "value": true,
+   "level": "MAY",
+   "source": "RFC 7208 8.5",
+   "url": "https://www.rfc-editor.org/rfc/rfc7208#section-8.5",
+   "verified": "2026-10-29",
+   "check": "spf"
+  },
+  {
+   "id": "spf.no_all",
+   "value": true,
+   "level": "MAY",
+   "source": "RFC 7208 4.7",
+   "url": "https://www.rfc-editor.org/rfc/rfc7208#section-4.7",
+   "verified": "2026-10-29",
+   "check": "spf"
+  },
+  {
+   "id": "blocklist.zones",
+   "value": [
+    {
+     "zone": "zen.spamhaus.org",
+     "type": "ip",
+     "test": "127.0.0.2",
+     "terms": "https://www.spamhaus.org/blocklists/dnsbl-fair-use-policy/"
+    },
+    {
+     "zone": "dbl.spamhaus.org",
+     "type": "domain",
+     "test": "dbltest.com",
+     "terms": "https://www.spamhaus.org/blocklists/dnsbl-fair-use-policy/"
+    },
+    {
+     "zone": "bl.spamcop.net",
+     "type": "ip",
+     "test": "127.0.0.2",
+     "terms": "https://www.spamcop.net/fom-serve/cache/291.html"
+    },
+    {
+     "zone": "psbl.surriel.com",
+     "type": "ip",
+     "test": "127.0.0.2",
+     "terms": "https://psbl.org/"
+    }
+   ],
+   "level": "TOOL",
+   "source": "RFC 5782 5 test points; list operators' usage terms",
+   "url": "https://www.rfc-editor.org/rfc/rfc5782#section-5",
+   "verified": "2026-10-29",
+   "check": "blocklist"
+  },
+  {
+   "id": "blocklist.listed_ip",
+   "value": true,
+   "level": "PROVIDER",
+   "source": "RFC 5782 2.1 (IP address DNSxL)",
+   "url": "https://www.rfc-editor.org/rfc/rfc5782#section-2.1",
+   "verified": "2026-10-29",
+   "check": "blocklist"
+  },
+  {
+   "id": "blocklist.listed_domain",
+   "value": true,
+   "level": "PROVIDER",
+   "source": "RFC 5782 3 (domain name DNSxL)",
+   "url": "https://www.rfc-editor.org/rfc/rfc5782#section-3",
+   "verified": "2026-10-29",
+   "check": "blocklist"
+  },
+  {
+   "id": "blocklist.not_tested",
+   "value": true,
+   "level": "TOOL",
+   "source": "RFC 5782 5: test point did not answer as listed",
+   "url": "https://www.rfc-editor.org/rfc/rfc5782#section-5",
+   "verified": "2026-10-29",
+   "check": "blocklist"
+  },
+  {
+   "id": "blocklist.no_ipv4",
+   "value": true,
+   "level": "TOOL",
+   "source": "RFC 5782 2.4 (IPv6 DNSxLs not queried)",
+   "url": "https://www.rfc-editor.org/rfc/rfc5782#section-2.4",
+   "verified": "2026-10-29",
+   "check": "blocklist"
+  },
+  {
+   "id": "blocklist.internal",
+   "value": true,
+   "level": "TOOL",
+   "source": "tool error, not a finding about the domain",
+   "url": "",
+   "verified": "2026-10-29",
+   "check": "blocklist"
+  },
+  {
+   "id": "lookalike.max_candidates",
+   "value": 60,
+   "level": "TOOL",
+   "source": "FaultyPacket cap on candidates per domain (typo, homoglyph, TLD swap)",
+   "url": "",
+   "verified": "2026-10-29",
+   "check": "lookalike"
+  },
+  {
+   "id": "lookalike.registered",
+   "value": true,
+   "level": "TOOL",
+   "source": "Observation: candidate has NS or A records (RFC 1034 3.6); MX per RFC 5321 5.1",
+   "url": "https://www.rfc-editor.org/rfc/rfc5321#section-5.1",
+   "verified": "2026-10-29",
+   "check": "lookalike"
+  },
+  {
+   "id": "lookalike.internal",
+   "value": true,
+   "level": "TOOL",
+   "source": "tool error, not a finding about the domain",
+   "url": "",
+   "verified": "2026-10-29",
+   "check": "lookalike"
   }
  ]
 }

@@ -1,0 +1,14 @@
+ARC-Seal: i=2; a=rsa-sha256; cv=pass; d=list.example; s=arc; t=1; b=x
+ARC-Message-Signature: i=2; a=rsa-sha256; d=list.example; s=arc; h=from; bh=x; b=x
+ARC-Authentication-Results: i=2; list.example; dkim=pass header.d=shop.example; spf=pass smtp.mailfrom=shop.example
+Authentication-Results: mx.receiver.example; dkim=fail header.d=shop.example; spf=pass smtp.mailfrom=list.example; dmarc=fail header.from=shop.example; arc=pass
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=relay.example; s=arc; t=1; b=x
+ARC-Message-Signature: i=1; a=rsa-sha256; d=relay.example; s=arc; h=from; bh=x; b=x
+ARC-Authentication-Results: i=1; relay.example; dkim=pass header.d=shop.example
+Received: from list.example (list.example [198.51.100.9]) by mx.receiver.example with ESMTP; Thu, 29 Oct 2026 10:05:00 +0000
+Received: from shop.example (shop.example [192.0.2.4]) by list.example with ESMTP; Thu, 29 Oct 2026 10:00:00 +0000
+DKIM-Signature: v=1; a=rsa-sha256; d=shop.example; s=s1; h=from:subject; bh=x; b=y
+From: a@shop.example
+Subject: list post
+
+x

@@ -20,7 +20,7 @@ Sample output (live run, 2026-10-29 11:45 UTC, trimmed):
 europa.eu: ERROR
   dmarc: error
     [error] no DMARC record at _dmarc.europa.eu and none found by the Tree Walk: DMARC does not apply (RFC 9989 4.10.1)
-      rule dmarc.no_record | RFC 9989 4.10.1 | https://www.rfc-editor.org/rfc/rfc9989#section-4.10.1 | rules 2026.10.29.3
+      rule dmarc.no_record | RFC 9989 4.10.1 | https://www.rfc-editor.org/rfc/rfc9989#section-4.10.1 | rules 2026.10.29.4
   bulk-sender: warning
     google: fail (not checkable from DNS: alignment, one_click_unsub, tls, spam_rate_max)
     outlook: fail (not checkable from DNS: alignment)
@@ -29,7 +29,7 @@ europa.eu: ERROR
 
 Runs locally. No account, no upload. Also a [GitHub Action](#github-action), an [MCP server](#mcp-server-for-ai-agents) and a [weekly scan](#weekly-scan-in-your-own-repo) for your own repo. AI agents: see [AGENTS.md](AGENTS.md).
 
-> Status: v1.2.0 (2026-10-29). JSON fields are stable within 1.x ([schema](schema/audit.schema.json)); rule changes bump `rules_version`.
+> Status: v1.3.0 (2026-10-29). JSON fields are stable within 1.x ([schema](schema/audit.schema.json)); rule changes bump `rules_version`.
 
 ## Checks
 
@@ -46,6 +46,10 @@ Runs locally. No account, no upload. Also a [GitHub Action](#github-action), an 
 | `rdns` | Forward-confirmed reverse DNS for MX hosts and `--sending-ip` | RFC 1912 2.1; provider guidelines |
 | `bimi` | BIMI record, DMARC enforcement prerequisite, SVG Tiny PS profile, `<title>`, 32 KB limit, certificate presence | draft-brand-indicators-for-message-identification-14; draft-svg-tiny-ps-abrotman-12 |
 | `bulk-sender` | Major mailbox providers' published bulk-sender requirements, split into what DNS can verify and what it can't | provider guideline pages, linked per row |
+| `blocklist` (opt-in) | MX IPv4 addresses on Spamhaus ZEN, SpamCop and PSBL, the domain on Spamhaus DBL. Each list's RFC 5782 test point is queried first; a list that refuses your resolver (Spamhaus refuses large public resolvers) is reported as **not tested**, never as clean. Free use is subject to each operator's terms, linked in the output | RFC 5782 2.1, 3, 5 |
+| `lookalike` (opt-in) | Up to 60 typo, homoglyph and TLD-swap names for your domain; reports which resolve (NS/A) and which have MX. Observations only | RFC 1034; RFC 5321 5.1 |
+
+The two opt-in checks send extra queries (to third-party lists, or 180 queries for lookalikes), so they run only when named: `--checks spf,dmarc,mx,blocklist,lookalike`.
 
 ## Install and run
 
@@ -53,6 +57,8 @@ Runs locally. No account, no upload. Also a [GitHub Action](#github-action), an 
 pip install git+https://github.com/FaultyPacket/faultypacket-audit
 faultypacket-audit example.com
 faultypacket-audit -f domains.txt --json out.json --csv out.csv --sarif out.sarif
+faultypacket-audit example.com --html report.html        # self-contained; print to PDF from a browser
+faultypacket-audit headers message.eml                  # alignment verdict from saved headers
 faultypacket-audit example.com --dkim-selector s1 --sending-ip 192.0.2.10
 faultypacket-audit -f domains.txt --json new.json --baseline old.json --diff changes.md --fail-on-new
 python -m faultypacket_audit --checks spf,dmarc --doh example.com
@@ -66,6 +72,8 @@ Exit codes: 0 means clean, 1 means the `--fail-on` threshold (default `error`) w
 * **JSON** gives one object per domain. Each check has a `status`, its `findings` and structured `data`.
 * **CSV** gives one row per finding.
 * **SARIF 2.1.0** works with GitHub code scanning. Each rule carries a `helpUri` that links to its source.
+* **HTML** (`--html FILE`) is one self-contained file (no scripts, fonts or remote assets): executive summary, per-provider verdicts, every finding with its linked source, and suggested fixes. Print it to PDF from any browser.
+* **PDF** (`--pdf FILE`) is optional: `pip install fpdf2` (pure-Python, but it pulls in Pillow and fontTools). The printed HTML looks better.
 
 Each finding has these fields:
 
@@ -75,11 +83,39 @@ Each finding has these fields:
 * `citation` (for example `RFC 9989 9.3`)
 * `url`
 * `level`, which is `MUST`, `SHOULD`, `MAY`, `PROVIDER` or `TOOL`. `TOOL` covers the tool's own conditions, such as DNS errors.
-* `rules_version` (for example `2026.10.29.3`), so a finding can be traced to the exact rule set that produced it. SARIF messages end with `[rule_id | citation | rules version]`.
+* `rules_version` (for example `2026.10.29.4`), so a finding can be traced to the exact rule set that produced it. SARIF messages end with `[rule_id | citation | rules version]`.
 
 ## Suggested fixes
 
-Where the right record follows from the standard alone, the report includes a copy-paste fix tied to the rule it answers: a monitoring DMARC record when none exists, your existing DMARC record rewritten without the tags RFC 9989 retired (plus any invalid `fo` or obsolete `!size`), and a TLS-RPT record when it is missing. Anything only you know, such as the mailbox that reads reports, is a `REPLACE-` placeholder. In JSON these are in each report's `fixes` list.
+Where the right change follows from the standard, the report includes a fix tied to the rule it answers (`fixes` in JSON, one per finding class). Each is a DNS record (`TXT`, `MX`, `CAA`), a file to publish (`FILE`), or ordered `STEPS`:
+
+| Finding | Fix |
+|---|---|
+| no SPF / no DMARC / no TLS-RPT | a starting record |
+| SPF over 10 lookups | steps naming your heaviest includes, and when flattening to `ip4:` is safe |
+| SPF void lookups | the void terms to remove |
+| SPF `~all`, `?all`, `+all`, no `all` | your record ending `-all`, with the caveat to check DMARC reports first |
+| SPF `ptr`, missing include target, two records | steps |
+| DMARC retired `pct`/`rf`/`ri`, invalid `fo`, `!size`, no `rua`, `t=y` | your record rewritten |
+| DMARC `p=none` | the staged route to `quarantine` then `reject` |
+| third-party `rua`/`ruf` not authorised | the exact `_report._dmarc` record the report receiver must publish |
+| DKIM key under 2048 bits or SHA-1 only | rotation steps: new selector, 7-day overlap, revoke with empty `p=` |
+| no MTA-STS | the policy file (with your real MX hosts) and the `_mta-sts` TXT |
+| MTA-STS in testing | steps to enforce |
+| MX is a CNAME | the MX pointing at the canonical name |
+| no CAA / bad `iodef` | a CAA record |
+| unsigned or bogus DNSSEC | pointers (DS at the registrar) |
+| no BIMI / SVG profile / DMARC not enforcing | record and steps |
+
+Anything only you know (report mailbox, CA, selector, logo URL) is a `REPLACE-` placeholder. The tests re-audit each suggested SPF, DMARC and MTA-STS fix to check it is itself valid.
+
+## Message headers
+
+```
+faultypacket-audit headers message.eml [--json] [--adkim s] [--aspf s] [--trust mx.yourdomain.example] [--doh]
+```
+
+Reads a saved message and reports: Authentication-Results (RFC 8601, comments and quoting handled), ARC sets and `cv` chain (RFC 8617), each DKIM-Signature (missing tags, `rsa-sha1`, `l=`, whether `From` is signed), the Received chain oldest first with per-hop delay, and a DMARC alignment verdict (RFC 9989 3.2.10 relaxed/strict, 4.4). By default only the topmost Authentication-Results is trusted (anything below it may have been added by the sender). Organizational Domains come from the Public Suffix List offline, or the RFC 9989 Tree Walk with `--doh`. It does not re-verify signatures. Exit 0 when aligned, 1 otherwise.
 
 ## Provider verdicts
 
@@ -108,7 +144,7 @@ report = audit("example.com", Resolver(), load_rules())
   with: {sarif_file: "${{ steps.audit.outputs.sarif }}"}
 ```
 
-Outputs: `exit-code`, `json`, `sarif`. `@v1` follows the latest 1.x release; pin a tag such as `@v1.2.0` for fixed behaviour.
+Outputs: `exit-code`, `json`, `sarif`, `html`. `@v1` follows the latest 1.x release; pin a tag such as `@v1.3.0` for fixed behaviour.
 
 ## MCP server for AI agents
 

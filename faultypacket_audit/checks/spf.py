@@ -232,14 +232,47 @@ def analyse(domain, res):
             "lookup_log": e.rows, "tree": tree}
 
 
+def all_qualifier(record):
+    """Qualifier of the top-level 'all' term ('+', '-', '~', '?'), 'redirect'
+    when there is no 'all' but a redirect, or None when neither is present."""
+    if not record:
+        return None
+    q, redirect = None, False
+    for term in record.split()[1:]:
+        kind, name, _arg, _cidr, qual = parse_term(term)
+        if kind == "mechanism" and name == "all" and q is None:
+            q = qual
+        elif kind == "modifier" and name == "redirect":
+            redirect = True
+    return q if q is not None else ("redirect" if redirect else None)
+
+
 def check(domain, res, rules, options=None):
     """-> CheckResult dict. Every finding is created through rules.finding()."""
     r = analyse(domain, res)
     findings = [rules.finding(NAME, SEVERITY[i["severity"]], "spf." + i["code"], i["message"],
                               spf_result=i["severity"])
                 for i in r["issues"]]
+    rec = (r["tree"] or {}).get("record")
+    q = all_qualifier(rec) if rec and r["result"] != "permerror" else "n/a"
+    if q == "+":
+        restricted = any(t[0] in "-~" and t.lstrip("-~").lower() != "all" for t in rec.split()[1:])
+        findings.append(rules.finding(NAME, "warning" if restricted else "error", "spf.all_pass",
+                                      "'+all' passes every host not matched earlier" +
+                                      ("; earlier '-'/'~' terms restrict it (RFC 7208 A.4), check this is intended"
+                                       if restricted else ": every host on the internet may send as this domain")))
+    elif q == "?":
+        findings.append(rules.finding(NAME, "warning", "spf.all_neutral",
+                                      "'?all' gives no assertion about unlisted hosts (neutral)"))
+    elif q == "~":
+        findings.append(rules.finding(NAME, "info", "spf.all_softfail",
+                                      "'~all' (softfail): unlisted hosts are 'probably not authorised'; "
+                                      "'-all' asserts they are not"))
+    elif q is None:
+        findings.append(rules.finding(NAME, "warning", "spf.no_all",
+                                      "no 'all' term and no redirect: unlisted hosts get the default result 'neutral'"))
     return {"check": NAME, "domain": domain, "findings": findings,
-            "data": {"result": r["result"], "lookups": r["lookups"], "lookup_limit": LOOKUP_LIMIT,
+            "data": {"result": r["result"], "lookups": r["lookups"], "all": q, "lookup_limit": LOOKUP_LIMIT,
                      "void_lookups": r["void_lookups"], "void_limit": VOID_LIMIT,
                      "record": (r["tree"] or {}).get("record"),
                      "lookup_log": r["lookup_log"], "tree": r["tree"]}}

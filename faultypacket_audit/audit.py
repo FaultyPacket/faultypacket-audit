@@ -1,17 +1,22 @@
 """Run checks for one domain. Pure: returns a report dict, never prints."""
 import datetime as dt
 
-from .checks import spf, dmarc, dkim, bulk_sender, mx, mtasts, caa, rdns, dnssec, dane, bimi
+from .checks import spf, dmarc, dkim, bulk_sender, mx, mtasts, caa, rdns, dnssec, dane, bimi, blocklist, lookalike
 from .core.finding import worst
 from .core.resolver import Cached
 
 CHECKS = {"spf": spf.check, "dmarc": dmarc.check, "dkim": dkim.check, "mx": mx.check,
           "mta-sts": mtasts.check, "dnssec": dnssec.check, "dane": dane.check, "caa": caa.check,
-          "rdns": rdns.check, "bimi": bimi.check, "bulk-sender": bulk_sender.check}
+          "rdns": rdns.check, "bimi": bimi.check, "bulk-sender": bulk_sender.check,
+          "blocklist": blocklist.check, "lookalike": lookalike.check}
 # order matters: bulk-sender reuses spf, dmarc and dkim data; bimi reuses dmarc
 ORDER = ["spf", "dmarc", "dkim", "mx", "mta-sts", "dnssec", "dane", "caa", "rdns", "bimi", "bulk-sender"]
+# opt-in: they query third parties (blocklists) or many names (lookalike)
+EXTRA = ["blocklist", "lookalike"]
+ALL = ORDER + EXTRA
 INTERNAL = {"spf": "spf.internal", "dmarc": "dmarc.internal", "bulk-sender": "bulk.internal",
-            "mta-sts": "mtasts.internal"}
+            "mta-sts": "mtasts.internal",
+            "blocklist": "blocklist.internal", "lookalike": "lookalike.internal"}
 
 
 def now_utc():
@@ -23,7 +28,7 @@ def audit(domain, res, rules, checks=None, options=None):
     Each check is isolated: an exception becomes a cited TOOL finding for that
     check only."""
     res = res if isinstance(res, Cached) else Cached(res)
-    wanted = [c for c in ORDER if c in (checks or ORDER)]
+    wanted = [c for c in ALL if c in (checks or ORDER)]
     opts = dict(options or {})
     opts["results"] = {}
     out = []

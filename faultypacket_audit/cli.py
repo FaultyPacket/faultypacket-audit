@@ -3,7 +3,7 @@ import argparse, sys
 from concurrent.futures import ThreadPoolExecutor
 
 from . import __version__
-from .audit import audit, ORDER, now_utc
+from .audit import audit, ORDER, ALL, now_utc
 from .core.finding import rank
 from .core.inputs import collect
 from .core.resolver import Cached, Resolver, DEFAULT_DOH
@@ -46,9 +46,11 @@ def main(argv=None, stdin=None, stdout=None, stderr=None):
                     "DNSSEC, DANE, CAA, reverse DNS, BIMI, and Google/Yahoo/Outlook sender requirements that DNS can show.")
     p.add_argument("domains", nargs="*", help="domains, URLs or email addresses")
     p.add_argument("-f", "--file", action="append", help="file with one input per line ('-' = stdin); repeatable")
-    p.add_argument("--checks", default=",".join(ORDER), help="comma list from: " + ", ".join(ORDER) + " (default all)")
+    p.add_argument("--checks", default=",".join(ORDER), help="comma list from: " + ", ".join(ALL) + " (default: all except the opt-in blocklist, lookalike)")
     p.add_argument("--json", metavar="FILE", help="write JSON ('-' = stdout)")
     p.add_argument("--csv", metavar="FILE", help="write CSV, one row per finding ('-' = stdout)")
+    p.add_argument("--html", metavar="FILE", help="write a self-contained HTML report (prints to PDF from a browser)")
+    p.add_argument("--pdf", metavar="FILE", help="write a PDF report (needs the optional fpdf2 package: pip install 'faultypacket-audit[pdf]')")
     p.add_argument("--sarif", metavar="FILE", help="write SARIF 2.1.0 ('-' = stdout)")
     p.add_argument("--sarif-artifact", default=None, help="file path SARIF results point at (default: first -f file, else domains.txt)")
     p.add_argument("--sarif-info", action="store_true", help="include info findings in SARIF")
@@ -72,9 +74,9 @@ def main(argv=None, stdin=None, stdout=None, stderr=None):
     p.add_argument("--version", action="version", version=f"faultypacket-audit {__version__}")
     a = p.parse_args(argv)
     checks = [c.strip() for c in a.checks.split(",") if c.strip()]
-    unknown = [c for c in checks if c not in ORDER]
+    unknown = [c for c in checks if c not in ALL]
     if unknown or not checks:
-        p.error(f"unknown check(s): {', '.join(unknown) or '(none)'}; choose from {', '.join(ORDER)}")
+        p.error(f"unknown check(s): {', '.join(unknown) or '(none)'}; choose from {', '.join(ALL)}")
     if not 1 <= a.concurrency <= 32:
         p.error("--concurrency must be 1..32")
     try:
@@ -106,7 +108,7 @@ def main(argv=None, stdin=None, stdout=None, stderr=None):
 
     with ThreadPoolExecutor(max_workers=min(a.concurrency, len(domains))) as ex:
         reports = list(ex.map(one, domains))
-    to_stdout = "-" in (a.json, a.csv, a.sarif)
+    to_stdout = "-" in (a.json, a.csv, a.sarif, a.html)
     human = stderr if to_stdout else stdout
     if not a.quiet:
         print(text.render(reports, a.verbose), file=human)
@@ -116,6 +118,16 @@ def main(argv=None, stdin=None, stdout=None, stderr=None):
         _write(a.json, jsonout.dumps(reports, __version__), stdout)
     if a.csv:
         _write(a.csv, csvout.dumps(reports), stdout)
+    if a.html:
+        from .output import html as htmlout
+        _write(a.html, htmlout.render(jsonout.to_jsonable(reports, __version__), __version__), stdout)
+    if a.pdf:
+        from .output import html as htmlout
+        try:
+            htmlout.to_pdf(jsonout.to_jsonable(reports, __version__), __version__, a.pdf)
+        except RuntimeError as e:
+            print(f"--pdf: {e}", file=stderr)
+            return 2
     if a.sarif:
         art = a.sarif_artifact or next((f for f in (a.file or []) if f != "-"), "domains.txt")
         _write(a.sarif, sarif.dumps(reports, rules, __version__, artifact=art,
@@ -144,6 +156,9 @@ def entry():
     if sys.argv[1:2] == ["mcp"]:
         from .mcp import serve
         sys.exit(serve(sys.argv[2:]))
+    if sys.argv[1:2] == ["headers"]:
+        from .headers import main as hmain
+        sys.exit(hmain(sys.argv[2:], sys.stdin, sys.stdout, sys.stderr))
     sys.exit(main())
 
 

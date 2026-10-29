@@ -65,3 +65,9 @@ def test_serve_stdio():
     lines = [json.loads(x) for x in out.getvalue().splitlines()]
     assert lines[0] == {"jsonrpc": "2.0", "id": 1, "result": {}}
     assert lines[1]["error"]["code"] == -32700
+
+
+def test_mcp_schema_lists_opt_in_checks():
+    from faultypacket_audit.mcp import TOOLS
+    enum = next(t for t in TOOLS if t["name"] == "audit_domain")["inputSchema"]["properties"]["checks"]["items"]["enum"]
+    assert "blocklist" in enum and "lookalike" in enum

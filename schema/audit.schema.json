@@ -82,7 +82,7 @@
                 "type": "string"
               },
               "type": {
-                "const": "TXT"
+                "enum": ["TXT", "MX", "CAA", "CNAME", "FILE", "STEPS"]
               },
               "value": {
                 "type": "string"

@@ -31,6 +31,9 @@ outputs:
   sarif:
     description: Path to audit.sarif, ready for github/codeql-action/upload-sarif.
     value: ${{ steps.run.outputs.sarif }}
+  html:
+    description: Path to audit.html, a self-contained report that prints to PDF.
+    value: ${{ steps.run.outputs.html }}
 runs:
   using: composite
   steps:
@@ -49,7 +52,7 @@ runs:
         OUT: ${{ inputs.output-dir }}
       run: |
         mkdir -p "$OUT"
-        cmd=(faultypacket-audit --fail-on "$FAIL_ON" --json "$OUT/audit.json" --csv "$OUT/audit.csv" --sarif "$OUT/audit.sarif")
+        cmd=(faultypacket-audit --fail-on "$FAIL_ON" --json "$OUT/audit.json" --csv "$OUT/audit.csv" --sarif "$OUT/audit.sarif" --html "$OUT/audit.html")
         if [ -n "$DOMAINS_FILE" ]; then cmd+=(-f "$DOMAINS_FILE"); fi
         read -r -a extra <<< "$ARGS"
         read -r -a doms <<< "$DOMAINS"
@@ -57,5 +60,5 @@ runs:
         "${cmd[@]}" "${extra[@]}" "${doms[@]}"
         rc=$?
         set -e
-        { echo "exit-code=$rc"; echo "json=$OUT/audit.json"; echo "sarif=$OUT/audit.sarif"; } >> "$GITHUB_OUTPUT"
+        { echo "exit-code=$rc"; echo "json=$OUT/audit.json"; echo "sarif=$OUT/audit.sarif"; echo "html=$OUT/audit.html"; } >> "$GITHUB_OUTPUT"
         exit "$rc"
