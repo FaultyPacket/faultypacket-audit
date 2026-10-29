@@ -314,9 +314,13 @@ def txt_size(name, txts):
 
 
 def record_checks(domain, res, rules, rec):
-    """RFC 7208 3.4 size, 3.1 type 99, 6.2 exp= target."""
+    """RFC 7208 3.4 size, 3.1 type 99, 6.2 exp= target, 6.1 redirect position,
+    5.5 ptr position, 3.5 wildcard coverage."""
     F = lambda sev, rid, msg, **e: rules.finding(NAME, sev, rid, msg, **e)
     out = []
+    for sev, rid, msg in term_order_issues(rec):
+        out.append(F(sev, rid, msg))
+    out += wildcard_coverage(domain, res, F)
     txts, st = res.query(domain, "TXT")
     if st == "ok":
         size, lim = txt_size(domain, txts), rules.value("spf.record_size")
@@ -353,3 +357,45 @@ def record_checks(domain, res, rules, rec):
             out.append(F("warning", "spf.exp_target", f"exp={target} text is not valid macro-string (US-ASCII, valid %{{...}} macros); "
                                                       "receivers will ignore it"))
     return out
+
+
+def term_order_issues(rec):
+    """RFC 7208 6.1: redirect SHOULD be the last term; 5.5: ptr SHOULD be one of
+    the last mechanisms checked (only 'all' or other ptr terms after it)."""
+    if not rec:
+        return []
+    terms = rec.split()[1:]
+    out = []
+    names = [re.split(r"[:=/]", t.lstrip("+-~?"), maxsplit=1)[0].lower() for t in terms]
+    if "redirect" in names and names.index("redirect") != len(names) - 1:
+        out.append(("info", "spf.redirect_position", "redirect= is not the last term; for clarity it SHOULD be (RFC 7208 6.1)"))
+    if "ptr" in names:
+        after = [n for n in names[names.index("ptr") + 1:] if n not in ("ptr", "all", "exp", "redirect")
+                 and n in ("a", "mx", "ip4", "ip6", "include", "exists")]
+        if after:
+            out.append(("info", "spf.ptr_position", f"ptr is checked before {', '.join(after)}; it SHOULD be one of the last mechanisms (RFC 7208 5.5)"))
+    return out
+
+
+WILDCARD_PROBE = "fpa-wildcard-probe"
+
+
+def wildcard_coverage(domain, res, F):
+    """RFC 7208 3.5: a host with any RRs needs its own SPF declaration. Wildcard
+    MX/A at *.<domain> creates such hosts; probe one random-looking label."""
+    if not domain or getattr(res, "query", None) is None:
+        return []
+    probe = f"{WILDCARD_PROBE}.{domain}"
+    has = []
+    for t in ("MX", "A", "AAAA"):
+        v, st = res.query(probe, t)
+        if st == "ok" and v:
+            has.append(t)
+    if not has:
+        return []
+    txt, st = res.query(probe, "TXT")
+    if st == "ok" and any(x.lower().startswith("v=spf1") for x in txt or []):
+        return []
+    return [F("warning", "spf.wildcard_coverage",
+              f"*.{domain} has wildcard {'/'.join(has)} records but no wildcard SPF: every such name can be used as a "
+              f"sender with no SPF policy; publish '*.{domain} TXT \"v=spf1 -all\"' (RFC 7208 3.5)")]

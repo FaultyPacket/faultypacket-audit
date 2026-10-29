@@ -84,6 +84,10 @@ def check(domain, res, R, options=None):
         return result(NAME, domain, [F("error", "bimi.record", f"{len(recs)} BIMI records at {name}; ambiguous, receivers ignore them")], data)
     data["record"] = rec = recs[0]
     t, fs = tags(rec), []
+    cn, cst = res.query(name, "CNAME")
+    if cst == "ok" and cn:
+        data["shared_via"] = cn[0].rstrip(".")
+        fs.append(F("info", "bimi.shared_cname", f"{name} is a CNAME to {cn[0].rstrip('.')}: Indicators are shared from one DNS location, as RECOMMENDED (BIMI 6.3)"))
     l, a = t.get("l"), t.get("a", "")
     if l is None:
         fs.append(F("error", "bimi.record", "l= is required"))

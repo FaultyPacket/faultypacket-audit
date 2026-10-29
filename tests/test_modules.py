@@ -78,7 +78,7 @@ def test_dkim_bad_version_sha1_unknown_k_no_p_bad_key():
 def test_dkim_duplicate_tag_and_two_records():
     r = dk({("s1._domainkey.d.test", "TXT"): [f"v=DKIM1; p={RSA2048}; p={RSA1024}"],
             ("s2._domainkey.d.test", "TXT"): [f"v=DKIM1; p={RSA2048}", f"v=DKIM1; p={RSA1024}"]})
-    assert ids(r).count("dkim.syntax") == 2
+    assert ids(r).count("dkim.syntax") == 1 and ids(r).count("dkim.multiple_records") == 1
 
 
 def test_dkim_none_found_is_info_but_named_selector_missing_is_error():
