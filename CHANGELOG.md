@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+- SPF: redirect= not last (RFC 7208 6.1), ptr before other mechanisms (5.5), wildcard MX/A without wildcard SPF (3.5).
+- DKIM: IDN selectors queried as A-labels (RFC 6376 3.5); multiple key records at a selector get their own rule `dkim.multiple_records` (3.6.2.2).
+- DMARC: plain-http rua/ruf (RFC 9989 11.7); ruf in a psd=y record (RFC 9991 2). Corpus expectations updated for the 63 real/mutated psd=y records with ruf.
+- BIMI: assertion record shared by CNAME is reported (draft-14 6.3).
+
 
 
 ## 1.5.0 (2026-10-29)

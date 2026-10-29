@@ -2878,6 +2878,78 @@
    "source": "RFC 9116 3.1",
    "url": "https://www.rfc-editor.org/rfc/rfc9116#section-3.1",
    "verified": "2026-10-29"
+  },
+  {
+   "id": "dmarc.unencrypted_uri",
+   "check": "dmarc",
+   "value": true,
+   "level": "SHOULD",
+   "source": "RFC 9989 11.7",
+   "url": "https://www.rfc-editor.org/rfc/rfc9989#section-11.7",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "dmarc.ruf_psd",
+   "check": "dmarc",
+   "value": true,
+   "level": "MUST",
+   "source": "RFC 9991 2",
+   "url": "https://www.rfc-editor.org/rfc/rfc9991#section-2",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "spf.redirect_position",
+   "check": "spf",
+   "value": true,
+   "level": "SHOULD",
+   "source": "RFC 7208 6.1",
+   "url": "https://www.rfc-editor.org/rfc/rfc7208#section-6.1",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "spf.ptr_position",
+   "check": "spf",
+   "value": true,
+   "level": "SHOULD",
+   "source": "RFC 7208 5.5",
+   "url": "https://www.rfc-editor.org/rfc/rfc7208#section-5.5",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "spf.wildcard_coverage",
+   "check": "spf",
+   "value": true,
+   "level": "MUST",
+   "source": "RFC 7208 3.5",
+   "url": "https://www.rfc-editor.org/rfc/rfc7208#section-3.5",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "dkim.selector_alabel",
+   "check": "dkim",
+   "value": true,
+   "level": "MUST",
+   "source": "RFC 6376 3.5",
+   "url": "https://www.rfc-editor.org/rfc/rfc6376#section-3.5",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "dkim.multiple_records",
+   "check": "dkim",
+   "value": true,
+   "level": "MUST",
+   "source": "RFC 6376 3.6.2.2",
+   "url": "https://www.rfc-editor.org/rfc/rfc6376#section-3.6.2.2",
+   "verified": "2026-10-29"
+  },
+  {
+   "id": "bimi.shared_cname",
+   "check": "bimi",
+   "value": true,
+   "level": "SHOULD",
+   "source": "BIMI draft-14 6.3",
+   "url": "https://datatracker.ietf.org/doc/html/draft-brand-indicators-for-message-identification-14#section-6.3",
+   "verified": "2026-10-29"
   }
  ]
 }

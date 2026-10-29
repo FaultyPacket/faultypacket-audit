@@ -105,13 +105,29 @@ def analyse_key(name, rec, R):
     return info, fs
 
 
+def _idna_ok(s):
+    try:
+        s.encode("idna"); return True
+    except UnicodeError:
+        return False
+
+
 def check(domain, res, R, options=None):
     options = options or {}
     user = [s.strip() for s in options.get("dkim_selectors") or [] if s.strip()]
     common = list(R.value("dkim.common_selectors")) if options.get("probe_common", True) else []
     sels = list(dict.fromkeys(user + common))
+    user = user + [u.encode("idna").decode() for u in user if any(ord(c) > 127 for c in u) and _idna_ok(u)]
     keys, fs, errors = [], [], []
     for sel in sels:
+        if any(ord(c) > 127 for c in sel):
+            try:
+                alabel = sel.encode("idna").decode()
+            except UnicodeError:
+                fs.append(R.finding(NAME, "error", "dkim.selector_alabel", f"selector {sel!r} is not a valid IDN", selector=sel)); continue
+            fs.append(R.finding(NAME, "info", "dkim.selector_alabel",
+                                f"selector {sel!r} queried and must be signed as its A-label {alabel!r} (RFC 6376 3.5)", selector=sel))
+            sel = alabel
         name = f"{sel}._domainkey.{domain}"
         txts, st = res.query(name, "TXT")
         if st.startswith("error"):
@@ -129,7 +145,7 @@ def check(domain, res, R, options=None):
                 fs.append(R.finding(NAME, "error", "dkim.no_key", f"{name}: selector you sign with has no key record", selector=name))
             continue
         if len(recs) > 1:
-            fs.append(R.finding(NAME, "error", "dkim.syntax", f"{name}: {len(recs)} key records; verifiers may pick either", selector=name))
+            fs.append(R.finding(NAME, "error", "dkim.multiple_records", f"{name}: {len(recs)} key records; TXT RRs MUST be unique per selector, results are undefined (RFC 6376 3.6.2.2)", selector=name))
         info, f2 = analyse_key(name, recs[0], R)
         info["selector"] = sel
         keys.append(info); fs += f2

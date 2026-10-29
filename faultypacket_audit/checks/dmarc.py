@@ -244,6 +244,8 @@ def validate(record):
             if not uris:
                 issues.append(("error", "empty_" + k, f"{k} is present but empty (RFC 9989 4.7)"))
             for u in uris:
+                if u["scheme"] == "http":
+                    issues.append(("warning", "unencrypted_uri", f"{k} URI {u['uri']!r} uses plain http: report data would travel unencrypted; unencrypted mechanisms SHOULD be avoided (RFC 9989 11.7)"))
                 if u["scheme"] != "mailto":
                     issues.append(("warning", "scheme_" + k, f"{k} URI {u['uri']!r} is not mailto; mailto is the scheme receivers MUST support (RFC 9989 4.6)"))
                 elif not u["host"]:
@@ -252,6 +254,8 @@ def validate(record):
                     issues.append(("error", "bad_uri_" + k, f"{k} URI {u['uri']!r} is not a valid mailto URI: no spaces and exactly one '@' (RFC 9989 4.8; RFC 3986; RFC 6068)"))
                 if u["size"]:
                     issues.append(("info", "obsolete_size", f"{k} URI {u['uri']!r}: the !size suffix is obsolete and ignored (RFC 9989 4.8)"))
+    if "ruf" in d and d.get("psd", "").lower() == "y":
+        issues.append(("warning", "ruf_psd", "ruf in a psd=y record: report generators MUST NOT consider it without specific agreements (RFC 9991 2)"))
     if "rua" not in d:
         issues.append(("warning", "no_rua", "no rua: you receive no aggregate reports (RFC 9989 4.7; RFC 9990)"))
     if p and p.lower() == "none":
