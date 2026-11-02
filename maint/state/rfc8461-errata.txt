@@ -1,0 +1,119 @@
+RFC Errata
+RFC Errata
+About
+Login
+Errata
+RFC Number Errata ID Status
+All/Any
+Verified+Reported
+Verified
+Reported
+Held for Document Update
+Rejected
+Area Acronym
+All/Any
+app
+art
+gen
+int
+ops
+rai
+rtg
+sec
+tsv
+wit
+Type
+All/Any
+Editorial
+Technical
+WG Acronym Submitter Name Stream
+All/Any
+IAB
+INDEPENDENT
+IRTF
+Legacy
+Editorial
+Date Submitted Presentation
+Table
+Full Records
+Submit
+Reported (4)
+RFC 8461
+Source of RFC: uta (sec)
+Errata-ID: 6253
+Status:
+Reported
+Type:
+Technical
+Reported By:
+Daniel Shahaf
+Date Reported:
+2020-08-08
+Section 3.2 says:
+CRLF-separated key/value pairs
+It should say:
+LF- or CRLF-separated key/value pairs
+Notes:
+Rationale:
+1. The definition of &#x27;sts-policy-term&#x27; in the grammar explicitly allows use of either CRLF or bare LF.
+2. On page 8, one of the example says &quot;&lt;CRLF&gt;&quot; explicitly at the end of the first line, while the second line of that example and all lines of the other example have neither &quot;&lt;CRLF&gt;&quot; nor &quot;&lt;LF&gt;&quot; appended to them. That makes it ambiguous whether those lines are terminated by LF or by CRLF.
+Errata-ID: 6285
+Status:
+Reported
+Type:
+Technical
+Reported By:
+Paul Buonopane
+Date Reported:
+2020-09-10
+Section 3.1 says:
+sts-field-delim = *WSP &quot;;&quot; *WSP
+It should say:
+sts-field-delim = &quot;;&quot; *WSP
+Notes:
+The following text appears within the same section:
+&gt; If multiple TXT records for &quot;_mta-sts&quot; are returned by the resolver, records that do not begin with &quot;v=STSv1;&quot; are discarded.
+The current definition of sts-field-delim is incompatible with that instruction. Either the instruction needs to be changed, a new delimiter needs to be defined that doesn&#x27;t permit whitespace before the semicolon, or sts-field-delim needs to be modified.
+Errata-ID: 7282
+Status:
+Reported
+Type:
+Technical
+Reported By:
+Benjamin Schwarze
+Date Reported:
+2022-12-21
+Section 3.2 says:
+sts-policy-max-age-value = 1*10(DIGIT)
+It should say:
+sts-policy-max-age-value = 1*8(DIGIT)
+Notes:
+As described under 3.2 at point &quot;max_age&quot;, the maximum lifetime of a policy may only be 31557600 seconds. Therefore 8 digits in the ABNF for &quot;sts-policy-max-age-value&quot; would be sufficient.
+On the other hand, if values larger than 31557600 seconds are allowed, the text under &quot;max_age&quot; should be adjusted.
+Errata-ID: 6525
+Status:
+Reported
+Type:
+Editorial
+Reported By:
+Kaspar Etter
+Date Reported:
+2021-04-10
+Section 4.2 says:
+The certificate presented by the receiving MTA MUST not be expired
+It should say:
+The certificate presented by the receiving MTA MUST NOT be expired
+Notes:
+NOT should be capitalized.
+Report New Erratum
+rfc-editor.org is maintained by the Internet Engineering Task Force
+Useful links
+IETF.org
+IRTF.org
+IAB.org
+Datatracker
+Author Resources
+Contact Us
+RFC Editor
+rfc-dist Info Page
+rfc-interest Info Page

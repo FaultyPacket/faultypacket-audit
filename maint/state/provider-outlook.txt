@@ -1,0 +1,122 @@
+Announcements
+Skip to main content
+|
+Outlook.com Postmaster
+Announcements
+Announcements
+Fighting Junk Email
+Policies
+Services
+Troubleshooting
+Outbound IP Space
+About Outlook.com
+End-User Support
+Postmaster
+This site provides information to information technology professionals who administer systems that send email to and
+receive email from Outlook.com. It also provides some information about how users with Outlook.com accounts can
+report junk email and phishing attempts. However, it is not intended to provide extensive support to Outlook.com
+users. If you are an Outlook.com user in need of support, please visit Microsoft Support.
+To navigate this site please use the navigation links to the left, or to jump right to the most requested
+information please click on one of the links below.
+Postmaster section, most requested information.
+I am an Outlook.com user in need of support.
+(opens in a new tab)
+Email I send is being blocked or junked by Outlook.com.
+I want information about SMTP error codes returned by Outlook.com servers.
+Announcements
+Requirements for High-Volume Senders
+Starting May 5th, 2025, Outlook.com is enforcing stricter email authentication standards (SPF, DKIM, DMARC) for domains sending over 5,000 emails per day to enhance security and reduce spam. Non-compliant messages will be sent to messages will be sent to the junk folder . Shortly we will reject the messages until the DNS records are corrected.
+Learn more about these changes and how to prepare in our recent blog post:
+Strengthening Email Ecosystem: Outlook’s Requirements for High‐Volume Senders.
+New Postmaster Site
+Welcome to the new Outlook.com Postmaster site. We've introduced this new site in order to help senders improve
+their reputations and increase deliverability into Outlook.com inboxes.
+&copy;
+2025
+|
+|
+|
+Developers
+|
+English (United States)
+čeština (Česko)
+dansk (Danmark)
+Deutsch (Deutschland)
+Deutsch (Österreich)
+Deutsch (Schweiz)
+eesti (Eesti)
+English (Australia)
+English (Canada)
+English (Hong Kong SAR)
+English (India)
+English (Ireland)
+English (Malaysia)
+English (New Zealand)
+English (Philippines)
+English (Singapore)
+English (South Africa)
+English (United Kingdom)
+English (United States)
+español (Argentina)
+español (Bolivia)
+español (Chile)
+español (Colombia)
+español (Costa Rica)
+español (Ecuador)
+español (El Salvador)
+español (España, alfabetización internacional)
+español (Estados Unidos)
+español (Guatemala)
+español (México)
+español (Panamá)
+español (Paraguay)
+español (Perú)
+español (Puerto Rico)
+español (República Dominicana)
+español (Uruguay)
+español (Venezuela)
+français (Algérie)
+français (Belgique)
+français (Canada)
+français (France)
+français (Luxembourg)
+français (Maroc)
+français (Suisse)
+français (Tunisie)
+hrvatski (Bosna i Hercegovina)
+hrvatski (Hrvatska)
+Indonesia (Indonesia)
+italiano (Italia)
+latviešu (Latvija)
+lietuvių (Lietuva)
+magyar (Magyarország)
+Nederlands (België)
+Nederlands (Nederland)
+norsk bokmål (Norge)
+polski (Polska)
+português (Brasil)
+português (Portugal)
+română (România)
+slovenčina (Slovensko)
+slovenščina (Slovenija)
+srpski (Srbija)
+suomi (Suomi)
+svenska (Sverige)
+Tiếng Việt (Việt Nam)
+Türkçe (Türkiye)
+Ελληνικά (Ελλάδα)
+български (България)
+русский (Казахстан)
+русский (Россия)
+українська (Україна)
+עברית (ישראל)
+العربية (الإمارات العربية المتحدة)
+العربية (المملكة العربية السعودية)
+العربية (مصر)
+ไทย (ไทย)
+한국어(대한민국)
+中文(中国)
+中文(台灣)
+中文(香港特別行政區)
+日本語 (日本)
+-->

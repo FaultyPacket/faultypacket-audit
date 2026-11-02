@@ -1,0 +1,14 @@
+draft-crocker-dmarc-sender@01
+draft-dmarc-interoperability@00
+draft-ietf-dmarc-aggregate-reporting@32
+draft-ietf-dmarc-arc-multi@03
+draft-ietf-dmarc-arc-protocol@23
+draft-ietf-dmarc-arc-to-historic@01
+draft-ietf-dmarc-arc-usage@09
+draft-ietf-dmarc-dmarcbis@41
+draft-ietf-dmarc-eaiauth@06
+draft-ietf-dmarc-failure-reporting@25
+draft-ietf-dmarc-interoperability@18
+draft-ietf-dmarc-psd@15
+draft-ietf-dmarc-rfc7601bis@06
+draft-ietf-dmarc-sender@00

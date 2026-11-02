@@ -1,0 +1,7 @@
+draft-adams-bimi-reporting@12
+draft-bkl-bimi-overview@00
+draft-blank-ietf-bimi@02
+draft-brotman-bimi-mua@00
+draft-brotman-ietf-bimi-guidance@16
+draft-chuang-bimi-certificate@00
+draft-chuang-ietf-bimi-security-perspectives@00

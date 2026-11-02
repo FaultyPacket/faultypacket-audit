@@ -1,0 +1,593 @@
+RFC Errata
+RFC Errata
+About
+Login
+Errata
+RFC Number Errata ID Status
+All/Any
+Verified+Reported
+Verified
+Reported
+Held for Document Update
+Rejected
+Area Acronym
+All/Any
+app
+art
+gen
+int
+ops
+rai
+rtg
+sec
+tsv
+wit
+Type
+All/Any
+Editorial
+Technical
+WG Acronym Submitter Name Stream
+All/Any
+IAB
+INDEPENDENT
+IRTF
+Legacy
+Editorial
+Date Submitted Presentation
+Table
+Full Records
+Submit
+Verified (2)
+RFC 7208 inline-errata
+Source of RFC: spfbis (app)
+Updated by: RFC7372, RFC8553, RFC8616
+Errata-ID: 5436
+Status:
+Verified
+Type:
+Technical
+Reported By:
+Peter Occil
+Date Reported:
+2018-07-23
+Verified by:
+Alexey Melnikov
+Date Verified:
+2018-11-26
+Throughout the document, when it says:
+header-field = &quot;Received-SPF:&quot; [CFWS] result FWS [comment FWS]
+[ key-value-list ] CRLF
+It should say:
+header-field = &quot;Received-SPF:&quot; [CFWS] result [ FWS comment ]
+[ FWS key-value-list ] [FWS] CRLF
+Notes:
+As specified, this ABNF doesn&#x27;t allow a header field value like result-FWS-comment with no FWS or key-value-list following it, a header field value which occurs very often in Received-SPF header fields I see in practice. (Note that FWS must contain at least one white space.) The corrected ABNF better follows practice in implementations.
+Errata-ID: 6721
+Status:
+Verified
+Type:
+Technical
+Reported By:
+Ale Vesely
+Date Reported:
+2021-10-25
+Verified by:
+Murray Kucherawy
+Date Verified:
+2021-11-09
+Section 8.4 says:
+550 5.7.1 SPF MAIL FROM check failed:
+550 5.7.1 The domain example.com explains:
+550 5.7.1 Please see http://www.example.com/mailpolicy.html
+It should say:
+550-5.7.1 SPF MAIL FROM check failed:
+550-5.7.1 The domain example.com explains:
+550 5.7.1 Please see http://www.example.com/mailpolicy.html
+Notes:
+In addition, RFC 7208 does not give an example of rejection based on the HELO argument.
+Reported (10)
+RFC 7208 inline-errata
+Source of RFC: spfbis (app)
+Updated by: RFC7372, RFC8553, RFC8616
+Errata-ID: 4751
+Status:
+Reported
+Type:
+Technical
+Reported By:
+Ken Mortimer
+Date Reported:
+2016-07-27
+Section 5.5 says:
+This mechanism matches if
+o the &lt;target-name&gt; is a subdomain of a validated domain name, or
+o the &lt;target-name&gt; and a validated domain name are the same.
+It should say:
+This mechanism matches if
+o a validated domain name is a subdomain of the &lt;target-name&gt;, or
+o the &lt;target-name&gt; and a validated domain name are the same.
+Notes:
+The first bullet point is in contradiction to the description of the ptr mechanism evaluation in the preceding paragraph:
+&quot;Check all validated domain names to see if they either match the &lt;target-name&gt; domain or are a subdomain of the &lt;target-name&gt; domain. If any do, this mechanism matches. If no validated domain name can be found, or if none of the validated domain names match or are a subdomain of the &lt;target-name&gt;, this mechanism fails to match.&quot;
+Errata-ID: 5227
+Status:
+Reported
+Type:
+Technical
+Reported By:
+David Garfield
+Date Reported:
+2018-01-04
+Section 5.5 says:
+The &lt;ip&gt;&#x27;s name is looked up using this procedure:
+o Perform a DNS reverse-mapping for &lt;ip&gt;: Look up the corresponding
+PTR record in &quot;in-addr.arpa.&quot; if the address is an IPv4 address
+and in &quot;ip6.arpa.&quot; if it is an IPv6 address.
+o For each record returned, validate the domain name by looking up
+its IP addresses. To prevent DoS attacks, the PTR processing
+limits defined in Section 4.6.4 MUST be applied. If they are
+exceeded, processing is terminated and the mechanism does not
+match.
+o If &lt;ip&gt; is among the returned IP addresses, then that domain name
+is validated.
+Check all validated domain names to see if they either match the
+&lt;target-name&gt; domain or are a subdomain of the &lt;target-name&gt; domain.
+If any do, this mechanism matches. If no validated domain name can
+be found, or if none of the validated domain names match or are a
+subdomain of the &lt;target-name&gt;, this mechanism fails to match. If a
+DNS error occurs while doing the PTR RR lookup, then this mechanism
+fails to match. If a DNS error occurs while doing an A RR lookup,
+then that domain name is skipped and the search continues.
+This mechanism matches if
+o the &lt;target-name&gt; is a subdomain of a validated domain name, or
+o the &lt;target-name&gt; and a validated domain name are the same.
+For example, &quot;mail.example.com&quot; is within the domain &quot;example.com&quot;,
+but &quot;mail.bad-example.com&quot; is not.
+It should say:
+The &lt;ip&gt;&#x27;s name is looked up using this procedure:
+o Perform a DNS reverse-mapping for &lt;ip&gt;: Look up the corresponding
+PTR record in &quot;in-addr.arpa.&quot; if the address is an IPv4 address
+and in &quot;ip6.arpa.&quot; if it is an IPv6 address.
+Check all domain names to see if they either match the
+&lt;target-name&gt; domain or are a subdomain of the &lt;target-name&gt;
+domain. If any do, this domain name can be validated. If no
+domain name can be found, or if none of the domain names match or
+are a subdomain of the &lt;target-name&gt;, this mechanism fails to
+match. If a DNS error occurs while doing the PTR RR lookup, then
+this mechanism fails to match.
+This mechanism may match if
+o the &lt;target-name&gt; is a subdomain of a domain name, or
+o the &lt;target-name&gt; and a domain name are the same.
+For example, &quot;mail.example.com&quot; is within the domain &quot;example.com&quot;,
+but &quot;mail.bad-example.com&quot; is not.
+The domain names received must also be validated for the mechanism
+to match.
+o For each matched record, validate the domain name by looking up
+its IP addresses. To prevent DoS attacks, the PTR processing
+limits defined in Section 4.6.4 MUST be applied. If they are
+exceeded, processing is terminated and the mechanism does not
+match.
+o If &lt;ip&gt; is among the returned IP addresses, then that domain name
+is validated.
+If a DNS error occurs while doing an A RR lookup, then that domain
+name is skipped and the search continues.
+The mechanism matches if a domain name is found that properly
+matches the target name and can be properly validated. While these
+tests can be done in either order, performing the match before
+validating prevents needless DNS queries being performed.
+Notes:
+As specified, the RFC calls for all names to be validated, even those that can be immediately discarded because they do not match. The RFC should call for the local-only operation to be done first. While it may be argued that the RFC doesn&#x27;t require the order, implementers shouldn&#x27;t be misled.
+My corrected text probably needs editorial work.
+I have not fixed errata 4751 in my corrected text.
+Errata-ID: 5228
+Status:
+Reported
+Type:
+Technical
+Reported By:
+David Garfield
+Date Reported:
+2018-01-04
+Section 5.5 says:
+Note: This mechanism is slow, it is not as reliable as other
+mechanisms in cases of DNS errors, and it places a large burden on
+the .arpa name servers. If used, proper PTR records have to be in
+place for the domain&#x27;s hosts and the &quot;ptr&quot; mechanism SHOULD be one of
+the last mechanisms checked. After many years of SPF deployment
+experience, it has been concluded that it is unnecessary and more
+reliable alternatives should be used instead. It is, however, still
+in use as part of the SPF protocol, so compliant check_host()
+implementations MUST support it.
+It should say:
+Note: This mechanism is not as reliable as other
+mechanisms in cases of DNS errors.
+If used, proper PTR records have to be in
+place for the domain&#x27;s hosts and the &quot;ptr&quot; mechanism SHOULD be one of
+the last mechanisms checked. After many years of SPF deployment
+experience, it has been concluded that it is unnecessary and more
+reliable alternatives should be used instead. It is, however, still
+in use as part of the SPF protocol, so compliant check_host()
+implementations MUST support it.
+Notes:
+I have not reflowed the text so it can be more clear what I changed.
+This mechanism is slow
+In fact, if all the DNS records are in place, Errata 5227 is accounted
+for, and the single PTR query is discounted, this mechanism produces
+no more additional DNS queries than mechanism &quot;a&quot;. I.e. it produces
+one A (or AAAA) query. It is not slow.
+it places a large burden on the .arpa name servers
+In fact, it requires 1 PTR query, for however many ptr mechanisms are
+in the SPF record. Further, most mail servers already do this PTR
+query, to report the information on the &quot;Received&quot; line. Even if a
+seperate daemon is used to the SPF check, the data should already be
+in a local caching name server.
+Errata-ID: 5550
+Status:
+Reported
+Type:
+Technical
+Reported By:
+Borislav Petrov
+Date Reported:
+2018-11-09
+Section 2.3. says:
+Note that requirements for the domain presented in the EHLO or HELO
+command are not always clear to the sending party, and SPF verifiers
+have to be prepared for the identity to be an IP address literal (see
+[RFC5321], Section 4.1.3) or simply be malformed. This SPF check can
+only be performed when the &quot;HELO&quot; string is a valid, multi-label
+domain name.
+Notes:
+It looks like that those who have HELO &lt;IP Address&gt; or &lt;malformed&gt; will have result &quot;none&quot; (and pass) but those that have HELO &lt;hostname&gt; and have not yet published their hostname (A record) as allowed sender will get fail. This becomes a very common case for all messages which are DSNs. The whole idea that it is better to have your HELO malformed than a valid hostname which identifies the system is wrong. The point is to fight spam but you actually make it easier for spammers to just have the EHLO malformed and send with &lt;&gt; reverse-path rather than having some proper EHLO/HELO which is subject to other verifications like rDNS, etc.
+Errata-ID: 5843
+Status:
+Reported
+Type:
+Technical
+Reported By:
+Jesus Donaldo Osornio
+Date Reported:
+2019-08-22
+Section 9.1 says:
+Received-SPF: pass (mybox.example.org: domain of
+myname@example.com designates 192.0.2.1 as permitted sender)
+receiver=mybox.example.org; client-ip=192.0.2.1;
+mechanism=ip4:192.0.2.1; envelope-from=&quot;myname@example.com&quot;;
+helo=foo.example.com;
+It should say:
+Received-SPF: pass (mybox.example.org: domain of
+myname@example.com designates 192.0.2.1 as permitted sender)
+receiver=mybox.example.org; client-ip=192.0.2.1;
+mechanism=&quot;ip4:192.0.2.1&quot;; envelope-from=&quot;myname@example.com&quot;;
+helo=foo.example.com;
+Notes:
+There&#x27;s an error in the last example of this section:
+By the definition of key-value-pair, a &quot;value&quot; can only be a dot-atom or a quoted-string.
+The string ip4:192.0.2.1 in the mechanism key is not a legal dot-atom, so it should be surrounded by double quotes, to be a quoted-string instead
+Errata-ID: 6216
+Status:
+Reported
+Type:
+Technical
+Reported By:
+David Bürgin
+Date Reported:
+2020-06-26
+Section A.4 says:
+ptr._spf.example.com. SPF &quot;v=spf1 -ptr +all&quot;
+It should say:
+ptr._spf.example.com. TXT &quot;v=spf1 -ptr:example.com +all&quot;
+Notes:
+The example in appendix A.4, &#x27;Multiple Requirements Example&#x27;, does not
+work as intended.
+In the example, the SPF record at ptr._spf.example.com contains the
+directive &#x27;-ptr&#x27;.
+When this directive is evaluated, the &lt;target-name&gt; is equal to
+&#x27;ptr._spf.example.com&#x27;. An input &lt;ip&gt; such as 192.0.2.10, which has a
+PTR record pointing to &#x27;example.com&#x27;, will fail to match, as that domain
+is not equal to nor a subdomain of &#x27;ptr._spf.example.com&#x27;. In other
+words, given the DNS setup of appendix A, there are no inputs that
+fulfil the requirement for matching this ptr mechanism.
+The example can be fixed by supplying an appropriate &lt;domain-spec&gt;:
+replace &#x27;-ptr&#x27; with &#x27;-ptr:example.com&#x27;.
+Errata-ID: 6433
+Status:
+Reported
+Type:
+Technical
+Reported By:
+Kaspar Etter
+Date Reported:
+2021-02-17
+Section 3 says:
+Each SPF record is placed in the DNS tree at the owner name it
+pertains to, not in a subdomain under the owner name. This is
+similar to how SRV records [RFC2782] are done.
+It should say:
+Each SPF record is placed in the DNS tree at the owner name it
+pertains to, not in a subdomain under the owner name. This is
+different from how SRV records [RFC2782] are done.
+Notes:
+SRV records are placed at specific subdomains, which is not the case for SPF records. (I&#x27;ve chosen Editorial instead of Technical because the meaning of this paragraph should be clear from the context and thus this feels more like a typo.)
+RPC changed from &quot;Editorial&quot; to &quot;Technical&quot;: Unable to verify, requires review.
+Errata-ID: 6595
+Status:
+Reported
+Type:
+Technical
+Reported By:
+Benjamin Schwarze
+Date Reported:
+2021-06-03
+Section 4.6.4 says:
+As described at the end of Section 11.1, there may be cases where it
+is useful to limit the number of &quot;terms&quot; for which DNS queries return
+either a positive answer (RCODE 0) with an answer count of 0, or a
+&quot;Name Error&quot; (RCODE 3) answer. These are sometimes collectively
+referred to as &quot;void lookups&quot;. SPF implementations SHOULD limit
+&quot;void lookups&quot; to two. An implementation MAY choose to make such a
+limit configurable. In this case, a default of two is RECOMMENDED.
+Exceeding the limit produces a &quot;permerror&quot; result.
+It should say:
+-- Addition to the original paragraph --
+ADMDs should be aware that the void lookup limit can easily be exceeded by using sender-specific macros (&quot;s&quot;, &quot;l&quot;, &quot;o&quot;, &quot;i&quot;, &quot;h&quot;) in more than 2 terms.
+The following example will lead to an permerror in the most implementations if the &lt;ip&gt; is not found in any of the lists:
+v=spf1 exists:%{ir}.list1.example.net exists:%{ir}.list2.example.net exists:%{ir}.list3.example.net -all
+Notes:
+In addition to the above suggestion, I still see a contradiction between the &quot;void lookup limit&quot; and the &quot;exists&quot; mechanism. The functionality of &quot;exists&quot; includes (in my opinion) the negative response (RCODE 3). But the &quot;void lookup limit&quot; allows this to occur only twice. This limits the use of &quot;exists&quot; very much.
+Admittedly: I have no good idea how to solve this. :-)
+Errata-ID: 8596
+Status:
+Reported
+Type:
+Technical
+Reported By:
+Utkarsh Jaiswal
+Date Reported:
+2025-10-10
+Section 5.5 says:
+The &lt;ip&gt;&#x27;s name is looked up using this procedure:
+o Perform a DNS reverse-mapping for &lt;ip&gt;: Look up the corresponding
+PTR record in &quot;in-addr.arpa.&quot; if the address is an IPv4 address
+and in &quot;ip6.arpa.&quot; if it is an IPv6 address.
+o For each record returned, validate the domain name by looking up
+its IP addresses. To prevent DoS attacks, the PTR processing
+limits defined in Section 4.6.4 MUST be applied. If they are
+exceeded, processing is terminated and the mechanism does not
+match.
+o If &lt;ip&gt; is among the returned IP addresses, then that domain name
+is validated.
+Check all validated domain names to see if they either match the
+&lt;target-name&gt; domain or are a subdomain of the &lt;target-name&gt; domain.
+If any do, this mechanism matches. If no validated domain name can
+be found, or if none of the validated domain names match or are a
+subdomain of the &lt;target-name&gt;, this mechanism fails to match. If a
+DNS error occurs while doing the PTR RR lookup, then this mechanism
+fails to match. If a DNS error occurs while doing an A RR lookup,
+then that domain name is skipped and the search continues.
+This mechanism matches if
+o the &lt;target-name&gt; is a subdomain of a validated domain name, or
+o the &lt;target-name&gt; and a validated domain name are the same.
+For example, &quot;mail.example.com&quot; is within the domain &quot;example.com&quot;,
+but &quot;mail.bad-example.com&quot; is not.
+It should say:
+The &lt;ip&gt;&#x27;s name is looked up using this procedure:
+o Perform a DNS reverse-mapping for &lt;ip&gt;: Look up the corresponding
+PTR record in &quot;in-addr.arpa.&quot; if the address is an IPv4 address
+and in &quot;ip6.arpa.&quot; if it is an IPv6 address.
+o For each record returned, filter the domain which either match
+or are subdomain of &lt;target-name&gt; domain, validate the domain name
+by looking up its IP addresses. To prevent DoS attacks, the PTR
+processing limits defined in Section 4.6.4 MUST be applied. If they are
+exceeded, processing is terminated and the mechanism does not
+match.
+o If &lt;ip&gt; is among the returned IP addresses, then that domain name
+is validated.
+Filter resolved domain names to see if they either match the
+&lt;target-name&gt; domain or are a subdomain of the &lt;target-name&gt; domain.
+If any do, validate the domain by looking up its IP address if any
+of the IP match this mechanism matches. If no domain name can
+be found by reverse-mapping, or if none of the resolved domain
+names match or are a subdomain of the &lt;target-name&gt;, this mechanism
+fails to match. If a DNS error occurs while doing the PTR RR lookup,
+then this mechanism fails to match. If a DNS error occurs while
+doing an A RR lookup, then that domain name is skipped and the search continues.
+This mechanism performs lookup if:
+o the resolved domain is subdomain of &lt;target-name&gt; domain, or
+o the &lt;target-name&gt; and a resolved domain name are the same.
+For example, &quot;mail.example.com&quot; is within the domain &quot;example.com&quot;,
+but &quot;mail.bad-example.com&quot; is not.
+The mechanism matches if any of the filtered domains has an &lt;ip&gt; among the returned IP addresses.
+Notes:
+As Errata: https://www.rfc-editor.org/errata/eid4751 points-out there is a conflict in description of ptr mechanism and later bullet point.
+And its efficient to filter out subdomains first and then perform lookup instead of other way around as recommended in the RFC.
+Errata-ID: 4841
+Status:
+Reported
+Type:
+Editorial
+Reported By:
+Alessandro Vesely
+Date Reported:
+2016-10-25
+Section 3.5. says:
+EXAMPLE.COM. MX 10 A.EXAMPLE.COM
+*.EXAMPLE.COM. MX 10 A.EXAMPLE.COM
+A.EXAMPLE.COM. MX 10 A.EXAMPLE.COM
+*.A.EXAMPLE.COM. MX 10 A.EXAMPLE.COM
+It should say:
+EXAMPLE.COM. MX 10 A.EXAMPLE.COM.
+*.EXAMPLE.COM. MX 10 A.EXAMPLE.COM.
+A.EXAMPLE.COM. MX 10 A.EXAMPLE.COM.
+*.A.EXAMPLE.COM. MX 10 A.EXAMPLE.COM.
+Notes:
+This is an editorial errata, since it is a punctuation error.
+It is not technical, because the example might have implied an $ORIGIN of &quot;.&quot; or some other strange setting, while a normative reference --rfc 1035-- makes it very clear that &quot;[d]omain names that end in a dot are called absolute, and are taken as complete.&quot; Hence no technical meaning is affected.
+Held for Document Update (2)
+RFC 7208 inline-errata
+Source of RFC: spfbis (app)
+Updated by: RFC7372, RFC8553, RFC8616
+Errata-ID: 4001
+Status:
+Held for Document Update
+Type:
+Technical
+Reported By:
+Jimmy Xu
+Date Reported:
+2014-05-27
+Held for Document Update by:
+Pete Resnick
+Date Held for Document Update:
+2014-06-04
+Section A.4 says:
+example.com. SPF ( &quot;v=spf1 &quot;
+&quot;-include:ip4._spf.%{d} &quot;
+&quot;-include:ptr._spf.%{d} &quot;
+&quot;+all&quot; )
+ip4._spf.example.com. SPF &quot;v=spf1 -ip4:192.0.2.0/24 +all&quot;
+ptr._spf.example.com. SPF &quot;v=spf1 -ptr +all&quot;
+It should say:
+example.com. TXT ( &quot;v=spf1 &quot;
+&quot;-include:ip4._spf.%{d} &quot;
+&quot;-include:ptr._spf.%{d} &quot;
+&quot;+all&quot; )
+ip4._spf.example.com. TXT &quot;v=spf1 -ip4:192.0.2.0/24 +all&quot;
+ptr._spf.example.com. TXT &quot;v=spf1 -ptr +all&quot;
+Notes:
+According to Section 14.1 and Appendix B, the use of DNS RR type SPF (99) has been removed from the protocol.
+Errata-ID: 4453
+Status:
+Held for Document Update
+Type:
+Editorial
+Reported By:
+Seymour J. Metz
+Date Reported:
+2015-08-24
+Held for Document Update by:
+Barry Leiba
+Date Held for Document Update:
+2015-08-24
+Section 5.6. &quot;ip4&quot; says:
+ip4-cidr-length = &quot;/&quot; (&quot;0&quot; / %x31-39 0*1DIGIT) ; value range 0-32
+ip6-cidr-length = &quot;/&quot; (&quot;0&quot; / %x31-39 0*2DIGIT) ; value range 0-128
+It should say:
+ip4-cidr-length = &quot;/&quot; (DIGIT /
+%x31-%x32 DIGIT /
+%x33 %x30-%x32) ; value range 0-32
+ip6-cidr-length = &quot;/&quot; (&quot;0&quot; /
+%31-%39 0*1DIGIT /
+&quot;1&quot; %30-%31 DIGIT /
+&quot;12&quot; %30-%38) ; value range 0-128
+Notes:
+As written the ABNF matches ranges 0-99 and 0-999, not the ranges in the comments.
+Note: I coded the ABNF the way that I did to avoid leading zeros.
+----- Verifier Notes -----
+This isn&#x27;t documenting an error: the ABNF was specified as it was intentionally, using the comments to restrict the range. I&#x27;m marking this &quot;Held for Document Update&quot; in case we ever revise this and want to consider making the ABNF pickier.
+Rejected (3)
+RFC 7208 inline-errata
+Source of RFC: spfbis (app)
+Updated by: RFC7372, RFC8553, RFC8616
+Errata-ID: 4081
+Status:
+Rejected
+Type:
+Technical
+Reported By:
+D. Stussy
+Date Reported:
+2014-08-13
+Rejected by:
+Barry Leiba
+Date Rejected:
+2014-08-14
+Section 8.4 says:
+(Paragraph 2): if supported, the 5.7.1 enhanced status code
+...
+550 5.7.1 SPF MAIL FROM check failed:
+550 5.7.1 The domain example.com explains:
+550 5.7.1 Please see http://www.example.com/mailpolicy.html
+It should say:
+if supported, the 5.7.7 enhanced status code
+...
+550 5.7.7 SPF MAIL FROM check failed:
+550 5.7.7 The domain example.com explains:
+550 5.7.7 Please see http://www.example.com/mailpolicy.html
+Notes:
+5.7.1 generally refers to messages refused due to content or LOCAL policies.
+5.7.7 refers to messages where there is an integrity problem.
+5.7.7 is a better description for rejecting an unauthorized message due to the application of automatic checking criterion set by remote validation.
+The author of this errata notes that the IANA is showing a pending addition to the enhanced codes to add SPF-specific error code 5.7.23 (in lieu of 5.7.1 or 5.7.7), but currently sees no valid RFC proposing it. The draft is located at: http://tools.ietf.org/html/draft-ietf-appsawg-email-auth-codes-07
+--VERIFIER NOTES--
+The code used was the clear choice of the working group, and can&#x27;t be changed through the errata system.
+Errata-ID: 4082
+Status:
+Rejected
+Type:
+Technical
+Reported By:
+D. Stussy
+Date Reported:
+2014-08-13
+Rejected by:
+Barry Leiba
+Date Rejected:
+2014-08-14
+Section 8.7 says:
+... If the message is rejected during the SMTP transaction for
+this reason, the software SHOULD use an SMTP reply code of 550
+and, if supported, the 5.5.2 enhanced status code ...
+It should say:
+... If the message is rejected during the SMTP transaction for
+this reason, the software SHOULD use an SMTP reply code of 550
+and, if supported, the 5.7.8 enhanced status code ...
+Notes:
+5.5.2 refers to responses where there&#x27;s an SMTP COMMAND syntax error.
+5.7.8 refers to messages where authentication credentials are invalid.
+5.7.8 is a better description for rejecting an unauthorized message due to the
+application of invalid authentication credentials such as bad syntax in an SPF DNS record.
+The author of this errata notes that the IANA is showing a pending addition to
+the enhanced codes to add SPF-specific error code 5.7.24 (in lieu of 5.5.2 or
+5.7.8), but currently sees no valid RFC proposing it. The draft is located at:
+http://tools.ietf.org/html/draft-ietf-appsawg-email-auth-codes-07
+The use of 5.5.2 here is misleading since the source of the error is not the
+SMTP command stream.
+--VERIFIER NOTES--
+The code used was the clear choice of the working group, and can&#x27;t be changed through the errata system.
+Errata-ID: 6432
+Status:
+Rejected
+Type:
+Technical
+Reported By:
+Kaspar Etter
+Date Reported:
+2021-02-17
+Rejected by:
+Barry Leiba
+Date Rejected:
+2021-02-17
+Section 4.4 says:
+In accordance with how the records are published (see Section 3
+above), a DNS query needs to be made for the &lt;domain&gt; name, querying
+for type TXT only.
+It should say:
+?
+Notes:
+Request for clarification: Are CNAME indirections allowed or, in other words, do they have to be followed during record lookup? If yes, do they count towards the DNS lookup limits as defined in section 4.6.4? If yes, the following sentence has to be adapted as well: &quot;SPF implementations MUST limit the total number of those terms to 10 during SPF evaluation, to avoid unreasonable load on the DNS.&quot; If the answer to the first question is no, then this should be made clear in section 4.4.
+Please note that whether using CNAMEs is a good or bad idea is irrelevant to my question. I also know that you can&#x27;t add a CNAME record to an apex domain but SPF is not limited to such domains. I assume the answer/consensus will be the same for the initial, `a`, `include`, `exists` and `redirect` lookups. If not, this should also be clarified, of course.
+--VERIFIER NOTES--
+Errata reports are not the place to ask questions. An appropriate mailing list on which to discuss SPF is the &lt;ietf-smtp&gt; list.
+Report New Erratum
+rfc-editor.org is maintained by the Internet Engineering Task Force
+Useful links
+IETF.org
+IRTF.org
+IAB.org
+Datatracker
+Author Resources
+Contact Us
+RFC Editor
+rfc-dist Info Page
+rfc-interest Info Page

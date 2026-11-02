@@ -1,0 +1,226 @@
+RFC Errata
+RFC Errata
+About
+Login
+Errata
+RFC Number Errata ID Status
+All/Any
+Verified+Reported
+Verified
+Reported
+Held for Document Update
+Rejected
+Area Acronym
+All/Any
+app
+art
+gen
+int
+ops
+rai
+rtg
+sec
+tsv
+wit
+Type
+All/Any
+Editorial
+Technical
+WG Acronym Submitter Name Stream
+All/Any
+IAB
+INDEPENDENT
+IRTF
+Legacy
+Editorial
+Date Submitted Presentation
+Table
+Full Records
+Submit
+Verified (2)
+RFC 9989 inline-errata
+Source of RFC: dmarc (art)
+Errata-ID: 9025
+Status:
+Verified
+Type:
+Editorial
+Publication Format:
+TXT
+Reported By:
+Isamu Koga
+Date Reported:
+2026-07-04
+Verified by:
+Madison Church
+Date Verified:
+2026-07-08
+Section Appendix B.2.5. says:
+The Domain Owner desires only that an actor performing a DMARC validation check apply any special handling rules it might have in place,
+such as rewriting the RFC53322.From header field;
+It should say:
+The Domain Owner desires only that an actor performing a DMARC validation check apply any special handling rules it might have in place,
+such as rewriting the RFC5322.From header field;
+Notes:
+There is an extra &quot;3&quot; in &quot;RFC53322.From&quot;. It should read &quot;RFC5322.From&quot;.
+Errata-ID: 9150
+Status:
+Verified
+Type:
+Editorial
+Publication Format:
+TXT
+Reported By:
+VENKAT NOOKALA
+Date Reported:
+2026-08-27
+Verified by:
+Madison Church
+Date Verified:
+2026-09-02
+Section 11.6 (also Appendix B.2.3, B.2.4) says:
+Section 11.6:
+To avoid abuse by bad actors, reporting addresses generally have to
+be inside the domains about which reports are requested. To
+accommodate special cases, such as a need to get reports about
+domains that cannot actually receive mail, Section 3 of [RFC9990]
+describes a DNS-based mechanism for validating approved external
+reporting.
+Appendix B.2.3:
+Because the address used in the &quot;ruf&quot; tag is outside the
+Organizational Domain in which this record is published, conforming
+Mail Receivers MUST implement additional checks as described in
+Section 3 of [RFC9990].
+Appendix B.2.4:
+Intermediaries and other third parties should refer to Section 3 of
+[RFC9990] for the full details of this mechanism.
+It should say:
+Section 11.6:
+... Section 4 of [RFC9990] describes a DNS-based mechanism for
+validating approved external reporting.
+Appendix B.2.3:
+... conforming Mail Receivers MUST implement additional checks as
+described in Section 4 of [RFC9990].
+Appendix B.2.4:
+Intermediaries and other third parties should refer to Section 4 of
+[RFC9990] for the full details of this mechanism.
+Notes:
+In RFC 9990, Section 3 is &quot;DMARC Feedback&quot; (report format and delivery). The DNS-based verification mechanism for external reporting addresses is Section 4, &quot;Verifying External Destinations&quot;. All three cross-references intend the verification mechanism, so each should read &quot;Section 4 of [RFC9990]&quot;. The reference in Appendix B.2.3 is normative (MUST), so the incorrect pointer misdirects implementers.
+Reported (4)
+RFC 9989 inline-errata
+Source of RFC: dmarc (art)
+Errata-ID: 8995
+Status:
+Reported
+Type:
+Technical
+Publication Format:
+TXT
+Reported By:
+Johnathon Mihalop
+Date Reported:
+2026-06-09
+Section Appendix A.4. says:
+If the response code received for a query for a domain name is NXDOMAIN, then the name and all the names under it do not exist.
+It should say:
+If the response received for a query for a domain name proves that the queried name does not exist, then the name and all names under it are considered non-existent for the purposes of this specification. This proof can be conveyed by an NXDOMAIN response, or by a DNSSEC-validated denial-of-existence response that otherwise indicates non-existence of the queried name, such as an RFC 9824 Compact Denial response containing the NXNAME type in the relevant NSEC bitmap.
+Notes:
+RFC 9824 (Compact Denial of Existence in DNSSEC) is a Proposed Standard that defines a way to reduce the size and signing cost of DNSSEC denial-of-existence responses. For a non-existent name, Compact Denial can return a NODATA-shaped response, i.e. RCODE=NOERROR with an empty Answer section, while signalling non-existence using the NXNAME RR type (TYPE128) in the NSEC/NSEC3 type bitmap.
+RFC 9989 describes non-existent domains only in terms of NXDOMAIN. This is incomplete for DNSSEC-validated responses from zones using RFC 9824 Compact Denial. A receiver that only treats RCODE=NXDOMAIN as proof of non-existence may fail to recognize an RFC 9824 NXNAME denial proof and may therefore fail to apply the DMARC np= policy for a non-existent Author Domain.
+Errata-ID: 9235
+Status:
+Reported
+Type:
+Technical
+Publication Formats:
+HTML
+PDF
+TXT
+Reported By:
+Mehedi Hasan and Tasmim Afroj Lamia
+Date Reported:
+2026-10-24
+Section 4.10.1 says:
+In the absence of applicable &quot;sp&quot; or &quot;np&quot; tags, the &quot;p&quot; tag policy is used for subdomains.
+It should say:
+If the applicable tag is absent, use &quot;sp&quot; for a non-existent subdomain when &quot;sp&quot; is
+present (as described for &quot;np&quot; in Section 4.7), and otherwise use the &quot;p&quot; tag policy.
+Notes:
+Section 4.7 says that if &quot;np&quot; is absent, the &quot;sp&quot; policy applies to non-existent subdomains when &quot;sp&quot; is present, and &quot;p&quot; only when &quot;sp&quot; is also absent. The sentence in 4.10.1 can be read as &quot;use p when np is absent&quot;, even when sp is present. For a record such as &quot;v=DMARC1; p=reject; sp=none&quot; and a non-existent subdomain, section 4.7 gives none and the 4.10.1 sentence can be read to give reject. We suggest making 4.10.1 match 4.7.
+Errata-ID: 9236
+Status:
+Reported
+Type:
+Technical
+Publication Formats:
+HTML
+PDF
+TXT
+Reported By:
+Mehedi Hasan and Tasmim Afroj Lamia
+Date Reported:
+2026-10-24
+Section 4.7 (also 4.10.1) says:
+Section 4.7 (&quot;p&quot; tag):
+If this tag
+is not present in an otherwise syntactically valid DMARC Policy
+Record, then the record is treated as if it included &quot;p=none&quot; (see
+Section 4.10.1).
+Section 4.10.1:
+If a retrieved DMARC Policy Record does not contain a valid &quot;p&quot; tag,
+or contains an &quot;sp&quot; or &quot;np&quot; tag that is not valid, then:
+* If a &quot;rua&quot; tag is present and contains at least one syntactically
+valid reporting URI, the Mail Receiver MUST act as if a record
+containing &quot;p=none&quot; was retrieved and continue processing.
+* Otherwise, the Mail Receiver applies no DMARC processing to this
+message.
+It should say:
+Section 4.7 (&quot;p&quot; tag):
+If this tag is not present, see Section 4.10.1 for how the record is handled.
+Notes:
+For a record with no &quot;p&quot; tag and no valid &quot;rua&quot; (for example &quot;v=DMARC1&quot;), section 4.7 says to treat it as &quot;p=none&quot; (DMARC applies), and section 4.10.1 says to apply no DMARC processing. In our tests, almost all implementations follow 4.10.1. We suggest changing the 4.7 sentence to point to the rule in 4.10.1.
+Errata-ID: 9237
+Status:
+Reported
+Type:
+Technical
+Publication Formats:
+HTML
+PDF
+TXT
+Reported By:
+Mehedi Hasan and Tasmim Afroj Lamia
+Date Reported:
+2026-10-24
+Section 4.8 (also 4.10.1) says:
+Section 4.8:
+Syntax errors in the
+remainder of the record MUST be discarded in favor of default values
+(if any) or ignored outright.
+Section 4.10.1:
+If a retrieved DMARC Policy Record does not contain a valid &quot;p&quot; tag,
+or contains an &quot;sp&quot; or &quot;np&quot; tag that is not valid, then:
+* If a &quot;rua&quot; tag is present and contains at least one syntactically
+valid reporting URI, the Mail Receiver MUST act as if a record
+containing &quot;p=none&quot; was retrieved and continue processing.
+* Otherwise, the Mail Receiver applies no DMARC processing to this
+message.
+It should say:
+Section 4.8:
+Syntax errors in the remainder of the record MUST be discarded in favor
+of default values (if any) or ignored outright, except for invalid &quot;p&quot;, &quot;sp&quot;,
+and &quot;np&quot; values, which are handled as described in Section 4.10.1.
+Notes:
+For a record such as &quot;v=DMARC1; p=reject; sp=bogus&quot; with no &quot;rua&quot;, section 4.8 says to ignore the bad &quot;sp&quot; value, so &quot;p=reject&quot; still applies. Section 4.10.1 says an invalid &quot;sp&quot; means no DMARC processing at all. The same conflict exists in RFC 7489 (sections 6.3 and 6.6.3). In our tests, implementations split into three groups: some follow 4.10.1, some ignore the bad tag as in 4.8, and some treat the whole record as an error. We suggest stating which rule wins.
+Report New Erratum
+rfc-editor.org is maintained by the Internet Engineering Task Force
+Useful links
+IETF.org
+IRTF.org
+IAB.org
+Datatracker
+Author Resources
+Contact Us
+RFC Editor
+rfc-dist Info Page
+rfc-interest Info Page

@@ -1,0 +1,199 @@
+RFC Errata
+RFC Errata
+About
+Login
+Errata
+RFC Number Errata ID Status
+All/Any
+Verified+Reported
+Verified
+Reported
+Held for Document Update
+Rejected
+Area Acronym
+All/Any
+app
+art
+gen
+int
+ops
+rai
+rtg
+sec
+tsv
+wit
+Type
+All/Any
+Editorial
+Technical
+WG Acronym Submitter Name Stream
+All/Any
+IAB
+INDEPENDENT
+IRTF
+Legacy
+Editorial
+Date Submitted Presentation
+Table
+Full Records
+Submit
+Verified (1)
+RFC 8460 inline-errata
+Source of RFC: uta (sec)
+Errata-ID: 8070
+Status:
+Verified
+Type:
+Editorial
+Reported By:
+Freddie Leeman
+Date Reported:
+2024-08-09
+Verified by:
+RFC Editor
+Date Verified:
+2024-08-12
+Section 3 says:
+A receiver MAY opt to only attempt delivery to one of the endpoints;
+It should say:
+The reporter MAY opt to only attempt delivery to one of the endpoints;
+Notes:
+The reporter is the entity that delivers the report, not the receiver.
+Reported (1)
+RFC 8460 inline-errata
+Source of RFC: uta (sec)
+Errata-ID: 8303
+Status:
+Reported
+Type:
+Technical
+Reported By:
+Andreas Schulze
+Date Reported:
+2025-02-20
+Section 3 says:
+The DKIM TXT record SHOULD contain the appropriate service type declaration, &quot;s=tlsrpt&quot;
+It should say:
+Section 6 does not request IANA to update the DKIM service type list
+https://www.iana.org/assignments/dkim-parameters/dkim-parameters.xhtml#dkim-parameters-8 still does not list &quot;tlsrpt&quot; as a valid service type.
+Notes:
+It seems, the request to IANA to update the list was just forgotten.
+Held for Document Update (2)
+RFC 8460 inline-errata
+Source of RFC: uta (sec)
+Errata-ID: 5889
+Status:
+Held for Document Update
+Type:
+Technical
+Reported By:
+Scott Kitterman
+Date Reported:
+2019-10-31
+Held for Document Update by:
+Alexey Melnikov
+Date Held for Document Update:
+2020-03-25
+Section 6.7 says:
+Item is missing entirely
+It should say:
+6.7 DKIM Service Type
+This document registers a new DKIM Service Type in the DomainKeys Identified Mail (DKIM) Parameters registry:
+Service Type name: tlsrpt
+Reference: RFC 8460
+Status Active
+Notes:
+The new service type is discussed in Section 3, so it should have been added to the registry. It&#x27;s an IETF Review required registry, not Specification Required, so this can (and should) be addressed in terms at least of the registry now.
+Alexey: Murray wrote:
+I would guess we can&#x27;t rectify this oversight via the errata system. What got IETF Review was the need for the registration, but not the registration itself.
+I imagine this should either be done through DISPATCH (which is chartered to do minor housekeeping things like this) or through an AD-sponsored document that contains only the registration.
+Errata-ID: 6241
+Status:
+Held for Document Update
+Type:
+Technical
+Reported By:
+Kristian Klausen
+Date Reported:
+2020-07-27
+Held for Document Update by:
+Barry Leiba
+Date Held for Document Update:
+2020-07-29
+Section Appendix B. says:
+Appendix B. Example JSON Report
+...
+&quot;policies&quot;: [{
+&quot;policy&quot;: {
+...
+&quot;mx-host&quot;: &quot;*.mail.company-y.example&quot;
+},
+...
+It should say:
+Appendix B. Example JSON Report
+...
+&quot;policies&quot;: [{
+&quot;policy&quot;: {
+...
+&quot;mx-host&quot;: [&quot;*.mail.company-y.example&quot;]
+},
+...
+Notes:
+&quot;mx-host-pattern&quot; is defined as a JSON array
+========== Verifier notes ==========
+This is right on the edge of &quot;Verified&quot;: the reporter is correct about the error, but the existing implementations don&#x27;t comply with the proposed fix. So this really needs to be dealt with in a document update, rather than through an errata report.
+Rejected (1)
+RFC 8460 inline-errata
+Source of RFC: uta (sec)
+Errata-ID: 8582
+Status:
+Rejected
+Type:
+Technical
+Reported By:
+Ömer Güven
+Date Reported:
+2025-09-23
+Rejected by:
+Deb Cooley
+Date Rejected:
+2026-05-07
+Section 5.1 (and 4.4) says:
+filename = sender &quot;!&quot; policy-domain &quot;!&quot; begin-timestamp
+&quot;!&quot; end-timestamp [ &quot;!&quot; unique-id ] &quot;.&quot; extension
+It should say:
+filename = sender &quot;!&quot; recipient-domain &quot;!&quot; begin-timestamp
+&quot;!&quot; end-timestamp [ &quot;!&quot; unique-id ] &quot;.&quot; extension
+Notes:
+Section 5.1 currently mandates that the TLSRPT filename be constructed with policy-domain. The policy-domain as defined in Section 1.1 may differ from the recipient domain (MX host for DANE and undefined for no-policy-found cases) and is already included in the JSON.
+In practice, TLSRPT filenames almost always contain the recipient domain, which is defined earlier in the RFC but never included in the JSON itself. Implementing Section 5.1 literally (using the policy-domain instead of the recipient domain) would break TLSRPT for shared report mailboxes. For example:
+- Multiple customer domains sharing an MX provider
+- External MX smart hosts implementing DANE, where the policy-domain is the MX hostname providing TLSA records
+In these cases, the report recipient cannot reliably determine which recipient domain the report is aimed at if only the policy-domain is used in the filename.
+Suggested correction:
+1. Update the filename ABNF to use the recipient domain instead of the policy-domain to reflect the status quo.
+2. Include a consistent recipient-domain field in the TLSRPT JSON for unambiguous identification.
+This ensures parsers can reliably determine which recipient domain the report is intended for, preserves TLSRPT’s usefulness for shared mailboxes, and allows easier and standardized implementation across different reporting environments.
+--VERIFIER NOTES--
+The MIME filename hint does not have semantic
+significance. This is a RECOMMENDED value, and a receiving system
+should generally ignore this entirely, and process the report JSON
+payload without regard to the filename.
+For obvious security reasons the filename must not be trusted, and the
+report might never be stored as a separate file, with results stored in
+a database or transformed into an API call.
+The recipient domain is not a better choice, but it
+really should not matter, the filename is a nonce, it has no semantic
+value.
+Report New Erratum
+rfc-editor.org is maintained by the Internet Engineering Task Force
+Useful links
+IETF.org
+IRTF.org
+IAB.org
+Datatracker
+Author Resources
+Contact Us
+RFC Editor
+rfc-dist Info Page
+rfc-interest Info Page
