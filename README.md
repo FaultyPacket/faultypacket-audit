@@ -1,4 +1,4 @@
-<!--badge-->![last verified](https://img.shields.io/badge/last_verified-2026--11--02_verified-brightgreen)<!--/badge-->
+<!--badge-->![last verified](https://img.shields.io/badge/last_verified-2026--11--09_verified-brightgreen)<!--/badge-->
 # FaultyPacket™ Audit
 
 [![ci](https://github.com/FaultyPacket/faultypacket-audit/actions/workflows/ci.yml/badge.svg)](https://github.com/FaultyPacket/faultypacket-audit/actions/workflows/ci.yml)
